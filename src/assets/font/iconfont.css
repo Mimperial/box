@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2348255 */
+  src: url('iconfont.woff2?t=1637894872753') format('woff2'),
+       url('iconfont.woff?t=1637894872753') format('woff'),
+       url('iconfont.ttf?t=1637894872753') format('truetype');
+}
+[class^="el-icon-my"],
+[class*=" el-icon-my"]/*这里有空格*/
+ {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.el-icon-mybofang:before {
+  content: "\e624";
+}
+
+.el-icon-myodbc-full:before {
+  content: "\e93a";
+}
+
+.el-icon-myanchor-full:before {
+  content: "\e9f4";
+}
+
+.el-icon-myshanchu:before {
+  content: "\e614";
+}
+
+.el-icon-myzhuanhuan:before {
+  content: "\e621";
+}
+
+.el-icon-myfangkuang:before {
+  content: "\e641";
+}
+
+.el-icon-myduobianxing:before {
+  content: "\e61b";
+}
+
+.el-icon-myline:before {
+  content: "\e600";
+}
+

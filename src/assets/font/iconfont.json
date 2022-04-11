@@ -1,0 +1,65 @@
+{
+  "id": "2348255",
+  "name": "element",
+  "font_family": "iconfont",
+  "css_prefix_text": "el-icon-my",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2674474",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "18169740",
+      "name": "数据库,数据",
+      "font_class": "odbc-full",
+      "unicode": "e93a",
+      "unicode_decimal": 59706
+    },
+    {
+      "icon_id": "18170943",
+      "name": "地图锚,勾,船锚",
+      "font_class": "anchor-full",
+      "unicode": "e9f4",
+      "unicode_decimal": 59892
+    },
+    {
+      "icon_id": "10292039",
+      "name": "删 除",
+      "font_class": "shanchu",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "1309818",
+      "name": "转换",
+      "font_class": "zhuanhuan",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "5831260",
+      "name": "方框",
+      "font_class": "fangkuang",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "10048825",
+      "name": "多边形",
+      "font_class": "duobianxing",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "11200411",
+      "name": "线",
+      "font_class": "line",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}
