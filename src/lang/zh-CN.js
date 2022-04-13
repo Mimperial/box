@@ -58,6 +58,7 @@ export default {
         mlsgone: '算法管理',
         mksgone: 'ssh管理',
         mjsgone: '日志',
+        ruleset: '规则设置',
         mhsgone: '密码长度不小于6',
         mfsgone: '请选择目录',
         mdsgone: '添加成功',

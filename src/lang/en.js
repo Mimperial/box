@@ -58,6 +58,7 @@ export default {
         mlsgone: 'AI Algorithm Management',
         mksgone: 'SSH Management',
         mjsgone: 'Log',
+        ruleset: 'rules setting',
         mhsgone: '6-character minimum',
         mfsgone: 'Select Path',//请选择目录
         mdsgone: 'SUCCESS',

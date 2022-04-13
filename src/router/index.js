@@ -180,6 +180,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                 { roles: "Engine", name: "引擎配置" },
                 { roles: "SSH", name: "ssh管理" },
                 { roles: "Log", name: "日志" },
+                { roles: "Ruleset", name: "规则设置" }
               ]
             },
             component: () => import('@/views/config/rolesConfig/rolesConfig'),

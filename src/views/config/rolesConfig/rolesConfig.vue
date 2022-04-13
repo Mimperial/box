@@ -14,7 +14,7 @@ import AlgorithmConfig from "./components/algorithmConfig";
 import Log from "./components/log";
 import SSH from "./components/ssh";
 import Engine from "./components/engine";
-
+import Ruleset from "./components/ruleset"
 export default {
   data() {
     return {
@@ -38,6 +38,10 @@ export default {
         {
           name: this.$t("js.mjsgone"),
           component: "Log",
+        },
+        {
+          name: this.$t("js.ruleset"),
+          component: "Ruleset",
         },
       ],
       selectComponent: {},
