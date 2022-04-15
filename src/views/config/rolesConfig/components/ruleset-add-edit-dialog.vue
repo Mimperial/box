@@ -8,9 +8,9 @@
         <el-select v-model="dataForm.AlgList" multiple :placeholder="$t('html.select')" style="width: 100%">
           <el-option
               v-for="item in algorithmList"
-              :key="item.id"
+              :key="item.alarmNumber"
               :label="item.name"
-              :value="item.id">
+              :value="item.alarmNumber">
           </el-option>
         </el-select>
       </el-form-item>

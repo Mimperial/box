@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import {getRule, deleteRules, getAlgorithmListApi, getAlgorithmApi} from '@/api/article.js'
+import {getRule, deleteRules, getAlgorithmListApi } from '@/api/article.js'
 import RulesetAddorEditDialog from './ruleset-add-edit-dialog'
 export default {
   name: 'ruleset',
@@ -63,7 +63,7 @@ export default {
       let nameTemp = []
       let tempMap = {}
       AlgorithmList.forEach((item) => {
-        tempMap[item.id] = item.name
+        tempMap[item.alarmNumber] = item.name
       })
       for(let i = 0; i < ruleList.length; i++){
         nameTemp = []
