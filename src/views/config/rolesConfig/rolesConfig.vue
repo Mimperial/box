@@ -64,7 +64,7 @@ export default {
       this.selectComponent = data;
     },
   },
-  components: { Engine, AlgorithmConfig, Log, SSH, UesrManger, TopHeader },
+  components: { Engine, AlgorithmConfig, Log, SSH, UesrManger, TopHeader, Ruleset },
 };
 </script>
 

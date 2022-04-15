@@ -306,3 +306,39 @@ export function wschonglian(callback) {
     return axios.ws("", callback)
 }
 
+// ------------------------------------------------------------规则设置------------------------------------------------------------
+/**
+ * 获取规则
+ * @param data
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function getRule(data){
+    return axios.post('/api/web/getRules', data = {})
+}
+
+/**
+ * 新增规则
+ * @param data
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function addRules(data){
+    return axios.post('/api/web/addRule', data)
+}
+
+/**
+ * 修改规则
+ * @param data
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function editRules(data) {
+    return axios.post('/api/web/editRule', data)
+}
+
+/**
+ * 删除规则
+ * @param data
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function deleteRules(data){
+    return axios.post('/api/web/deleteRule', data)
+}

@@ -45,6 +45,16 @@
         <div style="padding: 15px 0 0 30px; box-sizing: border-box">
           <BaseIcon title="算法设置"></BaseIcon>
         </div>
+        <div class="selectArithmetic">
+          <el-select v-model="currentRuleId" placeholder="请选择" style="margin-left: 20px;width: 254px">
+            <el-option
+                v-for="item in ruleList"
+                :key="item.RuleId"
+                :label="item.RuleName"
+                :value="item.RuleId">
+            </el-option>
+          </el-select>
+        </div>
         <div class="content">
           <el-checkbox-group v-model="selectAlgorithmIds">
             <div
@@ -99,6 +109,7 @@ import {
   getCameraApi,
   getAlgorithmListApi,
   getOsdInfoApi,
+  getRule
 } from "@/api/article";
 import BaseIcon from "@/components/baseIcon.vue";
 import EventRight from "./component/eventRight.vue";
@@ -111,6 +122,7 @@ export default {
   },
   data() {
     return {
+      currentRuleId: '',  // 规则id
       selectChannels: [], //所有的"选择通道"
       selectCamerId: "",
       algorithmList: [],
@@ -119,11 +131,13 @@ export default {
       algorithmDataCacle: {}, //缓存报警数据对于切换算法设置报错上次的数据 AlgCode:object
       cloningDialogVisible: false, //控制克隆弹框内容
       cloningData: {}, //克隆数据的原始data
+      ruleList: [], // 规则列表
     };
   },
   created() {
     this.getCamera();
     this.getAlgorithmList();
+    this.getRuleList()
   },
   computed: {
     otherCamera() {
@@ -339,6 +353,17 @@ export default {
       }
       return !flag;
     },
+    // 获取规则列表
+    async getRuleList() {
+      const result = await getRule({})
+      const {code, msg, data} = result
+      let newData = JSON.parse(data)
+      if(code !== 0){
+        return this.$message.error(msg)
+      }
+      this.ruleList = newData;
+      this.currentRuleId = newData[0].RuleId;
+    }
   },
 };
 </script>

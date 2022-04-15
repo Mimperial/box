@@ -111,6 +111,33 @@
         type="primary"
         >保存</el-button
       >
+      <div class="configArea">
+<!--        <el-form :model="configForm" label-width="120px" size="mini">-->
+<!--          <el-form-item label="目标框最大尺寸:">-->
+<!--            <div class="maxSize">{{configForm.maxSize}}%</div>-->
+<!--            <el-slider v-model="configForm.maxSize" :show-tooltip="false" :step="10"></el-slider>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="目标框最小尺寸:">-->
+<!--            <div class="minSize">{{configForm.minSize}}px</div>-->
+<!--            <el-slider v-model="configForm.minSize" :show-tooltip="false"></el-slider>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="目标框位置:">-->
+<!--            <el-input v-model="configForm.currentLocation" style="width: 50px"></el-input>&nbsp;%-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="阈值:">-->
+<!--            <el-slider v-model="configForm.thresholdValue" :show-tooltip="false"></el-slider>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="时长:">-->
+<!--            <el-input v-model="configForm.BurningTime" :show-tooltip="false" style="width: 50px"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="报警间隔:" style="margin-top: 10px;margin-bottom: 10px">-->
+<!--            <el-input v-model="configForm.alarmInterval" :show-tooltip="false" style="width: 50px"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="最小报警人数:">-->
+<!--            <el-input v-model="configForm.minPeopleNumber" :show-tooltip="false" style="width: 50px"></el-input>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+      </div>
     </div>
   </div>
 </template>
@@ -162,6 +189,15 @@ export default {
       ],
       timeConfigVal: "1",
       loading: false,
+      configForm: {
+        maxSize: 0,
+        minSize: 0,
+        currentLocation: '',
+        thresholdValue: 0,
+        BurningTime: '',
+        alarmInterval: '',
+        minPeopleNumber: ''
+      }
     };
   },
   computed: {
@@ -421,6 +457,26 @@ export default {
     }
     .save {
       float: right;
+    }
+    .configArea {
+      width: 500px;
+      height: 300px;
+      .el-form {
+        .el-slider {
+          margin-left: 10px;
+          width: 300px;
+        }
+        .el-form-item {
+          position: relative;
+          margin-bottom: 0;
+        }
+        .maxSize, .minSize {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+
+      }
     }
   }
 }
