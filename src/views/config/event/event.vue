@@ -46,7 +46,7 @@
           <BaseIcon title="算法设置"></BaseIcon>
         </div>
         <div class="selectArithmetic">
-          <el-select v-model="currentRuleId" placeholder="请选择" style="margin-left: 20px;width: 254px">
+          <el-select v-model="currentRuleId" placeholder="请选择" style="margin-left: 20px;width: 254px" @change="handleSelect">
             <el-option
                 v-for="item in ruleList"
                 :key="item.RuleId"
@@ -314,6 +314,7 @@ export default {
         try {
           var data = JSON.parse(res.data);
           this.algorithmList = data;
+          console.log(data, "data~~")
           this.clickAlgorithmId = data[0].id;
         } catch (error) {
           console.log(error, "解析错误请检查getAlgorithmListApi接口");
@@ -361,8 +362,18 @@ export default {
       if(code !== 0){
         return this.$message.error(msg)
       }
-      this.ruleList = newData;
+      this.ruleList = newData.reverse()
       this.currentRuleId = newData[0].RuleId;
+      console.log(this.selectAlgorithmIds, "被选中~~");
+    },
+    // 选择规则
+    handleSelect(currentId){
+      // AlgList
+      // TODO  下拉选择的规则中的算法与选择通道中的算法冲突
+      const currentItem = this.ruleList.find((item) => item.RuleId === currentId)
+      this.algorithmList = currentItem.AlgList
+      console.log(currentItem.AlgList, "guize~~~")
+      console.log(this.algorithmList, "规则数组~~~")
     }
   },
 };
