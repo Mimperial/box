@@ -103,17 +103,11 @@
 </template>
 
 <script>
-import {
-  setAlgorithmApi,
-  getAlgorithmApi,
-  getCameraApi,
-  getAlgorithmListApi,
-  getOsdInfoApi,
-  getRule
-} from "@/api/article";
+import {getAlgorithmApi, getAlgorithmListApi, getCameraApi, getRule, setAlgorithmApi} from "@/api/article";
 import BaseIcon from "@/components/baseIcon.vue";
 import EventRight from "./component/eventRight.vue";
 import CloningDialog from "./component/cloningDialog.vue";
+
 export default {
   components: {
     BaseIcon,
@@ -314,7 +308,6 @@ export default {
         try {
           var data = JSON.parse(res.data);
           this.algorithmList = data;
-          console.log(data, "data~~")
           this.clickAlgorithmId = data[0].id;
         } catch (error) {
           console.log(error, "解析错误请检查getAlgorithmListApi接口");
@@ -364,16 +357,19 @@ export default {
       }
       this.ruleList = newData.reverse()
       this.currentRuleId = newData[0].RuleId;
-      console.log(this.selectAlgorithmIds, "被选中~~");
     },
     // 选择规则
-    handleSelect(currentId){
-      // AlgList
+    async handleSelect(currentId){
+      try {
+        const result = await getAlgorithmListApi({})
+        this.algorithmList = JSON.parse(result.data);
+      } catch (err) {
+        console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
+      }
       // TODO  下拉选择的规则中的算法与选择通道中的算法冲突
       const currentItem = this.ruleList.find((item) => item.RuleId === currentId)
-      this.algorithmList = currentItem.AlgList
-      console.log(currentItem.AlgList, "guize~~~")
-      console.log(this.algorithmList, "规则数组~~~")
+      // 在算法数组中过滤掉当前规则里不存在的算法
+      this.algorithmList =  this.algorithmList.filter((item) => currentItem.AlgList.some((ele) => ele === item.alarmNumber))
     }
   },
 };
