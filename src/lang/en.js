@@ -164,6 +164,9 @@ export default {
         引擎配置: "Parameter settings",
     },
     html: {
+        yzkq: 'Threshold value open',
+        mbkdx: 'Target box size',
+        bjjg: 'alarm interval',
         please: 'please select rule name',
         select: 'Please select',
         xzsf: 'Select algorithm',

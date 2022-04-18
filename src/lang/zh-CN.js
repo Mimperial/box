@@ -167,6 +167,9 @@ export default {
         引擎配置: "引擎配置",
     },
     html: {
+        yzkq: '阈值开启',
+        mbkdx: '目标框大小',
+        bjjg: '报警间隔',
         please: '请选择规则名称',
         select: '请选择',
         xzsf: '选择算法',

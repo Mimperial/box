@@ -184,36 +184,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24" style="height: 50px">
-            <el-form-item label="报警间隔">
-              <el-switch
-                  v-model="algorithmForm.alarmInterval"
-                  :active-text="$t('html.kq')"
-                  :inactive-text="$t('html.gb')">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" style="height: 50px">
-            <el-form-item label="目标框大小">
-              <el-switch
-                  v-model="algorithmForm.targetSize"
-                  :active-text="$t('html.kq')"
-                  :inactive-text="$t('html.gb')">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" style="height: 50px">
-            <el-form-item label="阈值开启">
-              <el-switch
-                  v-model="algorithmForm.isThresholdvalue"
-                  :active-text="$t('html.kq')"
-                  :inactive-text="$t('html.gb')">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-<!--          <el-col :span="24" style="height: 30px; font-weight: bold">-->
-<!--            <el-form-item :label="$t('html.csxi')" label-width="100px">-->
-<!--              <el-divider></el-divider>-->
+<!--          <el-col :span="24" style="height: 50px">-->
+<!--            <el-form-item :label="$t('html.bjjg')">-->
+<!--              <el-switch-->
+<!--                  v-model="algorithmForm.alarmInterval"-->
+<!--                  active-value="1"-->
+<!--                  inactive-value="0"-->
+<!--                  :active-text="$t('html.kq')"-->
+<!--                  :inactive-text="$t('html.gb')">-->
+<!--              </el-switch>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="24" style="height: 50px">-->
+<!--            <el-form-item :label="$t('html.mbkdx')">-->
+<!--              <el-switch-->
+<!--                  v-model="algorithmForm.targetSize"-->
+<!--                  active-value="1"-->
+<!--                  inactive-value="0"-->
+<!--                  :active-text="$t('html.kq')"-->
+<!--                  :inactive-text="$t('html.gb')">-->
+<!--              </el-switch>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="24" style="height: 50px">-->
+<!--            <el-form-item :label="$t('html.yzkq')">-->
+<!--              <el-switch-->
+<!--                  v-model="algorithmForm.isThresholdvalue"-->
+<!--                  active-value="1"-->
+<!--                  inactive-value="0"-->
+<!--                  :active-text="$t('html.kq')"-->
+<!--                  :inactive-text="$t('html.gb')">-->
+<!--              </el-switch>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
           <el-col
@@ -319,9 +320,9 @@ export default {
         MusicStatus:"0",//用于控制语音报警地址开启或者关闭
         Utools: [], //工具  矩形、框选、绊线  可用/不可用
         inputConfig: [],
-        alarmInterval: '', // 报警间隔
-        targetSize: '', // 目标框大小
-        isThresholdvalue: '' // 阈值开启
+        // alarmInterval: '', // 报警间隔
+        // targetSize: '', // 目标框大小
+        // isThresholdvalue: '' // 阈值开启
       },
       rules: {
         name: [
