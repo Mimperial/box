@@ -357,6 +357,7 @@ export default {
       }
       this.ruleList = newData.reverse()
       this.currentRuleId = newData[0].RuleId;
+      await this.handleSelect(this.currentRuleId);
     },
     // 选择规则
     async handleSelect(currentId){
@@ -366,10 +367,9 @@ export default {
       } catch (err) {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
-      // TODO  下拉选择的规则中的算法与选择通道中的算法冲突
       const currentItem = this.ruleList.find((item) => item.RuleId === currentId)
       // 在算法数组中过滤掉当前规则里不存在的算法
-      this.algorithmList =  this.algorithmList.filter((item) => currentItem.AlgList.some((ele) => ele === item.alarmNumber))
+      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
     }
   },
 };
