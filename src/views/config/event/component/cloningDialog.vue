@@ -1,15 +1,7 @@
 <template>
   <div>
-    <el-dialog
-      :title="title"
-      :before-close="closeDialog"
-      :visible.sync="dialogValue"
-    >
-      <div
-        class="cloning"
-        v-loading="loading"
-        :element-loading-text="loadingText"
-      >
+    <el-dialog :title="title" :before-close="closeDialog" :visible.sync="dialogValue">
+      <div class="cloning" v-loading="loading" :element-loading-text="loadingText">
         <div class="cloningText">
           克隆通道：<span class="soureData">{{ cloningData.name }}</span>
         </div>

@@ -129,8 +129,8 @@ export function addCameraApi(data) {//添加相机
     return axios.post('/api/web/cameraAdd', { deviceIp: ip, devicePort: port, name, url, remark, deviceType, userName, pwd, videoW, videoH })// ,status,ImageUrl,IsDelete,EditFlag,PlayUrl,InsType
 }
 export function editCameraApi(data) {// 修改相机
-    let { ip, port, id, name, url, remark, deviceType, videoW = 1920, videoH = 1080, channelId, userName, pwd } = data;
-    return axios.post('/api/web/cameraUpdate', { deviceIp: ip, devicePort: port, id, name, url, remark, deviceType, videoW, videoH, channelId, userName, pwd })//{id,name,url,remark,videoW,videoH}
+    let { ip, port, id, name, url, remark, deviceType, videoW = 1920, videoH = 1080, channelId, userName, pwd, RuleId } = data;
+    return axios.post('/api/web/cameraUpdate', { deviceIp: ip, devicePort: port, id, name, url, remark, deviceType, videoW, videoH, channelId, userName, pwd, RuleId })//{id,name,url,remark,videoW,videoH}
 }
 export function delCameraApi(data) {// 删除相机
     let { id, channelId } = data;
@@ -167,7 +167,7 @@ export function getAlgorithmApi(data) {//算法-获取(这里新接口对接完�
 }
 export function setAlgorithmApi(data) {//算法-设置(这里新接口对接完成)
     let { id, AlgInfos } = data;
-    return axios.post('/api/web/setAlgInfo', { id: id, algInfos: AlgInfos })
+    return axios.post('/api/web/setAlgInfo', { id: id, algInfos: AlgInfos})
 }
 
 export function getAlgorithmListApi(data) {  //获取算法列表(这里新接口对接完成)-------------------
@@ -313,7 +313,8 @@ export function wschonglian(callback) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function getRule(data){
-    return axios.post('/api/web/getRules', data = {})
+    let { RuleId } = data
+    return axios.post('/api/web/getRules', { RuleId })
 }
 
 /**

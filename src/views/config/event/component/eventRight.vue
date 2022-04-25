@@ -4,13 +4,7 @@
       <VideoCom :seek="true" :videoUrl="videoUrl"></VideoCom>
       <div id="kuangFunArea"></div>
     </div>
-    <div
-      :class="{
-        timeConfig: true,
-        show: selectMethod == 2,
-      }"
-      id="TimeDraw"
-    >
+    <div :class="{timeConfig: true,show: selectMethod == 2,}" id="TimeDraw">
       <ConfigTimeCom
         :timeConfigVal="timeConfigVal"
         ref="ConfigTimeCom"

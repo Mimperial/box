@@ -57,22 +57,9 @@
         </div>
         <div class="content">
           <el-checkbox-group v-model="selectAlgorithmIds">
-            <div
-              v-for="item in algorithmList"
-              :label="item.id"
-              :key="item.id"
-              :class="{
-                algorithmKuang: true,
-                select: clickAlgorithmId === item.id,
-              }"
-              @click="clickAlgorithm(item)"
-            >
+            <div v-for="item in algorithmList" :key="item.id" :class="{algorithmKuang: true,select: clickAlgorithmId === item.id,}" @click="clickAlgorithm(item)">
               <div class="checkBox">
-                <el-checkbox
-                  @change="startOrClose(item)"
-                  :label="item.alarmNumber"
-                  >{{ "" }}</el-checkbox
-                >
+                <el-checkbox @change="startOrClose(item)" :label="item.alarmNumber">{{ "" }}</el-checkbox>
               </div>
               <div class="algorithmIcon">
                 <img :src="item.path" />
@@ -103,7 +90,7 @@
 </template>
 
 <script>
-import {getAlgorithmApi, getAlgorithmListApi, getCameraApi, getRule, setAlgorithmApi} from "@/api/article";
+import {getAlgorithmApi, getAlgorithmListApi, getCameraApi, getRule, setAlgorithmApi, editCameraApi} from "@/api/article";
 import BaseIcon from "@/components/baseIcon.vue";
 import EventRight from "./component/eventRight.vue";
 import CloningDialog from "./component/cloningDialog.vue";
@@ -136,9 +123,7 @@ export default {
   computed: {
     otherCamera() {
       //非选中的相机
-      return this.selectChannels.filter(
-        (item) => item.id != this.selectCamerId
-      );
+      return this.selectChannels.filter((item) => item.id !== this.selectCamerId);
     },
     selectCamera() {
       var cameraData = this.selectChannels.find(
@@ -245,8 +230,10 @@ export default {
       //清除上次缓存的信息 切换算法设置报错上次的数据
       this.algorithmDataCacle = {};
     },
-    save({ data, setLoading }) {
+    async save({ data, setLoading }) {
       this.setAlgorithmDataCacle(data);
+      // 给通道设置规则
+      await editCameraApi({id: this.selectCamerId, RuleId: this.currentRuleId});
       var AlgInfos = [];
       for (const key in this.algorithmDataCacle) {
         const element = JSON.parse(
@@ -278,15 +265,20 @@ export default {
           setLoading(false);
         });
     },
-    clickSelectChannel(row) {
-      /**
-       * 切换相机
-       */
-      if (this.selectCamerId !== row.id) {
-        this.selectCamerId = row.id;
+    async clickSelectChannel(row) {
+      const { id, RuleId } = row
+      // 切换相机
+      if (this.selectCamerId !== id) {
+        this.selectCamerId = id;
         this.getAlgorithm();
         this.clearCacleData();
       }
+      // 获取通道下的规则
+      const ruleRes = await getRule({RuleId: RuleId})
+      if(ruleRes.code !== 0 ) return this.$message.error(ruleRes.msg)
+      let data = JSON.parse(ruleRes.data)
+      this.currentRuleId = data[0].RuleId
+      await this.handleSelect(this.currentRuleId)
     },
     getAlgorithm() {
       getAlgorithmApi({ id: this.selectCamerId }).then((res) => {
@@ -319,6 +311,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             var data = JSON.parse(res.data);
+            console.log(data, "data")
             if (data && data.length > 0) {
               if (setSelectCamerId) {
                 //设置初始化相机选择
@@ -334,6 +327,7 @@ export default {
                 return item;
               });
               this.getAlgorithm(); //获取当前相机的算法
+              this.handleSelect(data[0].RuleId)
             }
           }
         })
