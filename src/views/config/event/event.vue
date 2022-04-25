@@ -415,7 +415,7 @@ export default {
       background-color: white;
       margin-top: 10px;
       .content {
-        height: calc(100% - 51px);
+        height: calc(100% - 91px);
         margin-top: 10px;
         overflow-y: auto;
         &::-webkit-scrollbar {
