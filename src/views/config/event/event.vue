@@ -235,9 +235,16 @@ export default {
       // 给通道设置规则
       await editCameraApi({id: this.selectCamerId, RuleId: this.currentRuleId});
       var AlgInfos = [];
-      for (const key in this.algorithmDataCacle) {
+      if (this.algorithmList && this.algorithmList.length > 0 ) {
+        // 在算法数组中过滤掉当前规则里不存在的算法
+        this.selectAlgorithmIds =  this.selectAlgorithmIds.filter((item) => this.algorithmList.some((ele) => ele.alarmNumber === item))
+      }
+
+      this.selectAlgorithmIds.forEach((item) => {
+
+
         const element = JSON.parse(
-          JSON.stringify(this.algorithmDataCacle[key])
+            JSON.stringify(this.algorithmDataCacle[item])
         );
         if (element.Parameters && element.Parameters.length > 0) {
           element.Parameters.forEach((item) => {
@@ -245,7 +252,21 @@ export default {
           });
         }
         AlgInfos.push(element);
-      }
+      })
+
+      // for (const key in this.algorithmDataCacle) {
+      //   console.log(key)
+      //
+      //   const element = JSON.parse(
+      //     JSON.stringify(this.algorithmDataCacle[key])
+      //   );
+      //   if (element.Parameters && element.Parameters.length > 0) {
+      //     element.Parameters.forEach((item) => {
+      //       item.Value = String(item.Value);
+      //     });
+      //   }
+      //   AlgInfos.push(element);
+      // }
       setLoading(true);
       setAlgorithmApi({
         id: this.selectCamera.id,
@@ -253,6 +274,7 @@ export default {
       })
         .then((res) => {
           if (res.code == 0) {
+            this.clearCacleData();
             this.getCamera(false);
             this.$message({
               type: "success",
