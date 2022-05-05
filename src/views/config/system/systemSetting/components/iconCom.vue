@@ -9,14 +9,25 @@
         <span :class="{ number: true, blue: blue }">{{ info }}</span>
         <span class="unit">{{ smallInfo }}</span>
       </div>
+      <div style="height: 190px">
+        <img :src="smallBut" alt="" srcset="" style="margin-top: 20px; width: 24px;height: auto;  display: block;" @click="btuClick()" />
+      </div>
     </div>
+
   </div>
 </template>
 
 <script>
 export default {
-  props: ["title", "info", "smallInfo", "srcImg", "blue"],
+  props: ["title", "info", "smallInfo", "srcImg", "blue", "smallBut", "smallButClick"],
+
+  methods: {
+     btuClick() {
+       this.smallButClick();
+    }
+  }
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -48,7 +59,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 60px;
+  //padding: 0 60px;
+  padding: 0px 30px 0px 60px;
+
   .imagePicture {
     width: 120px;
     img {
@@ -82,6 +95,12 @@ export default {
       color: #000000;
       line-height: 29px;
     }
+    .smallBut {
+      margin-top: 20px;
+      margin-left: 20px;
+      width: 30px;
+    }
   }
+
 }
 </style>

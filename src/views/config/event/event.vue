@@ -349,7 +349,7 @@ export default {
                 return item;
               });
               this.getAlgorithm(); //获取当前相机的算法
-              this.handleSelect(data[0].RuleId)
+              // this.handleSelect(this.currentRuleId)
             }
           }
         })
@@ -383,7 +383,11 @@ export default {
       } catch (err) {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
-      const currentItem = this.ruleList.find((item) => item.RuleId === currentId)
+      let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
+      if (!currentItem &&  this.ruleList &&  this.ruleList.length > 0) {
+        currentItem = this.ruleList[0];
+        currentItem = this.ruleList[0];
+      }
       // 在算法数组中过滤掉当前规则里不存在的算法
       this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
     }

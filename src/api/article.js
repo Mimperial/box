@@ -343,3 +343,11 @@ export function editRules(data) {
 export function deleteRules(data){
     return axios.post('/api/web/deleteRule', data)
 }
+/**
+ * 删除规则
+ * @param data
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function restartEngineApi(data){
+    return axios.post('/api/web/restartEngine', data)
+}

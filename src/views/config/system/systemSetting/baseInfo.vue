@@ -11,11 +11,14 @@
       </div>
       <div class="limian right">
         <iconCom
-          title="主机温度"
-          :info="temperature"
-          smallInfo="℃"
-          :srcImg="require('@/assets/img/temperature.png')"
+          title="引擎状态"
+          :info="statusEngine == 1 ? '运行' : '停止'"
+          smallInfo=""
+          :srcImg="require('@/assets/img/statusEngine.png')"
+          :smallBut="require('@/assets/img/engineRestart.png')"
+          :smallButClick="restartEngine"
         ></iconCom>
+
         <iconCom
           :blue="true"
           title="安全运行"
@@ -23,6 +26,7 @@
           smallInfo="天"
           :srcImg="require('@/assets/img/time.png')"
         ></iconCom>
+
       </div>
     </div>
     <div class="bottom">
@@ -73,7 +77,7 @@
 </template>
 
 <script>
-import { getDevInfoApi, setDevInfoApi, wsCpu } from "@/api/article";
+import { getDevInfoApi, setDevInfoApi, wsCpu, restartEngineApi } from "@/api/article";
 import storageCharts from "./components/storageCharts2";
 import lineCharts from "./components/lineCharts";
 import lineChartNetw from "./components/lineChartNetw";
@@ -107,6 +111,7 @@ export default {
       ethernetArr: [],
       ethernetArr1: [],
       temperature: 0,
+      statusEngine: 1,//1/在线，0/离线
       runningDays: 0,
       arrStr: [
         {
@@ -159,7 +164,7 @@ export default {
         (data) => {
           if (data.Cmd == "ComputerInfo") {
             var obj = JSON.parse(data.Data);
-            this.temperature = obj.temperature || 0;
+            this.statusEngine = obj.statusEngine || 1;
             this.runningDays = obj.runningDays || 0;
             this.storageObj.useStorage = parseInt(
               obj.diskUsed ? obj.diskUsed : 0
@@ -210,6 +215,16 @@ export default {
           });
         } else {
           return false;
+        }
+      });
+    },
+    restartEngine() {
+      restartEngineApi({}).then((res) => {
+        if (res.code == 0) {
+          this.$message({
+            message: this.$t("js.gmsgone"),
+            type: "success",
+          });
         }
       });
     },
