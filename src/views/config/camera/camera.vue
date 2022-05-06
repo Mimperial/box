@@ -1,7 +1,21 @@
 <template>
   <div class="waikuang">
     <el-row>
-      <el-col :offset="22" :span="2">
+      <el-col :span="17">
+        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+          <el-form-item label="通道名称">
+            <el-input
+              v-model="formInline.user"
+              placeholder="通道名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit(1)">查询</el-button>
+            <el-button type="primary" @click="onSubmit">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <el-col :offset="5" :span="2">
         <el-button size="" type="primary" @click="addDialogFlag = true"
           >添加通道</el-button
         >
@@ -73,6 +87,18 @@
           </el-table-column>
         </el-table></el-col
       >
+      <el-col :span="24">
+        <div style="text-align: center; margin-top: 20px">
+          <el-pagination
+            background
+            @current-change="handleCurrentChange"
+            :current-page.sync="page.currentPage"
+            layout="prev, pager, next"
+            :total="page.total"
+          >
+          </el-pagination>
+        </div>
+      </el-col>
     </el-row>
     <ChangeCamera
       :disabled="true"
@@ -114,12 +140,36 @@ export default {
       editDefault: {},
       lookDialogFlag: false,
       lookCameraData: {},
+      totalData: [],
+      page: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1,
+      },
+      formInline: {
+        user: "",
+      },
     };
   },
   mounted() {
     this.getData();
   },
   methods: {
+    onSubmit(val) {
+      if (this.formInline.user && val === 1) {
+        let arr = this.totalData.filter((item) => {
+          if (item.name.indexOf(this.formInline.user) > -1) {
+            return item;
+          }
+        });
+        this.page.total = arr.length || 0;
+        this.page.currentPage = 1;
+        this.tableData = arr;
+      } else {
+        this.formInline.user = "";
+        this.getData();
+      }
+    },
     lookItem(data) {
       this.lookDialogFlag = true;
       this.lookCameraData = data;
@@ -243,10 +293,19 @@ export default {
         return `rtsp://${userName}:${pwd}@${ip}:${port}/cam/realmonitor?channel=1&subtype=0`;
       }
     },
+    handleCurrentChange(val) {
+      let { page } = this;
+      let data = this.totalData.slice(
+        (page.currentPage - 1) * page.pageSize,
+        page.pageSize + (page.currentPage - 1) * page.pageSize
+      );
+      this.tableData = data;
+    },
     getData() {
       getCameraApi({}).then((res) => {
         if (res.code == 0) {
           var data = JSON.parse(res.data);
+          this.page.total = data.length || 0;
           data.forEach((element) => {
             var str,
               ip = "-",
@@ -264,7 +323,8 @@ export default {
             }
             element.ip = ip;
           });
-          this.tableData = data;
+          this.totalData = data;
+          this.handleCurrentChange(this.page.currentPage);
         }
       });
     },
