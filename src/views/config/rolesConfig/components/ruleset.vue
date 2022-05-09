@@ -73,6 +73,7 @@ export default {
         ruleList[i].name = nameTemp.join('、')
       }
       this.tableData = ruleList.reverse()
+      console.log(this.tableData)
     },
     async rowDelete(row){
       const newRow = JSON.parse(JSON.stringify(row))
