@@ -60,11 +60,15 @@ export default {
         this.$message.error(msg)
       }
       const ruleList = JSON.parse(data)
+      console.log(ruleList,"ruleList")
       let nameTemp = []
       let tempMap = {}
+      console.log(AlgorithmList, "AlgorithmList")
       AlgorithmList.forEach((item) => {
         tempMap[item.alarmNumber] = item.name
       })
+      console.log(tempMap, "tempMap")
+
       for(let i = 0; i < ruleList.length; i++){
         nameTemp = []
         for(let j = 0; j< ruleList[i].AlgList.length; j++){
@@ -72,6 +76,7 @@ export default {
         }
         ruleList[i].name = nameTemp.join('、')
       }
+      console.log(ruleList, "ruleList")
       this.tableData = ruleList.reverse()
       console.log(this.tableData)
     },

@@ -115,10 +115,10 @@ export default {
       ruleList: [], // 规则列表
     };
   },
-  created() {
-    this.getCamera();
+  async created() {
+    await this.getCamera();
     this.getAlgorithmList();
-    this.getRuleList()
+    this.getRuleList();
   },
   computed: {
     otherCamera() {
@@ -338,6 +338,7 @@ export default {
               if (setSelectCamerId) {
                 //设置初始化相机选择
                 this.selectCamerId = data[0].id;
+                this.currentRuleId = data[0].RuleId;
               }
               this.selectChannels = data.map((item) => {
                 //这里进行测报警信息数据转换成json格式
@@ -372,7 +373,9 @@ export default {
         return this.$message.error(msg)
       }
       this.ruleList = newData.reverse()
-      this.currentRuleId = newData[0].RuleId;
+      if (!this.currentRuleId) {
+        this.currentRuleId = newData[0].RuleId;
+      }
       await this.handleSelect(this.currentRuleId);
     },
     // 选择规则
@@ -389,7 +392,7 @@ export default {
         currentItem = this.ruleList[0];
       }
       // 在算法数组中过滤掉当前规则里不存在的算法
-      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
+      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList?.some((ele) => ele === item.alarmNumber))
     }
   },
 };
