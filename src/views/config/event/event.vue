@@ -119,7 +119,7 @@ export default {
   async created() {
     await this.getCamera();
     await this.getAlgorithmList();
-    this.getRuleList();
+    await this.getRuleList();
   },
   computed: {
     otherCamera() {
@@ -329,33 +329,34 @@ export default {
         }
       });
     },
-    getCamera(setSelectCamerId = true) {
-      getCameraApi({})
-        .then((res) => {
-          if (res.code == 0) {
-            var data = JSON.parse(res.data);
-            console.log(data, "data")
-            if (data && data.length > 0) {
-              if (setSelectCamerId) {
-                //设置初始化相机选择
-                this.selectCamerId = data[0].id;
-                this.currentRuleId = data[0].RuleId;
-              }
-              this.selectChannels = data.map((item) => {
-                //这里进行测报警信息数据转换成json格式
-                try {
-                  item.algInfos = JSON.parse(item.algInfos);
-                } catch (error) {
-                  console.log("解析失败，可能没有报警边框设置！");
+    async getCamera(setSelectCamerId = true) {
+      await getCameraApi({})
+          .then((res) => {
+            if (res.code == 0) {
+              var data = JSON.parse(res.data);
+              console.log(data, "data")
+              if (data && data.length > 0) {
+                if (setSelectCamerId) {
+                  //设置初始化相机选择
+                  this.selectCamerId = data[0].id;
+                  this.currentRuleId = data[0].RuleId;
                 }
-                return item;
-              });
-              this.getAlgorithm(); //获取当前相机的算法
-              // this.handleSelect(this.currentRuleId)
+                this.selectChannels = data.map((item) => {
+                  //这里进行测报警信息数据转换成json格式
+                  try {
+                    item.algInfos = JSON.parse(item.algInfos);
+                  } catch (error) {
+                    console.log("解析失败，可能没有报警边框设置！");
+                  }
+                  return item;
+                });
+                this.getAlgorithm(); //获取当前相机的算法
+                // this.handleSelect(this.currentRuleId)
+              }
             }
-          }
-        })
-        .catch((err) => {});
+          })
+          .catch((err) => {
+          });
     },
     cloningHighlight(data) {
       //判断克隆字是否高亮显示
@@ -374,6 +375,7 @@ export default {
         return this.$message.error(msg)
       }
       this.ruleList = newData.reverse()
+      console.log(this.currentRuleId, "getRuleList this.currentRuleId");
       if (!this.currentRuleId) {
         this.currentRuleId = newData[0].RuleId;
       }
@@ -389,6 +391,7 @@ export default {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
       console.log(currentId, "currentId");
+      console.log(this.ruleList, "this.ruleList");
       let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
       if (!currentItem && this.ruleList &&  this.ruleList.length > 0) {
         console.log(currentItem, "currentItem");
