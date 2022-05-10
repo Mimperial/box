@@ -104,6 +104,7 @@ export default {
   data() {
     return {
       currentRuleId: '',  // 规则id
+      currentRuleName: '',  // 规则id
       selectChannels: [], //所有的"选择通道"
       selectCamerId: "",
       algorithmList: [],
@@ -117,7 +118,7 @@ export default {
   },
   async created() {
     await this.getCamera();
-    this.getAlgorithmList();
+    await this.getAlgorithmList();
     this.getRuleList();
   },
   computed: {
@@ -383,16 +384,30 @@ export default {
       try {
         const result = await getAlgorithmListApi({})
         this.algorithmList = JSON.parse(result.data);
+        console.log(this.algorithmList, "this.algorithmList");
       } catch (err) {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
+      console.log(currentId, "currentId");
       let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
-      if (!currentItem &&  this.ruleList &&  this.ruleList.length > 0) {
-        currentItem = this.ruleList[0];
+      if (!currentItem && this.ruleList &&  this.ruleList.length > 0) {
+        console.log(currentItem, "currentItem");
+        console.log(this.ruleList, "this.ruleList");
         currentItem = this.ruleList[0];
       }
+      this.currentRuleName = currentItem && currentItem.RuleName;
+
       // 在算法数组中过滤掉当前规则里不存在的算法
-      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList?.some((ele) => ele === item.alarmNumber))
+      if (currentItem && currentItem.AlgList) {
+        this.algorithmList =  this.algorithmList.filter((item) => currentItem.AlgList.includes(item.alarmNumber))
+      }else {
+        this.$message({
+          type: "success",
+          message: "规则数据为空！",
+        });
+      }
+
+      console.log(this.algorithmList, "this.algorithmList");
     }
   },
 };
