@@ -67,21 +67,18 @@
         </el-form-item>
         <el-form-item v-if="addType == 2" prop="devicePort" label="端口号：">
           <el-input
-            :disabled="disabled"
             v-model="formDate.devicePort"
             :placeholder="$t('html.rtsp7')"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="addType == 2" prop="userName" label="账号：">
           <el-input
-            :disabled="disabled"
             v-model="formDate.userName"
             :placeholder="$t('html.qxzyhm')"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="addType == 2" prop="pwd" label="密码：">
           <el-input
-            :disabled="disabled"
             v-model="formDate.pwd"
             :placeholder="$t('html.rtsp2')"
           ></el-input>

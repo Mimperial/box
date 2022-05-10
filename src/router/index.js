@@ -90,7 +90,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                     { roles: "TimeConfig", name: "时间配置" },
                     { roles: "UseManagement", name: "修改密码" },
                     { roles: "EquipmentSerial", name: "设备编号" },
-                    { roles: "SiteInfo", name: "设备编号" }
+                    { roles: "SiteInfo", name: "站点信息" }
                   ]
                 },
                 component: () => import('@/views/config/system/systemMaintenance.vue'),
