@@ -388,6 +388,7 @@ export default {
         currentItem = this.ruleList[0];
         currentItem = this.ruleList[0];
       }
+
       // 在算法数组中过滤掉当前规则里不存在的算法
       this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
     }
