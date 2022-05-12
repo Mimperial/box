@@ -237,6 +237,11 @@ export function getAlarmHisApi(data) {//获取报警数据
     let { cameraId, startTime, endTime, alarmType, curPage, pageNum } = data
     return axios.post('/api/web/getAlarmHis', { cameraId, startTime, endTime, alarmType, curPage: String(curPage), pageNum: String(pageNum) })
 }
+
+export function getFaceAlarms() { //人脸识别
+    
+}
+
 export function downloadAlarmHisApi(data) {//下载
     let { cameraId, startTime, endTime, alarmType, download, userId = "" } = data
     return axios.post('/api/web/downloadAlarmHis', { cameraId, startTime, endTime, alarmType, download, userId })

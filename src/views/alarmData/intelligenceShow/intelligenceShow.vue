@@ -9,6 +9,7 @@
       :camerList="camerList"
     ></SelectTop>
     <div v-if="vidoeModel" style="margin-bottom: 20px">
+      <div v-if="showChangeModel">
       <el-button
         size="mini"
         icon="el-icon-s-grid"
@@ -19,15 +20,18 @@
         icon="el-icon-menu"
         @click="changeModel(true)"
       ></el-button>
+      </div>
     </div>
     <div :class="{ imageAll: true, noVideo: !isVideo }">
       <div class="imageItem" v-for="item in imgArr" :key="item.id">
+        <!-- 人脸识别 -->
         <ImageShow
           v-if="isVideo"
           :imageData="item"
           :alarmOptions="alarmOptions"
           :camerList="camerList"
         ></ImageShow>
+        <!-- 人脸抓拍 -->
         <ImageShow2
           v-else
           :imageData="item"
@@ -65,6 +69,13 @@ import { changeImge } from "@/utils/utils";
 import { mapGetters } from "vuex";
 export default {
   components: { FunAreaSelect, SelectTop, ImageShow, ImageShow2 },
+  props:{
+    showChangeModel:{
+      type:Boolean,
+      default:false
+    }
+  },
+  inject:['model'],
   data() {
     return {
       alarmOptions: [],
@@ -120,94 +131,89 @@ export default {
   },
   mounted() {
     this.getOption();
+    this.changeModel(this.model)
   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer);
   },
   methods: {
     changeModel(flag) {
-      if (flag !== this.isVideo) {
-        this.isVideo = flag;
-        if (this.imgArr.length > 0) {
-          if (flag == true && this.imgArr.length > 12) {
-            this.imgArr = this.imgArr.slice(0, 12);
-          }
-          this.$nextTick(() => {
-            this.$refs.SelectTop.seach();
+      this.isVideo = flag
+            this.$nextTick(() => {
+              this.$refs.SelectTop.seach();
           });
-        }
-      }
+      // const flag = this.model
+      // if (flag !== this.isVideo) {
+      //   this.isVideo = flag;
+      //   if (this.imgArr.length > 0) {
+      //     if (flag == true && this.imgArr.length > 12) {
+      //       this.imgArr = this.imgArr.slice(0, 12);
+      //     }
+      //     this.$nextTick(() => {
+      //     });
+      //   }
+      // }
     },
     getOption() {
-      getAlgorithmListApi({}).then((result) => {
-        if (result.code == 0) {
-          this.alarmOptions = JSON.parse(result.data);
-        }
-      });
+      // getAlgorithmListApi({}).then((result) => {
+      //   if (result.code == 0) {
+      //     this.alarmOptions = JSON.parse(result.data);
+      //   }
+      // });
       getCameraApi({}).then((result) => {
         if (result.code == 0) {
           this.camerList = JSON.parse(result.data);
         }
       });
     },
-    cameraFilter(val) {
-      if (this.camerList.length <= 0) return "";
-      var data = this.camerList.filter((item) => item.channelId == val)[0];
-      if (data) {
-        return data.name;
-      } else {
-        return this.$t("js.msgoned");
-      }
-    },
-    alarmFilter(val) {
-      if (this.alarmOptions.length <= 0) return "";
-      var data = this.alarmOptions.filter(
-        (item) => item.alarmNumber == val.alarmType
-      )[0];
-      if (data) {
-        return data.name;
-      } else {
-        return this.$t("js.msgoned");
-      }
-    },
+    // 点击检索
     getData(sourceData) {
       getAlarmHisApi(Object.assign(sourceData, this.page)).then((res) => {
         if (res.code == 0) {
-          try {
-            var data = JSON.parse(res.data);
-            // data.alarmList
-            if (
-              (data.alarmList && data.alarmList.length > 0) ||
-              this.page.curPage != 1
-            ) {
-              this.page.total = Number(data.total);
-              if (!data.alarmList || data.alarmList.length == 0) {
-                this.page.curPage = Math.ceil(data.total / this.page.pageNum);
-                this.getData(sourceData);
-              }
-              if (data.alarmList && data.alarmList.length > 0) {
-                this.imgArr = this.getDrawPoint(data.alarmList);
-              } else {
-                this.imgArr = [];
-              }
-            } else {
-              this.imgArr = [];
-              this.page.total = 0;
-              this.$message({
-                message: this.$t("js.msgoneb"),
-                type: "success",
-              });
-            }
-          } catch (error) {
-            this.imgArr = [];
-            this.page.total = 0;
+          const data = JSON.parse(res.data);
+          if(!data?.alarmList.length>0){
             this.$message({
               message: this.$t("js.msgoneb"),
-              type: "success",
-            });
+                type: "success",
+              });  
           }
+           this.page.total = Number(data.total);
+          this.imgArr = this.getDrawPoint(data.alarmList);
+               console.log("🤡 ~~ data", data.alarmList)
+          console.log("🤡 ~~ this.imgArr", this.imgArr)
+          // try {
+          //   console.log("🤡 ~~ data", data)
+          //   // data.alarmList
+          //   if (
+          //     (data.alarmList && data.alarmList.length > 0) ||
+          //     this.page.curPage != 1
+          //   ) {
+          //     if (!data.alarmList || data.alarmList.length == 0) {
+          //       this.page.curPage = Math.ceil(data.total / this.page.pageNum);
+          //       this.getData(sourceData);
+          //     }
+          //     if (data.alarmList && data.alarmList.length > 0) {
+          //     } else {
+          //       this.imgArr = [];
+          //     }
+          //   } else {
+          //     this.imgArr = [];
+          //     this.page.total = 0;
+          //     this.$message({
+          //       message: this.$t("js.msgoneb"),
+          //       type: "success",
+          //     });
+          //   }
+          // } catch (error) {
+          //   this.imgArr = [];
+          //   this.page.total = 0;
+          //   this.$message({
+          //     message: this.$t("js.msgoneb"),
+          //     type: "success",
+          //   });
+          // }
         }
-      });
+      })
     },
     handleCurrentChange(val) {
       this.page.curPage = val;

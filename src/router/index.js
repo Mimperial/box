@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import layout from "@/layout"
+import alarmDataLayout from  '@/views/alarmData/alarmData'
 Vue.use(VueRouter)
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -194,7 +195,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
           icon: "el-icon-bell",
           roles: 2
         },
-        component: () => import('@/views/alarmData/alarmData'),
+        component:alarmDataLayout,
         redirect: '/home/alarmData/intelligenceShow',
         children: [
           {
@@ -207,9 +208,43 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
               buttonRoles: [
                 { roles: "isVideo", name: "有视频" },
                 { roles: "NoVideo", name: "无视频" }
-              ]
+              ],
             },
-            component: () => import('@/views/alarmData/intelligenceShow/intelligenceShow'),
+            component: () => import('@/views/alarmData/intelligenceShow'),
+            redirect: '/home/alarmData/intelligenceShow/behaviouralAnalysis',
+            children:[
+              {
+                path:'behaviouralAnalysis',
+                name:'behaviouralAnalysis',
+                component:()=>import('@/views/alarmData/intelligenceShow/behaviouralAnalysis'),
+                meta:{
+                  title:'行为分析',
+                  icon:'el-icon-view',
+                  roles:"2-1-4",
+                },
+              },
+              {
+                path:'faceCaptured',
+                name:'faceCaptured',
+                component:()=>import('@/views/alarmData/intelligenceShow/faceCaptured'),
+                meta:{
+                  title:'人脸抓拍',
+                  icon:'el-icon-view',
+                  roles:"2-1-2",
+                }
+              },
+              {
+                path:'faceRecognition',
+                name:'faceRecognition',
+                component:()=>import('@/views/alarmData/intelligenceShow/faceRecognition'),
+                meta:{
+                  title:'人脸识别',
+                  icon:'el-icon-view',
+                  roles:"2-1-3",
+                }
+              },
+            
+            ]
           }
         ]
       }, {

@@ -20,21 +20,23 @@
         areaColor="rgba(40, 177, 217, 0)"
         selectAreaColor="rgba(40, 177, 217, 0)"
       ></FunAreaSelect>
+      <div class="img-bottom-text">
+        <div class="tetx-m">姓名：{{name}}</div>
+        <div>时间：{{imageData.time }}</div>  
+      </div>
     </div>
-    <div class="video" @click.stop="showVideo">
+    <div class="video" @click.stop="showImage">
       <el-image
         style="width: 100%; height: 100%"
         :src="imageData.alarmUrl"
+         @load="successLoad"
       ></el-image>
-      <div :class="{ player: true, black: !imageData.alarmVideo }">
+      <!-- <div :class="{ player: true, black: !imageData.alarmVideo }">
         <i class="el-icon-mybofang"></i>
-      </div>
-    </div>
-    <div class="info">
-      <div class="wenzi">相机名称：{{ name }}</div>
-      <div class="wenzi">
-        <span>时间：{{ imageData.time }}</span>
-        <span>报警类型：{{ type }}</span>
+      </div> -->
+       <div class="img-bottom-text">
+        <div class="tetx-m">识别度：{{name}}</div>
+        <div>相机名称：{{type}}</div>
       </div>
     </div>
     <ImageDialog
@@ -42,11 +44,6 @@
       :imageData="imageData"
       v-model="showImageDialog"
     ></ImageDialog>
-    <VideoDialog
-      :title="name"
-      :imageData="imageData"
-      v-model="showVidoeDialog"
-    ></VideoDialog>
   </div>
 </template>
 
@@ -65,7 +62,6 @@ export default {
     return {
       show: false, //是否显示绘框
       showImageDialog: false,
-      showVidoeDialog: false,
     };
   },
   computed: {
@@ -89,20 +85,19 @@ export default {
     successLoad() {
       this.show = true;
     },
-    showVideo() {
-      this.showVidoeDialog = true;
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .wangkuang {
-  width: 350px;
+  // width: 350px;
+  height: 100%;
   padding: 10px;
   border: 1px solid #d7d7d7;
   overflow: hidden;
   user-select: none;
+  box-sizing: border-box;
   .image {
     cursor: pointer;
     position: relative;
@@ -138,17 +133,12 @@ export default {
       }
     }
   }
-  .info {
-    float: left;
-    width: 100%;
-    height: 60px;
-    margin-top: 8px;
-    .wenzi {
-      line-height: 30px;
-      font-size: 13px;
-      span + span {
-        margin-left: 10px;
-      }
+  .img-bottom-text{
+    font-size: 13px;
+    color: #555555;
+    .tetx-m{
+      margin-top: 3px;
+      margin-bottom: 10px;
     }
   }
 }

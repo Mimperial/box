@@ -1,35 +1,16 @@
 <template>
-  <el-row :gutter="10" style="margin-bottom: 0px">
-    <el-form ref="form" :model="form" label-width="80px">
-      <el-col
-        :xs="show.xs"
-        :sm="show.sm"
-        :md="show.md"
-        :lg="show.lg"
-        :xl="show.xl"
-        ><el-form-item label="开始时间">
+<div>
+  <div class="top-search">
+    <el-form ref="form" :model="form" :inline="true" class="formClass" label-width="80px">
+     <el-form-item label="开始时间">
           <el-date-picker v-model="form.startTime" type="datetime">
           </el-date-picker> </el-form-item
-      ></el-col>
-      <el-col
-        :xs="show.xs"
-        :sm="show.sm"
-        :md="show.md"
-        :lg="show.lg"
-        :xl="show.xl"
       >
         <el-form-item :label="$t('html.结束时间')">
           <el-date-picker v-model="form.endTime" type="datetime">
           </el-date-picker> </el-form-item
-      ></el-col>
-      <el-col
-        :xs="show.xs"
-        :sm="show.sm"
-        :md="show.md"
-        :lg="show.lg"
-        :xl="show.xl"
       >
-        <el-form-item :label="$t('html.告警类型')">
+        <!-- <el-form-item :label="$t('html.告警类型')">
           <el-select
             multiple
             collapse-tags
@@ -43,15 +24,7 @@
               :value="item.alarmNumber"
             ></el-option>
           </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col
-        :xs="show.xs"
-        :sm="show.sm"
-        :md="show.md"
-        :lg="show.lg"
-        :xl="show.xl"
-      >
+        </el-form-item> -->
         <el-form-item :label="$t('html.设备')">
           <el-select
             multiple
@@ -66,17 +39,31 @@
             ></el-option>
           </el-select>
         </el-form-item>
-      </el-col>
-      <el-col :xs="8" :sm="8" :md="6" :lg="4" :xl="4">
-        <el-button @click="seach" type="primary">检索</el-button>
-        <el-button
-          @click="dialogVisibleDownload = true"
-          type="primary"
-          :disabled="downloadFlag"
-          >{{ downloadFlag ? "压缩中" : "下载" }}</el-button
-        >
-      </el-col>
+        <el-form-item v-if="model"  label="性别">
+          <el-select
+            v-model="form.sex"
+            clearable
+            placeholder="请选择性别"
+          >
+            <el-option
+              v-for="item in form.sexList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
     </el-form>
+    <div class="top-btn">
+    <el-button @click="seach" type="primary">检索</el-button>
+      <el-button
+        @click="dialogVisibleDownload = true"
+        type="primary"
+        :disabled="downloadFlag"
+        >{{ downloadFlag ? "压缩中" : "下载" }}
+        </el-button>
+      </div>
+    </div>
     <el-dialog
       title="下载文件"
       :visible.sync="dialogVisibleDownload"
@@ -99,13 +86,14 @@
         >
       </span>
     </el-dialog>
-  </el-row>
+</div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 export default {
   props: ["alarmOptions", "camerList", "isVideo"],
+  inject:['model'],
   data() {
     return {
       show: {
@@ -121,6 +109,8 @@ export default {
         alarmType: [],
         cameraId: [],
         download: "picture",
+        sex:'', // 性别
+        sexList:[{label:'男',value:0},{label:'女',value:1}]
       },
       dialogVisibleDownload: false,
     };
@@ -167,5 +157,9 @@ export default {
   .title {
     margin: 0 15px;
   }
+}
+.top-search{
+  display: flex;
+  justify-content: space-between;
 }
 </style>
