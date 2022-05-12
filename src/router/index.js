@@ -91,7 +91,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                     { roles: "TimeConfig", name: "时间配置" },
                     { roles: "UseManagement", name: "修改密码" },
                     { roles: "EquipmentSerial", name: "设备编号" },
-                    { roles: "SiteInfo", name: "设备编号" }
+                    { roles: "SiteInfo", name: "站点信息" }
                   ]
                 },
                 component: () => import('@/views/config/system/systemMaintenance.vue'),
@@ -159,14 +159,35 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
           //   component: () => import('@/views/config/image/image'),
           // },
           {
-            path: 'event',
-            name: 'event',
+            path: 'smart',
+            name: 'smart',
             meta: {
               title: '智能事件',
-              icon: "el-icon-paperclip",
+              icon: "el-icon-s-tools",
               roles: "1-6"
             },
-            component: () => import('@/views/config/event/event'),
+            component: () => import('@/views/config/smart'),
+            children: [
+              {
+                path: 'event',
+                name: 'event',
+                meta: {
+                  title: '智能事件',
+                  icon: 'el-icon-paperclip',
+                  roles: "1-1-1",
+                },
+                component: () => import('@/views/config/smart/event.vue'),
+              }, {
+                path: 'people',
+                name: 'people',
+                meta: {
+                  title: '人员库管理',
+                  icon: 'el-icon-paperclip',
+                  roles: "1-1-1",
+                },
+                component: () => import('@/views/config/smart/people.vue'),
+              },
+            ]
           },
           {
             path: 'rolesConfig',

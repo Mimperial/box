@@ -104,7 +104,6 @@ export default {
   data() {
     return {
       currentRuleId: '',  // 规则id
-      currentRuleName: '',  // 规则id
       selectChannels: [], //所有的"选择通道"
       selectCamerId: "",
       algorithmList: [],
@@ -116,10 +115,10 @@ export default {
       ruleList: [], // 规则列表
     };
   },
-  async created() {
-    await this.getCamera();
-    await this.getAlgorithmList();
-    await this.getRuleList();
+  created() {
+    this.getCamera();
+    this.getAlgorithmList();
+    this.getRuleList()
   },
   computed: {
     otherCamera() {
@@ -329,34 +328,32 @@ export default {
         }
       });
     },
-    async getCamera(setSelectCamerId = true) {
-      await getCameraApi({})
-          .then((res) => {
-            if (res.code == 0) {
-              var data = JSON.parse(res.data);
-              console.log(data, "data")
-              if (data && data.length > 0) {
-                if (setSelectCamerId) {
-                  //设置初始化相机选择
-                  this.selectCamerId = data[0].id;
-                  this.currentRuleId = data[0].RuleId;
-                }
-                this.selectChannels = data.map((item) => {
-                  //这里进行测报警信息数据转换成json格式
-                  try {
-                    item.algInfos = JSON.parse(item.algInfos);
-                  } catch (error) {
-                    console.log("解析失败，可能没有报警边框设置！");
-                  }
-                  return item;
-                });
-                this.getAlgorithm(); //获取当前相机的算法
-                // this.handleSelect(this.currentRuleId)
+    getCamera(setSelectCamerId = true) {
+      getCameraApi({})
+        .then((res) => {
+          if (res.code == 0) {
+            var data = JSON.parse(res.data);
+            console.log(data, "data")
+            if (data && data.length > 0) {
+              if (setSelectCamerId) {
+                //设置初始化相机选择
+                this.selectCamerId = data[0].id;
               }
+              this.selectChannels = data.map((item) => {
+                //这里进行测报警信息数据转换成json格式
+                try {
+                  item.algInfos = JSON.parse(item.algInfos);
+                } catch (error) {
+                  console.log("解析失败，可能没有报警边框设置！");
+                }
+                return item;
+              });
+              this.getAlgorithm(); //获取当前相机的算法
+              // this.handleSelect(this.currentRuleId)
             }
-          })
-          .catch((err) => {
-          });
+          }
+        })
+        .catch((err) => {});
     },
     cloningHighlight(data) {
       //判断克隆字是否高亮显示
@@ -375,10 +372,7 @@ export default {
         return this.$message.error(msg)
       }
       this.ruleList = newData.reverse()
-      console.log(this.currentRuleId, "getRuleList this.currentRuleId");
-      if (!this.currentRuleId) {
-        this.currentRuleId = newData[0].RuleId;
-      }
+      this.currentRuleId = newData[0].RuleId;
       await this.handleSelect(this.currentRuleId);
     },
     // 选择规则
@@ -386,34 +380,16 @@ export default {
       try {
         const result = await getAlgorithmListApi({})
         this.algorithmList = JSON.parse(result.data);
-        console.log(this.algorithmList, "this.algorithmList");
       } catch (err) {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
-      console.log(currentId, "currentId");
-      console.log(this.ruleList, "this.ruleList");
       let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
-      if (!currentItem && this.ruleList &&  this.ruleList.length > 0) {
-        console.log(currentItem, "currentItem");
-        console.log(this.ruleList, "this.ruleList");
+      if (!currentItem &&  this.ruleList &&  this.ruleList.length > 0) {
+        currentItem = this.ruleList[0];
         currentItem = this.ruleList[0];
       }
-<<<<<<< HEAD
-=======
-      this.currentRuleName = currentItem && currentItem.RuleName;
->>>>>>> scene_rules_20220509
-
       // 在算法数组中过滤掉当前规则里不存在的算法
-      if (currentItem && currentItem.AlgList) {
-        this.algorithmList =  this.algorithmList.filter((item) => currentItem.AlgList.includes(item.alarmNumber))
-      }else {
-        this.$message({
-          type: "success",
-          message: "规则数据为空！",
-        });
-      }
-
-      console.log(this.algorithmList, "this.algorithmList");
+      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
     }
   },
 };
