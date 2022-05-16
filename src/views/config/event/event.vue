@@ -398,10 +398,7 @@ export default {
         console.log(this.ruleList, "this.ruleList");
         currentItem = this.ruleList[0];
       }
-<<<<<<< HEAD
-=======
       this.currentRuleName = currentItem && currentItem.RuleName;
->>>>>>> scene_rules_20220509
 
       // 在算法数组中过滤掉当前规则里不存在的算法
       if (currentItem && currentItem.AlgList) {
