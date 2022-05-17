@@ -275,7 +275,7 @@ async mounted() {
     // 人脸识别接口
     getFaceRecognition(sourceData){
       const {startTime,endTime,Gender,cameraId:CameraId,Usage=''} = sourceData
-      getFaceAlarms({startTime,endTime,Gender,CameraId,Usage}).then(res=>{
+      getFaceAlarms({startTime,endTime,Gender,CameraId,Usage,...this.page}).then(res=>{
         const {data} = res
         if(data.row.length===0){
               this.$message({
