@@ -167,7 +167,7 @@ export function getAlgorithmApi(data) {//算法-获取(这里新接口对接完�
 }
 export function setAlgorithmApi(data) {//算法-设置(这里新接口对接完成)
     let { id, AlgInfos } = data;
-    return axios.post('/api/web/setAlgInfo', { id: id, algInfos: AlgInfos})
+    return axios.post('/api/web/setAlgInfo', { id: id, algInfos: AlgInfos })
 }
 
 export function getAlgorithmListApi(data) {  //获取算法列表(这里新接口对接完成)-------------------
@@ -317,7 +317,7 @@ export function wschonglian(callback) {
  * @param data
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function getRule(data){
+export function getRule(data) {
     let { RuleId } = data
     return axios.post('/api/web/getRules', { RuleId })
 }
@@ -327,7 +327,7 @@ export function getRule(data){
  * @param data
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function addRules(data){
+export function addRules(data) {
     return axios.post('/api/web/addRule', data)
 }
 
@@ -345,7 +345,7 @@ export function editRules(data) {
  * @param data
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function deleteRules(data){
+export function deleteRules(data) {
     return axios.post('/api/web/deleteRule', data)
 }
 /**
@@ -353,6 +353,32 @@ export function deleteRules(data){
  * @param data
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function restartEngineApi(data){
+export function restartEngineApi(data) {
     return axios.post('/api/web/restartEngine', data)
 }
+
+// ------------------------------------------------------------人员库管理------------------------------------------------------------
+
+export function addFaceGroup(data) {
+    return axios.post('/api/web/addFaceGroup', data)
+}
+
+export function deleteFaceGroup(data) {
+    return axios.post('/api/web/deleteFaceGroup', data)
+}
+
+export function editFaceGroup(data) {
+    return axios.post('/api/web/editFaceGroup', data)
+}
+
+export function getFaceGroups(data) {
+    return axios.post('/api/web/getFaceGroups', data)
+}
+
+export function getFacePersons(data) {
+    return axios.post('/api/web/getFacePersons', data)
+}
+
+
+
+

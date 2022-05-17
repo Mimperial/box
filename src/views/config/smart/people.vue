@@ -14,29 +14,40 @@
             suffix-icon="el-icon-search"
             v-model="input1"
             style="width: 80%; margin: 0 4%"
+            @change="getFaceGroups"
           >
           </el-input>
-          <i style="font-size: 20px; font-weight: 900" class="el-icon-plus"></i>
+          <i
+            @click="getBankDialog('新建')"
+            style="font-size: 20px; font-weight: 900; cursor: pointer"
+            class="el-icon-plus"
+          ></i>
         </div>
 
         <div class="content-list">
           <div
-            v-for="item in leftList"
-            :key="item.value"
+            v-for="item in faceGroups"
+            :key="item.GroupId"
             class="content-list-itemBox"
             :style="{
-              backgroundColor: leftActive == item.value ? '#010b56' : '#aaaaaa',
+              backgroundColor:
+                groupActive == item.GroupId ? '#010b56' : '#aaaaaa',
             }"
-            @click="leftListChange(item.value)"
+            @click="faceGroupsChange(item.GroupId)"
           >
             <i class="el-icon-user"></i>
-            <span class="text">{{ item.label }}</span>
+            <span class="text">{{ item.GroupName }}</span>
             <i
-              v-show="leftActive == item.value"
+              v-show="groupActive == item.GroupId"
               style="margin-right: 20px"
               class="el-icon-edit"
+              @click="getBankDialog('修改', item)"
             ></i>
-            <i v-show="leftActive == item.value" class="el-icon-delete"></i>
+            <i
+              @click="deleteFaceGroup(item.GroupId)"
+              v-show="groupActive == item.GroupId"
+              class="el-icon-delete"
+            ></i>
           </div>
         </div>
       </div>
@@ -53,9 +64,9 @@
           <el-row :gutter="10">
             <el-col :span="16">
               <div>
-                <el-button>新增</el-button>
+                <el-button @click="getForm('添加')">新增</el-button>
                 <el-button>删除</el-button>
-                <el-button>导入</el-button>
+                <el-button @click="importShow = !importShow">导入</el-button>
                 <el-button>导出</el-button>
               </div>
             </el-col>
@@ -75,7 +86,12 @@
       </div>
       <div class="right-centent">
         <div class="right-list">
-          <div v-for="item in 18" :key="item" class="right-list-item">
+          <div
+            @click="getForm('编辑')"
+            v-for="item in 18"
+            :key="item"
+            class="right-list-item"
+          >
             <img src="../../../assets/img/ren.png" alt="" />
             <div class="img-title">
               <el-row :gutter="10">
@@ -99,53 +115,108 @@
         </div>
       </div>
     </div>
+    <!-- 人员库 -->
+    <peopleBankDialog
+      :title="bankDialogTitle"
+      :bankDialogShow="bankDialogShow"
+      :editData="editData"
+      @setGroup="getFaceGroups"
+    ></peopleBankDialog>
+    <!-- 人员 -->
+    <peopleFormDialog
+      :title="formTitle"
+      :bankDialogShow="formShow"
+      :editData="formData"
+    >
+    </peopleFormDialog>
+    <!-- 导入 -->
+    <peopleImportDialog :bankDialogShow="importShow"> </peopleImportDialog>
   </div>
 </template>
 
 <script>
 import BaseIcon from "@/components/baseIcon.vue";
+import peopleBankDialog from "./component/peopleBankDialog.vue";
+import peopleFormDialog from "./component/peopleFormDialog.vue";
+import peopleImportDialog from "./component/peopleImportDialog.vue";
+import {
+  getFaceGroups,
+  deleteFaceGroup,
+  getFacePersons,
+} from "@/api/article.js";
+
 export default {
   components: {
     BaseIcon,
+    peopleBankDialog,
+    peopleFormDialog,
+    peopleImportDialog,
   },
   data() {
     return {
-      leftActive: "1",
+      groupActive: null,
+      input1: "",
+
       page: {
         total: 0,
         size: 18,
         current: 1,
       },
-      leftList: [
-        {
-          label: "商务部名单",
-          value: "1",
-        },
-        {
-          label: "研发部名单",
-          value: "2",
-        },
-        {
-          label: "运营部名单",
-          value: "3",
-        },
-        {
-          label: "财务部名单",
-          value: "4",
-        },
-      ],
+      bankDialogTitle: "新建",
+      bankDialogShow: false,
+      editData: {},
+      formTitle: "添加",
+      formShow: false,
+      formData: {},
+      importShow: false,
+      faceGroups: [],
     };
   },
-  created() {},
+  created() {
+    this.init();
+  },
   methods: {
-    leftListChange(val) {
-      this.leftActive = val;
+    async faceGroupsChange(val) {
+      const ruleRes = await getFacePersons({ GroupId: val });
+      console.log("faceGroupsChange", ruleRes);
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+      this.groupActive = val;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    getBankDialog(val, item = {}) {
+      this.bankDialogTitle = val;
+      this.bankDialogShow = !this.bankDialogShow;
+      if (val == "修改") {
+        this.editData = item;
+      }
+    },
+    getForm(val) {
+      this.formTitle = val;
+      this.formShow = !this.formShow;
+    },
+    init() {
+      this.getFaceGroups();
+    },
+    async getFaceGroups(val) {
+      console.log("val", val);
+      // GroupName
+      const ruleRes = await getFaceGroups({ GroupName: val ? val : "" });
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+      this.faceGroups = ruleRes.data.row;
+      if (this.groupActive == null) {
+        this.faceGroupsChange(this.faceGroups[0]["GroupId"]);
+      }
+    },
+
+    async deleteFaceGroup(GroupId) {
+      const ruleRes = await deleteFaceGroup({ GroupId });
+      this.groupActive = null;
+      this.getFaceGroups();
     },
   },
 };
