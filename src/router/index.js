@@ -162,7 +162,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
             path: 'smart',
             name: 'smart',
             meta: {
-              title: '智能事件',
+              title: '智能设置',
               icon: "el-icon-s-tools",
               roles: "1-6"
             },
