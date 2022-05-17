@@ -238,8 +238,8 @@ export function getAlarmHisApi(data) {//获取报警数据
     return axios.post('/api/web/getAlarmHis', { cameraId, startTime, endTime, alarmType, curPage: String(curPage), pageNum: String(pageNum) })
 }
 
-export function getFaceAlarms() { //人脸识别
-    
+export function getFaceAlarms(data) { //人脸识别
+    return axios.post('api/web/getFaceAlarms',data)
 }
 
 export function downloadAlarmHisApi(data) {//下载
