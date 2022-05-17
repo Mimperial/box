@@ -64,19 +64,28 @@
           <el-row :gutter="10">
             <el-col :span="16">
               <div>
-                <el-button @click="getForm('添加')">新增</el-button>
-                <el-button>删除</el-button>
-                <el-button @click="importShow = !importShow">导入</el-button>
-                <el-button>导出</el-button>
+                <el-button class="right-top-btn" @click="getForm('添加')"
+                  >新增</el-button
+                >
+                <el-button @click="deleteFacePerson" class="right-top-btn"
+                  >删除</el-button
+                >
+                <!-- <el-button
+                  class="right-top-btn"
+                  @click="importShow = !importShow"
+                  >导入</el-button
+                >
+                <el-button class="right-top-btn">导出</el-button> -->
               </div>
             </el-col>
             <el-col :span="8">
               <div>
                 <el-input
-                  placeholder="请输入库名称"
+                  placeholder="请输入姓名"
                   suffix-icon="el-icon-search"
-                  v-model="input1"
+                  v-model="PersonName"
                   style="width: 80%; margin: 0 4%"
+                  @change="PersonNameChange"
                 >
                 </el-input>
               </div>
@@ -87,16 +96,20 @@
       <div class="right-centent">
         <div class="right-list">
           <div
-            @click="getForm('编辑')"
-            v-for="item in 18"
-            :key="item"
+            @click="personActive = item.PersonId"
+            @dblclick="getForm('编辑', item)"
+            v-for="item in personList"
+            :key="item.PersonId"
             class="right-list-item"
+            :class="[personActive == item.PersonId ? 'person-active' : '']"
           >
-            <img src="../../../assets/img/ren.png" alt="" />
+            <img :src="httpUrl + item.Url" alt="" />
             <div class="img-title">
               <el-row :gutter="10">
-                <el-col :span="12">王翠花</el-col>
-                <el-col style="text-align: right" :span="12">女</el-col>
+                <el-col :span="12">{{ item.PersonName }}</el-col>
+                <el-col style="text-align: right" :span="12">{{
+                  item.Gender == 1 ? "男" : "女"
+                }}</el-col>
               </el-row>
             </div>
           </div>
@@ -127,6 +140,9 @@
       :title="formTitle"
       :bankDialogShow="formShow"
       :editData="formData"
+      :GroupId="groupActive"
+      :httpUrl="httpUrl"
+      @faceGroupsChange="faceGroupsChange"
     >
     </peopleFormDialog>
     <!-- 导入 -->
@@ -143,6 +159,7 @@ import {
   getFaceGroups,
   deleteFaceGroup,
   getFacePersons,
+  deleteFacePerson,
 } from "@/api/article.js";
 
 export default {
@@ -155,8 +172,9 @@ export default {
   data() {
     return {
       groupActive: null,
+      personActive: null,
+      PersonName: "",
       input1: "",
-
       page: {
         total: 0,
         size: 18,
@@ -170,17 +188,35 @@ export default {
       formData: {},
       importShow: false,
       faceGroups: [],
+      personList: [],
+      httpUrl: "",
     };
   },
   created() {
+    this.httpUrl =
+      process.env.NODE_ENV == "dev"
+        ? process.env.VUE_APP_URL
+        : window.location.origin;
     this.init();
+    // this.faceGroupsChange();
   },
   methods: {
-    async faceGroupsChange(val) {
-      const ruleRes = await getFacePersons({ GroupId: val });
+    async faceGroupsChange(val, PersonName) {
+      const ruleRes = await getFacePersons({
+        GroupId: `'${val}'` || "",
+        curPage: String(this.page.current),
+        pageNum: String(this.page.size),
+        PersonName: PersonName || "",
+      });
       console.log("faceGroupsChange", ruleRes);
       if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
       this.groupActive = val;
+      this.personList = ruleRes.data.row;
+      this.page.total = ruleRes.data.total;
+    },
+    PersonNameChange(val) {
+      this.page.current = 1;
+      this.faceGroupsChange(this.groupActive, val);
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -195,17 +231,46 @@ export default {
         this.editData = item;
       }
     },
-    getForm(val) {
+    getForm(val, item = {}) {
       this.formTitle = val;
       this.formShow = !this.formShow;
+      if (val == "编辑") {
+        this.personActive = item.PersonId;
+        this.formData = item;
+      }
     },
     init() {
       this.getFaceGroups();
     },
+    deleteFacePerson() {
+      this.$confirm("确定要删除该数据吗?", "提示", {
+        confirmButtonText: this.$t("js.msgonez"),
+        cancelButtonText: this.$t("js.msgoneq"),
+        type: "warning",
+      })
+        .then(() => {
+          deleteFacePerson({
+            PersonId: this.personActive,
+          }).then((ruleRes) => {
+            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+            this.faceGroupsChange(this.groupActive);
+            this.$message({
+              type: "success",
+              message: this.$t("js.mqsgone"),
+            });
+          });
+        })
+        .catch((err) => {
+          this.$message({
+            type: "info",
+            message: this.$t("js.msgonoe"),
+          });
+        });
+    },
     async getFaceGroups(val) {
       console.log("val", val);
       // GroupName
-      const ruleRes = await getFaceGroups({ GroupName: val ? val : "" });
+      const ruleRes = await getFaceGroups({ GroupName: val || "" });
       if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
       this.faceGroups = ruleRes.data.row;
       if (this.groupActive == null) {
@@ -213,10 +278,31 @@ export default {
       }
     },
 
-    async deleteFaceGroup(GroupId) {
-      const ruleRes = await deleteFaceGroup({ GroupId });
-      this.groupActive = null;
-      this.getFaceGroups();
+    deleteFaceGroup(GroupId) {
+      this.$confirm("确定要删除该数据吗?", "提示", {
+        confirmButtonText: this.$t("js.msgonez"),
+        cancelButtonText: this.$t("js.msgoneq"),
+        type: "warning",
+      })
+        .then(() => {
+          deleteFaceGroup({
+            GroupId,
+          }).then((ruleRes) => {
+            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+            this.groupActive = null;
+            this.getFaceGroups();
+            this.$message({
+              type: "success",
+              message: this.$t("js.mqsgone"),
+            });
+          });
+        })
+        .catch((err) => {
+          this.$message({
+            type: "info",
+            message: this.$t("js.msgonoe"),
+          });
+        });
     },
   },
 };
@@ -295,6 +381,12 @@ export default {
   overflow: hidden;
   padding: 10px 15px 0 15px;
 
+  .right-top-btn {
+    background-color: #09135b;
+    color: #fff;
+    margin-right: 20px;
+  }
+
   .right-centent {
     width: 100%;
     height: 100%;
@@ -308,24 +400,25 @@ export default {
       //   flex-wrap: wrap;
 
       .right-list-item {
-        width: 15%;
+        width: 174;
         height: 200px;
         float: left;
         position: relative;
+        box-sizing: border-box;
 
         margin: {
-          bottom: 10px;
-          right: 10px;
+          bottom: 20px;
+          right: 27px;
         }
 
         > img {
-          width: 100%;
-          height: 100%;
+          width: 174px;
+          height: 174px;
         }
 
         .img-title {
           background-color: #8e92ad;
-          height: 35px;
+          height: 40px;
           position: absolute;
           width: 100%;
           bottom: 0;
@@ -342,5 +435,9 @@ export default {
       text-align: center;
     }
   }
+}
+
+.person-active {
+  border: 2px solid #000;
 }
 </style>

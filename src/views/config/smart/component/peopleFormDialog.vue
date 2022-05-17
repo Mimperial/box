@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose"
+      @open="dialogOpen"
     >
       <div>
         <el-form
@@ -20,8 +21,8 @@
 
           <el-form-item label="性别" prop="Gender">
             <el-select v-model="ruleForm.Gender" placeholder="请选择活动区域">
-              <el-option label="男" value="man"></el-option>
-              <el-option label="女" value="girl"></el-option>
+              <el-option label="男" value="1"></el-option>
+              <el-option label="女" value="2"></el-option>
             </el-select>
           </el-form-item>
 
@@ -37,7 +38,7 @@
               :show-file-list="false"
               :before-upload="beforeAvatarUpload"
             >
-              <img v-if="ruleForm.Image" :src="ruleForm.Image" class="avatar" />
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span>174*174，大小2M以内</span>
@@ -76,6 +77,7 @@
 </template>
 
 <script>
+import { addFacePerson, editFacePerson } from "@/api/article.js";
 export default {
   props: {
     title: {
@@ -89,6 +91,10 @@ export default {
     editData: {
       default: {},
     },
+    GroupId: {
+      type: String,
+    },
+    httpUrl: {},
   },
   data() {
     return {
@@ -119,6 +125,7 @@ export default {
           },
         ],
         Enable: [{ required: true, message: "请选择状态", trigger: "change" }],
+        Image: [{ required: true, message: "请上传图片", trigger: "blur" }],
       },
     };
   },
@@ -126,43 +133,76 @@ export default {
     bankDialogShow() {
       this.dialogVisible = true;
     },
-    title() {
-      if (this.title == "编辑") {
-        // this.bankName = editData.name;
-      } else {
-        this.bankName = "";
-      }
-    },
   },
   methods: {
+    dialogOpen() {
+      if (this.title == "编辑") {
+        // this.ruleForm = this.editData;
+        // this.ruleForm.Image = this.httpUrl + this.editData.Url;
+        this.ruleForm = {
+          PersonName: this.editData.PersonName,
+          Gender: this.editData.Gender,
+          PersonId: this.editData.PersonId,
+          Image: this.editData.Image,
+          Enable: this.editData.Enable,
+          GroupId: this.editData.GroupId,
+        };
+        this.imageUrl = this.httpUrl + this.editData.Url;
+      } else {
+        this.ruleForm = {
+          PersonName: "",
+          Gender: "",
+          PersonId: "",
+          Image: "",
+          Enable: "1",
+        };
+        this.imageUrl = "";
+      }
+    },
     handleAvatarChange(res, file) {
       console.log("res, file", res, file);
       this.imageUrl = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 2;
+
       if (isLt2M) {
         let reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-          this.ruleForm.Image = reader.result;
+          this.imageUrl = reader.result;
+          this.ruleForm.Image = reader.result.split(",")[1];
+          // console.log('reader.result',reader.result.split(','));
         };
         reader.onerror = function (error) {
           console.log("Error: ", error);
         };
       } else {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error("上传图片大小不能超过 2MB!");
       }
       return false;
     },
     handleClose() {
       this.dialogVisible = false;
+      this.resetForm();
     },
     submitForm() {
       console.log("ruleForm", this.ruleForm);
-      this.$refs["ruleForm"].validate((valid) => {
+      if (!this.ruleForm.Image && !this.imageUrl)
+        return this.$message.error("请上传图片");
+      this.$refs["ruleForm"].validate(async (valid) => {
         if (valid) {
-          alert("submit!");
+          let ruleRes = null;
+          if (this.title == "编辑") {
+            ruleRes = await editFacePerson(this.ruleForm);
+          } else {
+            this.ruleForm.GroupId = this.GroupId;
+            ruleRes = await addFacePerson(this.ruleForm);
+          }
+          if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+          console.log("addFacePerson", ruleRes);
+          this.$emit("faceGroupsChange", this.GroupId);
+          this.handleClose();
         } else {
           console.log("error submit!!");
           return false;
@@ -170,7 +210,8 @@ export default {
       });
     },
     resetForm() {
-      this.$refs["formName"].resetFields();
+      console.log("resetForm-------------");
+      this.$refs["ruleForm"].resetFields();
     },
   },
 };
@@ -202,8 +243,8 @@ export default {
   text-align: center;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
+  width: 174px;
+  height: 174px;
   display: block;
 }
 </style>

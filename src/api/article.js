@@ -375,6 +375,20 @@ export function getFaceGroups(data) {
     return axios.post('/api/web/getFaceGroups', data)
 }
 
+// ------------------------------------------------------------人员管理------------------------------------------------------------
+
+export function addFacePerson(data) {
+    return axios.post('/api/web/addFacePerson', data)
+}
+
+export function deleteFacePerson(data) {
+    return axios.post('/api/web/deleteFacePerson', data)
+}
+
+export function editFacePerson(data) {
+    return axios.post('/api/web/editFacePerson', data)
+}
+
 export function getFacePersons(data) {
     return axios.post('/api/web/getFacePersons', data)
 }
