@@ -57,6 +57,7 @@
 import {
   getAlarmHisApi,
   getAlgorithmListApi,
+  getFaceAlarms,
   getCameraApi,
   downloadAlarmHisApi,
 } from "@/api/article";
@@ -67,6 +68,7 @@ import ImageShow2 from "./component/imageShow2.vue";
 import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
 import { changeImge } from "@/utils/utils";
 import { mapGetters } from "vuex";
+import { LegendPlainComponent } from 'echarts/components';
 export default {
   components: { FunAreaSelect, SelectTop, ImageShow, ImageShow2 },
   props:{
@@ -85,13 +87,6 @@ export default {
         pageNum: 12,
         curPage: 1,
         total: 0,
-      },
-      show: {
-        xs: 12,
-        sm: 12,
-        md: 12,
-        lg: 10,
-        xl: 6,
       },
       baseUrl:
         process.env.NODE_ENV == "dev"
@@ -129,8 +124,8 @@ export default {
   computed: {
     ...mapGetters(["downloadFlag"]),
   },
-  mounted() {
-    this.getOption();
+async mounted() {
+  await this.getOption();
     this.changeModel(this.model)
   },
   beforeDestroy() {
@@ -154,66 +149,27 @@ export default {
       //   }
       // }
     },
-    getOption() {
+  async  getOption() {
+      // 报警类型筛选条件，后来的原型不需要了
       // getAlgorithmListApi({}).then((result) => {
       //   if (result.code == 0) {
       //     this.alarmOptions = JSON.parse(result.data);
       //   }
       // });
-      getCameraApi({}).then((result) => {
+    const result = await  getCameraApi({})
         if (result.code == 0) {
           this.camerList = JSON.parse(result.data);
         }
-      });
+      
     },
     // 点击检索
     getData(sourceData) {
-      getAlarmHisApi(Object.assign(sourceData, this.page)).then((res) => {
-        if (res.code == 0) {
-          const data = JSON.parse(res.data);
-          if(!data?.alarmList.length>0){
-            this.$message({
-              message: this.$t("js.msgoneb"),
-                type: "success",
-              });  
-          }
-           this.page.total = Number(data.total);
-          this.imgArr = this.getDrawPoint(data.alarmList);
-               console.log("🤡 ~~ data", data.alarmList)
-          console.log("🤡 ~~ this.imgArr", this.imgArr)
-          // try {
-          //   console.log("🤡 ~~ data", data)
-          //   // data.alarmList
-          //   if (
-          //     (data.alarmList && data.alarmList.length > 0) ||
-          //     this.page.curPage != 1
-          //   ) {
-          //     if (!data.alarmList || data.alarmList.length == 0) {
-          //       this.page.curPage = Math.ceil(data.total / this.page.pageNum);
-          //       this.getData(sourceData);
-          //     }
-          //     if (data.alarmList && data.alarmList.length > 0) {
-          //     } else {
-          //       this.imgArr = [];
-          //     }
-          //   } else {
-          //     this.imgArr = [];
-          //     this.page.total = 0;
-          //     this.$message({
-          //       message: this.$t("js.msgoneb"),
-          //       type: "success",
-          //     });
-          //   }
-          // } catch (error) {
-          //   this.imgArr = [];
-          //   this.page.total = 0;
-          //   this.$message({
-          //     message: this.$t("js.msgoneb"),
-          //     type: "success",
-          //   });
-          // }
-        }
-      })
+      // 判断是不是人脸识别
+      if(this.isVideo){
+        this.getFaceRecognition(sourceData)
+      }else{
+        this.getFaceCaptured(sourceData)
+      } 
     },
     handleCurrentChange(val) {
       this.page.curPage = val;
@@ -246,6 +202,21 @@ export default {
           }
         });
       }
+    },
+    handleData(data){
+      const copyData = [...data]
+      const baseUrl = this.baseUrl
+      const arr =  copyData.map((v,index)=>{
+        const FaceThreshold = (v.FaceThreshold * 100).toFixed(0)+'%'
+        const FaceSnap = baseUrl+v.FaceSnap
+        const FaceUrl = baseUrl+v.FaceUrl
+        const time = v.time.slice(0,-4)
+       const {name:CamerName =''} = this.camerList.find(item=>item.channelId === v.CameraId)||{}
+      //  v['CamerName'] = name
+      return {...v,FaceThreshold,FaceSnap,FaceUrl,time,CamerName}
+      })
+      console.log("🤡 ~~ copyData", arr)
+      return arr
     },
     getDrawPoint(alarmList) {
       return alarmList.map((item) => {
@@ -283,6 +254,41 @@ export default {
         return item;
       });
     },
+    // 人脸抓拍接口
+    getFaceCaptured(sourceData){
+      const parms = {...sourceData,...this.page,alarmType: "'400'"}
+      getAlarmHisApi(parms).then((res) => {
+        if (res.code == 0) {
+          const data = JSON.parse(res.data);
+          if(!data?.alarmList.length>0){
+            this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+          }
+           this.page.total = Number(data.total);
+          this.imgArr = this.getDrawPoint(data.alarmList);
+               
+    
+        }
+      })
+    },
+    // 人脸识别接口
+    getFaceRecognition(sourceData){
+      const {startTime,endTime,Gender,cameraId:CameraId,Usage=''} = sourceData
+      const {pageNum,curPage} = this.page
+      getFaceAlarms({startTime,endTime,Gender:String(Gender),CameraId,Usage,pageNum:String(pageNum),curPage:String(curPage)}).then(res=>{
+        const {data} = res
+        if(data.row.length===0){
+              this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+        }
+        this.page.total = res.data.total
+        this.imgArr = this.handleData(data.row)
+      })
+    }
   },
 };
 </script>
@@ -292,7 +298,8 @@ export default {
   width: 100%;
   display: grid;
   justify-content: space-between;
-  grid-template-columns: repeat(auto-fill, 372px);
+  grid-template-columns: repeat(4, 372px);
+  grid-template-rows: repeat(3,180px);
   grid-gap: 10px;
   min-height: 550px;
   &.noVideo {

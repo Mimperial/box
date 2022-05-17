@@ -1,68 +1,85 @@
 <template>
   <div class="wangkuang">
-    <div class="image" @click.stop="showImage">
+    <div class="image"  @click="imageClick(imageData.FaceUrl)" >
       <el-image
+       
         style="width: 100%; height: 100%"
-        :src="imageData.alarmUrl"
+        :src="imageData.FaceUrl"
         @load="successLoad"
       >
         <div slot="error" class="image-slot">
           <i class="el-icon-picture-outline"></i>
         </div>
       </el-image>
-      <FunAreaSelect
+      <!-- <FunAreaSelect
         v-if="show"
         :id="imageData.id"
         :circleRadius="1"
         :circleBorderWidth="1"
-        :listData="imageData.listData"
+        :listData="imageData"
         :disabled="true"
         areaColor="rgba(40, 177, 217, 0)"
         selectAreaColor="rgba(40, 177, 217, 0)"
-      ></FunAreaSelect>
+      ></FunAreaSelect> -->
       <div class="img-bottom-text">
-        <div class="tetx-m">姓名：{{name}}</div>
+        <div class="tetx-m">姓名：{{imageData.PersonName}}</div>
         <div>时间：{{imageData.time }}</div>  
       </div>
     </div>
-    <div class="video" @click.stop="showImage">
+    <div class="video" >
       <el-image
         style="width: 100%; height: 100%"
-        :src="imageData.alarmUrl"
+        :src="imageData.FaceSnap"
          @load="successLoad"
+        @click.native="imageClick(imageData.FaceSnap)"
       ></el-image>
       <!-- <div :class="{ player: true, black: !imageData.alarmVideo }">
         <i class="el-icon-mybofang"></i>
       </div> -->
        <div class="img-bottom-text">
-        <div class="tetx-m">识别度：{{name}}</div>
-        <div>相机名称：{{type}}</div>
+        <div class="tetx-m">识别度：{{imageData.FaceThreshold}}</div>
+        <div>相机名称：{{imageData.CamerName}}</div>
       </div>
     </div>
     <ImageDialog
-      :title="name"
-      :imageData="imageData"
+      :title="imageData.CamerName"
+      :imageData="showUrl"
       v-model="showImageDialog"
     ></ImageDialog>
   </div>
 </template>
 
 <script>
-import FunAreaSelect from "@/components/funAreaSelect.vue";
+// import FunAreaSelect from "@/components/funAreaSelect.vue";
 import ImageDialog from "./imageDialog.vue";
 import VideoDialog from "./videoDialog.vue";
 export default {
   components: {
-    FunAreaSelect,
+    // FunAreaSelect,
     ImageDialog,
     VideoDialog,
   },
-  props: ["alarmOptions", "imageData", "camerList"],
+  props: ["", ""],
+  props:{
+    imageData:{
+      type:[Object]
+    },
+    alarmOptions:{
+      type:Array 
+    },
+    camerList:{
+      type:Array
+    }
+  },
   data() {
     return {
       show: false, //是否显示绘框
       showImageDialog: false,
+      showUrl:{}
     };
+  },
+  created(){
+    // console.log(this.imageData);
   },
   computed: {
     name() {
@@ -80,11 +97,14 @@ export default {
   },
   methods: {
     showImage() {
-      this.showImageDialog = true;
     },
     successLoad() {
       this.show = true;
     },
+    imageClick(url){
+      this.showImageDialog = true;
+        this.showUrl = {id:this.imageData.id,alarmUrl:url}
+    }
   },
 };
 </script>

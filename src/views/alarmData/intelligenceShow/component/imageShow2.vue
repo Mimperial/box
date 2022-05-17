@@ -1,3 +1,4 @@
+
 <template>
   <div class="wangkuang">
     <div class="image" @click.stop="showImage">

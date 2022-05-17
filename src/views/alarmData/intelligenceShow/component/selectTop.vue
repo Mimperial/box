@@ -41,7 +41,7 @@
         </el-form-item>
         <el-form-item v-if="model"  label="性别">
           <el-select
-            v-model="form.sex"
+            v-model="form.Gender"
             clearable
             placeholder="请选择性别"
           >
@@ -109,7 +109,7 @@ export default {
         alarmType: [],
         cameraId: [],
         download: "picture",
-        sex:'', // 性别
+        Gender:'', // 性别
         sexList:[{label:'男',value:0},{label:'女',value:1}]
       },
       dialogVisibleDownload: false,
