@@ -45,7 +45,7 @@ export default {
       require: true,
     },
     imageData: {
-      type: Object,
+      type: [Object,String],
       default: () => ({}),
     },
   },
@@ -65,7 +65,9 @@ export default {
   },
   computed: {
     listData() {
-      return changeImge(this.imageData.yuan, 960, 540);
+      if(this.imageData.yuan){
+        return changeImge(this.imageData.yuan, 960, 540);
+      }
     },
   },
   methods: {

@@ -68,6 +68,7 @@ import ImageShow2 from "./component/imageShow2.vue";
 import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
 import { changeImge } from "@/utils/utils";
 import { mapGetters } from "vuex";
+import { LegendPlainComponent } from 'echarts/components';
 export default {
   components: { FunAreaSelect, SelectTop, ImageShow, ImageShow2 },
   props:{
@@ -275,7 +276,8 @@ async mounted() {
     // 人脸识别接口
     getFaceRecognition(sourceData){
       const {startTime,endTime,Gender,cameraId:CameraId,Usage=''} = sourceData
-      getFaceAlarms({startTime,endTime,Gender,CameraId,Usage,...this.page}).then(res=>{
+      const {pageNum,curPage} = this.page
+      getFaceAlarms({startTime,endTime,Gender:String(Gender),CameraId,Usage,pageNum:String(pageNum),curPage:String(curPage)}).then(res=>{
         const {data} = res
         if(data.row.length===0){
               this.$message({
@@ -283,7 +285,7 @@ async mounted() {
                 type: "success",
               });  
         }
-        this.page.total = res.total
+        this.page.total = res.data.total
         this.imgArr = this.handleData(data.row)
       })
     }
