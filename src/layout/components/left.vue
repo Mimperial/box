@@ -8,11 +8,13 @@
     </div> -->
     <el-menu
       :default-active="$route.fullPath"
+      :default-openeds="openeds"
       background-color="#010b56"
       text-color="#25B2DB"
       active-text-color="#FFFFFF"
       :collapse="isCollapse"
       router
+      @open="handleOpen"
     >
       <div v-for="(item, index) in listInfo" :key="index">
         <el-submenu :index="item.path" v-if="item.children">
@@ -51,6 +53,7 @@ export default {
       imgSrc: require("@/assets/img/login.png"),
       listInfo: [],
       isCollapse: false,
+      openeds: ["system", "smart", "intelligenceShow"],
     };
   },
   computed: {
@@ -60,7 +63,7 @@ export default {
         return item.children ? item : false;
       })[0];
     },
-    language(){
+    language() {
       return (val) => {
         return this.$t("html." + val);
       };
@@ -71,6 +74,9 @@ export default {
     this.leftShow();
   },
   methods: {
+    handleOpen(index) {
+      // console.log("handleOpen", index);
+    },
     leftShow() {
       var clientWidth =
         document.body.clientWidth || document.documentElement.clientWidth;
