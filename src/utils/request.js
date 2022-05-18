@@ -65,6 +65,12 @@ service.interceptors.response.use(
                     type: 'error',
                     duration: 1500
                 })
+            } else if (res.code == 4001) {
+                Message({
+                    message: "照片质量有问题",
+                    type: 'error',
+                    duration: 1500
+                })
             } else {
                 Message({
                     message: (res.msg ? res.msg : "未知错误！"),
