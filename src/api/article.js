@@ -129,8 +129,8 @@ export function addCameraApi(data) {//添加相机
     return axios.post('/api/web/cameraAdd', { deviceIp: ip, devicePort: port, name, url, remark, deviceType, userName, pwd, videoW, videoH })// ,status,ImageUrl,IsDelete,EditFlag,PlayUrl,InsType
 }
 export function editCameraApi(data) {// 修改相机
-    let { ip, port, id, name, url, remark, deviceType, videoW = 1920, videoH = 1080, channelId, userName, pwd, RuleId } = data;
-    return axios.post('/api/web/cameraUpdate', { deviceIp: ip, devicePort: port, id, name, url, remark, deviceType, videoW, videoH, channelId, userName, pwd, RuleId })//{id,name,url,remark,videoW,videoH}
+    let { ip, port, id, name, url, remark, deviceType, videoW = 1920, videoH = 1080, channelId, userName, pwd, RuleId,GroupIds } = data;
+    return axios.post('/api/web/cameraUpdate', { deviceIp: ip, devicePort: port, id, name, url, remark, deviceType, videoW, videoH, channelId, userName, pwd, RuleId,GroupIds })//{id,name,url,remark,videoW,videoH}
 }
 export function delCameraApi(data) {// 删除相机
     let { id, channelId } = data;

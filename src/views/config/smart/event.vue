@@ -46,20 +46,38 @@
           <BaseIcon title="算法设置"></BaseIcon>
         </div>
         <div class="selectArithmetic">
-          <el-select v-model="currentRuleId" placeholder="请选择" style="margin-left: 20px;width: 254px" @change="handleSelect">
+          <el-select
+            v-model="currentRuleId"
+            placeholder="请选择"
+            style="margin-left: 20px; width: 254px"
+            @change="handleSelect"
+          >
             <el-option
-                v-for="item in ruleList"
-                :key="item.RuleId"
-                :label="item.RuleName"
-                :value="item.RuleId">
+              v-for="item in ruleList"
+              :key="item.RuleId"
+              :label="item.RuleName"
+              :value="item.RuleId"
+            >
             </el-option>
           </el-select>
         </div>
         <div class="content">
           <el-checkbox-group v-model="selectAlgorithmIds">
-            <div v-for="item in algorithmList" :key="item.id" :class="{algorithmKuang: true,select: clickAlgorithmId === item.id,}" @click="clickAlgorithm(item)">
+            <div
+              v-for="item in algorithmList"
+              :key="item.id"
+              :class="{
+                algorithmKuang: true,
+                select: clickAlgorithmId === item.id,
+              }"
+              @click="clickAlgorithm(item)"
+            >
               <div class="checkBox">
-                <el-checkbox @change="startOrClose(item)" :label="item.alarmNumber">{{ "" }}</el-checkbox>
+                <el-checkbox
+                  @change="startOrClose(item)"
+                  :label="item.alarmNumber"
+                  >{{ "" }}</el-checkbox
+                >
               </div>
               <div class="algorithmIcon">
                 <img :src="item.path" />
@@ -67,6 +85,18 @@
               <div class="title">{{ item.name }}</div>
             </div>
           </el-checkbox-group>
+          <div class="peopleBox">
+            <span>人员库: </span>
+            <el-select v-model="peopleIds" multiple placeholder="请选择">
+              <el-option
+                v-for="item in peopleList"
+                :key="item.GroupId"
+                :label="item.GroupName"
+                :value="item.GroupId"
+              >
+              </el-option>
+            </el-select>
+          </div>
         </div>
       </div>
     </div>
@@ -90,7 +120,15 @@
 </template>
 
 <script>
-import {getAlgorithmApi, getAlgorithmListApi, getCameraApi, getRule, setAlgorithmApi, editCameraApi} from "@/api/article";
+import {
+  getAlgorithmApi,
+  getAlgorithmListApi,
+  getCameraApi,
+  getRule,
+  setAlgorithmApi,
+  editCameraApi,
+  getFaceGroups,
+} from "@/api/article";
 import BaseIcon from "@/components/baseIcon.vue";
 import EventRight from "./component/eventRight.vue";
 import CloningDialog from "./component/cloningDialog.vue";
@@ -103,7 +141,9 @@ export default {
   },
   data() {
     return {
-      currentRuleId: '',  // 规则id
+      peopleIds: [],
+      peopleList: [],
+      currentRuleId: "", // 规则id
       selectChannels: [], //所有的"选择通道"
       selectCamerId: "",
       algorithmList: [],
@@ -116,14 +156,17 @@ export default {
     };
   },
   created() {
+    this.getFaceGroups();
     this.getCamera();
     this.getAlgorithmList();
-    this.getRuleList()
+    this.getRuleList();
   },
   computed: {
     otherCamera() {
       //非选中的相机
-      return this.selectChannels.filter((item) => item.id !== this.selectCamerId);
+      return this.selectChannels.filter(
+        (item) => item.id !== this.selectCamerId
+      );
     },
     selectCamera() {
       var cameraData = this.selectChannels.find(
@@ -144,6 +187,11 @@ export default {
     },
   },
   methods: {
+    async getFaceGroups() {
+      const ruleRes = await getFaceGroups({ GroupName: "" });
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+      this.peopleList = ruleRes.data.row;
+    },
     async cloningSure(data) {
       let { loading, close, loadingText, algInfos, length, ids, setCloseFlag } =
         data;
@@ -231,20 +279,26 @@ export default {
       this.algorithmDataCacle = {};
     },
     async save({ data, setLoading }) {
+      console.log("thisssss", this.peopleIds.join(","));
+      // return false;
       this.setAlgorithmDataCacle(data);
-      // 给通道设置规则
-      await editCameraApi({id: this.selectCamerId, RuleId: this.currentRuleId});
+      // 给通道设置规则 GroupIds
+      await editCameraApi({
+        id: this.selectCamerId,
+        RuleId: this.currentRuleId,
+        GroupIds: this.peopleIds.join(",") || " ",
+      });
       var AlgInfos = [];
-      if (this.algorithmList && this.algorithmList.length > 0 ) {
+      if (this.algorithmList && this.algorithmList.length > 0) {
         // 在算法数组中过滤掉当前规则里不存在的算法
-        this.selectAlgorithmIds =  this.selectAlgorithmIds.filter((item) => this.algorithmList.some((ele) => ele.alarmNumber === item))
+        this.selectAlgorithmIds = this.selectAlgorithmIds.filter((item) =>
+          this.algorithmList.some((ele) => ele.alarmNumber === item)
+        );
       }
 
       this.selectAlgorithmIds.forEach((item) => {
-
-
         const element = JSON.parse(
-            JSON.stringify(this.algorithmDataCacle[item])
+          JSON.stringify(this.algorithmDataCacle[item])
         );
         if (element.Parameters && element.Parameters.length > 0) {
           element.Parameters.forEach((item) => {
@@ -252,7 +306,7 @@ export default {
           });
         }
         AlgInfos.push(element);
-      })
+      });
 
       // for (const key in this.algorithmDataCacle) {
       //   console.log(key)
@@ -288,7 +342,7 @@ export default {
         });
     },
     async clickSelectChannel(row) {
-      const { id, RuleId } = row
+      const { id, RuleId } = row;
       // 切换相机
       if (this.selectCamerId !== id) {
         this.selectCamerId = id;
@@ -296,11 +350,11 @@ export default {
         this.clearCacleData();
       }
       // 获取通道下的规则
-      const ruleRes = await getRule({RuleId: RuleId})
-      if(ruleRes.code !== 0 ) return this.$message.error(ruleRes.msg)
-      let data = JSON.parse(ruleRes.data)
-      this.currentRuleId = data[0].RuleId
-      await this.handleSelect(this.currentRuleId)
+      const ruleRes = await getRule({ RuleId: RuleId });
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
+      let data = JSON.parse(ruleRes.data);
+      this.currentRuleId = data[0].RuleId;
+      await this.handleSelect(this.currentRuleId);
     },
     getAlgorithm() {
       getAlgorithmApi({ id: this.selectCamerId }).then((res) => {
@@ -333,8 +387,13 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             var data = JSON.parse(res.data);
-            console.log(data, "data")
+            console.log(data, "data-----");
             if (data && data.length > 0) {
+              if (data[0].GroupIds && data[0].GroupIds.length > 1) {
+                this.peopleIds = data[0].GroupIds.split(",");
+              } else {
+                this.peopleIds = [];
+              }
               if (setSelectCamerId) {
                 //设置初始化相机选择
                 this.selectCamerId = data[0].id;
@@ -365,32 +424,34 @@ export default {
     },
     // 获取规则列表
     async getRuleList() {
-      const result = await getRule({})
-      const {code, msg, data} = result
-      let newData = JSON.parse(data)
-      if(code !== 0){
-        return this.$message.error(msg)
+      const result = await getRule({});
+      const { code, msg, data } = result;
+      let newData = JSON.parse(data);
+      if (code !== 0) {
+        return this.$message.error(msg);
       }
-      this.ruleList = newData.reverse()
+      this.ruleList = newData.reverse();
       this.currentRuleId = newData[0].RuleId;
       await this.handleSelect(this.currentRuleId);
     },
     // 选择规则
-    async handleSelect(currentId){
+    async handleSelect(currentId) {
       try {
-        const result = await getAlgorithmListApi({})
+        const result = await getAlgorithmListApi({});
         this.algorithmList = JSON.parse(result.data);
       } catch (err) {
         console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
       }
-      let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
-      if (!currentItem &&  this.ruleList &&  this.ruleList.length > 0) {
+      let currentItem = this.ruleList.find((item) => item.RuleId === currentId);
+      if (!currentItem && this.ruleList && this.ruleList.length > 0) {
         currentItem = this.ruleList[0];
         currentItem = this.ruleList[0];
       }
       // 在算法数组中过滤掉当前规则里不存在的算法
-      this.algorithmList =  this.algorithmList.filter((item) => currentItem?.AlgList.some((ele) => ele === item.alarmNumber))
-    }
+      this.algorithmList = this.algorithmList.filter((item) =>
+        currentItem?.AlgList.some((ele) => ele === item.alarmNumber)
+      );
+    },
   },
 };
 </script>
@@ -444,6 +505,13 @@ export default {
         height: calc(100% - 91px);
         margin-top: 10px;
         overflow-y: auto;
+        .peopleBox {
+          margin: 30px 0 30px 20px;
+          /deep/.el-input__inner {
+            border: 0px;
+            border-bottom: 1px solid #dcdfe6;
+          }
+        }
         &::-webkit-scrollbar {
           width: 5px;
         }
