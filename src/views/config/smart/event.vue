@@ -85,7 +85,7 @@
               <div class="title">{{ item.name }}</div>
             </div>
           </el-checkbox-group>
-          <div class="peopleBox">
+          <div v-show="peopleSleShow" class="peopleBox">
             <span>人员库: </span>
             <el-select v-model="peopleIds" multiple placeholder="请选择">
               <el-option
@@ -143,6 +143,7 @@ export default {
     return {
       peopleIds: [],
       peopleList: [],
+      peopleSleShow: false,
       currentRuleId: "", // 规则id
       selectChannels: [], //所有的"选择通道"
       selectCamerId: "",
@@ -160,6 +161,13 @@ export default {
     this.getCamera();
     this.getAlgorithmList();
     this.getRuleList();
+  },
+  watch: {
+    selectAlgorithmIds() {
+      this.peopleSleShow = this.selectAlgorithmIds.some(
+        (item) => item == "400"
+      );
+    },
   },
   computed: {
     otherCamera() {
@@ -280,6 +288,11 @@ export default {
     },
     async save({ data, setLoading }) {
       console.log("thisssss", this.peopleIds.join(","));
+      if (this.peopleSleShow && this.peopleIds.length < 1) {
+        return this.$message.info("请选择人员库");
+      } else if (!this.peopleSleShow) {
+        this.peopleIds = " ";
+      }
       // return false;
       this.setAlgorithmDataCacle(data);
       // 给通道设置规则 GroupIds
