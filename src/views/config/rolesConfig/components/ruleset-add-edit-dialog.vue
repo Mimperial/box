@@ -15,7 +15,7 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('html.jumpFrames')" prop="ExtraData">
-        <el-input v-model.number="dataForm.ExtraData"></el-input>
+        <el-input  v-model.number="dataForm.ExtraData"></el-input>
       </el-form-item>
     </el-form>
    <div slot="footer" style="text-align: center">
@@ -53,7 +53,7 @@ export default {
       dataForm: {
         RuleName: '',
         AlgList: [],
-        ExtraData:'' // 跳帧数
+        ExtraData:5 // 跳帧数
       },
       algorithmList: [],
       dataFormRules: {
