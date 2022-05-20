@@ -88,7 +88,7 @@ export default {
         if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
         this.bankName = "";
         this.dialogVisible = false;
-        this.$emit("setGroup", true);
+        this.$emit("setGroup", '');
       }
     },
   },
