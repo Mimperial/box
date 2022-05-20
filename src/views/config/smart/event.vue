@@ -287,11 +287,10 @@ export default {
       this.algorithmDataCacle = {};
     },
     async save({ data, setLoading }) {
-      console.log("thisssss", this.peopleIds.join(","));
       if (this.peopleSleShow && this.peopleIds.length < 1) {
         return this.$message.info("请选择人员库");
       } else if (!this.peopleSleShow) {
-        this.peopleIds = " ";
+        this.peopleIds = [];
       }
       // return false;
       this.setAlgorithmDataCacle(data);
