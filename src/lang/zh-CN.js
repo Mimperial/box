@@ -174,6 +174,8 @@ export default {
         select: '请选择',
         xzsf: '选择算法',
         ruleName: '规则名称',
+        jumpFrames:'跳帧数',
+        ExtraDataMes:'请输入正整数!',
         submit: '提交',
         editRule: '编辑规则',
         newRule: '新增规则',

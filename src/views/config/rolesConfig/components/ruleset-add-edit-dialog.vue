@@ -14,6 +14,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item :label="$t('html.jumpFrames')" prop="ExtraData">
+        <el-input v-model.number="dataForm.ExtraData"></el-input>
+      </el-form-item>
     </el-form>
    <div slot="footer" style="text-align: center">
       <el-button type="info" size="small" @click="closeDialog">{{$t('html.gb')}}</el-button>
@@ -37,16 +40,28 @@ export default {
     }
   },
   data() {
+    const extraDataVal = (rule, value, callback)=>{
+        const  re = /^[0-9]+$/ ;
+        if(!re.test(value)){
+          callback(new Error(this.$t('html.ExtraDataMes')))
+          return
+        }
+        callback()
+    }
     return {
       dialogShow: false,
       dataForm: {
         RuleName: '',
-        AlgList: []
+        AlgList: [],
+        ExtraData:'' // 跳帧数
       },
       algorithmList: [],
       dataFormRules: {
         RuleName: [
           { required: true, message: this.$t('html.please') , trigger: 'blur' },
+        ],
+        ExtraData:[
+          { validator: extraDataVal,trigger:'blur'}
         ]
       }
     };
@@ -80,7 +95,8 @@ export default {
       this.$refs.dataFormRef.validate(async (isOk) => {
         if(isOk){
           if(this.dataForm.RuleId){
-            const editRes = await editRules(this.dataForm)
+            const {ExtraData} = this.dataForm
+            const editRes = await editRules({...this.dataForm,ExtraData:String(ExtraData)})
             const {code, msg} = editRes;
             if(code !== 0){
               this.$message.error(msg)
@@ -88,7 +104,8 @@ export default {
             this.$message.success(this.$t('js.mnsgone'))
             this.closeDialog()
           }else {
-            const result = await addRules(this.dataForm)
+            const {ExtraData} = this.dataForm
+            const result = await addRules({...this.dataForm,ExtraData:String(ExtraData)})
             const {code, msg} = result
             if(code !== 0){
               return this.$message.error(msg)
