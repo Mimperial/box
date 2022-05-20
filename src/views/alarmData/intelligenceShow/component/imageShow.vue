@@ -1,9 +1,10 @@
 <template>
   <div class="wangkuang">
     <div class="image"  @click="imageClick(imageData.FaceUrl)" >
+      <div class="img_top_text">底库</div>
       <el-image
-       
-        style="width: 100%; height: 100%"
+      style="width:100%;height:100%"
+      fit="contain"
         :src="imageData.FaceUrl"
         @load="successLoad"
       >
@@ -27,8 +28,10 @@
       </div>
     </div>
     <div class="video" >
+      <div class="img_top_text">抓拍</div>
       <el-image
         style="width: 100%; height: 100%"
+      fit="contain"
         :src="imageData.FaceSnap"
          @load="successLoad"
         @click.native="imageClick(imageData.FaceSnap)"
@@ -124,6 +127,7 @@ export default {
     float: left;
     width: 170px;
     height: 95.625px;
+    
   }
   .video {
     cursor: pointer;
@@ -161,5 +165,8 @@ export default {
       margin-bottom: 10px;
     }
   }
+  .img_top_text{
+      font-size: 14px;
+    }
 }
 </style>

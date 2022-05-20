@@ -299,7 +299,7 @@ async mounted() {
   display: grid;
   justify-content: space-between;
   grid-template-columns: repeat(4, 372px);
-  grid-template-rows: repeat(3,180px);
+  grid-template-rows: repeat(3,188px);
   grid-gap: 10px;
   min-height: 550px;
   &.noVideo {

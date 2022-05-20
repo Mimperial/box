@@ -11,6 +11,7 @@
           :src="imageData.alarmUrl"
           @load="successLoad"
           style="width: 960px; height: 540px"
+          fit="contain"
         >
           <div slot="error" class="image-slot">
             <i class="el-icon-picture-outline"></i>

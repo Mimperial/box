@@ -4,6 +4,7 @@
     <div class="image" @click.stop="showImage">
       <el-image
         style="width: 100%; height: 100%"
+        fit="contain"
         :src="imageData.alarmUrl"
         @load="successLoad"
       >
