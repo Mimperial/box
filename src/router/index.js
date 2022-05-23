@@ -232,7 +232,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
               ],
             },
             component: () => import('@/views/alarmData/intelligenceShow'),
-            redirect: '/home/alarmData/intelligenceShow/behaviouralAnalysis',
+            // redirect: '/home/alarmData/intelligenceShow/behaviouralAnalysis',
             children:[
               {
                 path:'behaviouralAnalysis',
