@@ -20,14 +20,17 @@
           </el-form-item>
 
           <el-form-item label="性别" prop="Gender">
-            <el-select v-model="ruleForm.Gender" placeholder="请选择活动区域">
+            <el-select v-model="ruleForm.Gender" placeholder="请选择性别">
               <el-option label="男" value="1"></el-option>
               <el-option label="女" value="2"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="工号" prop="PersonId">
-            <el-input v-model="ruleForm.PersonId"></el-input>
+            <el-input
+              :disabled="personIdDisabled"
+              v-model="ruleForm.PersonId"
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="上传照片">
@@ -100,6 +103,7 @@ export default {
     return {
       iconBase64: "",
       dialogVisible: false,
+      personIdDisabled: false,
       bankName: "",
       imageUrl: "",
       ruleForm: {
@@ -139,6 +143,7 @@ export default {
       if (this.title == "编辑") {
         // this.ruleForm = this.editData;
         // this.ruleForm.Image = this.httpUrl + this.editData.Url;
+        this.personIdDisabled = true;
         this.ruleForm = {
           PersonName: this.editData.PersonName,
           Gender: this.editData.Gender,
@@ -149,6 +154,7 @@ export default {
         };
         this.imageUrl = this.httpUrl + this.editData.Url;
       } else {
+        this.personIdDisabled = false;
         this.ruleForm = {
           PersonName: "",
           Gender: "",
@@ -158,6 +164,7 @@ export default {
         };
         this.imageUrl = "";
       }
+      this.$refs["ruleForm"].resetFields();
     },
     handleAvatarChange(res, file) {
       console.log("res, file", res, file);
