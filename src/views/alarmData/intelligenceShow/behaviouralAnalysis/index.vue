@@ -11,7 +11,8 @@ components:{
     intelligenceShow
 },
 provide:{
-  model:false
+  model:false,
+  showChangeModel:true
 }
 }
 </script>

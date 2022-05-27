@@ -8,7 +8,7 @@
       :alarmOptions="alarmOptions"
       :camerList="camerList"
     ></SelectTop>
-    <div v-if="vidoeModel" style="margin-bottom: 20px">
+    <div v-if="vidoeModel " style="margin-bottom: 20px">
       <div v-if="showChangeModel">
       <el-button
         size="mini"
@@ -77,7 +77,10 @@ export default {
       default:false
     }
   },
-  inject:['model'],
+  inject:{
+    model:{default:''},
+    showChangeModel:{default:''}
+  },
   data() {
     return {
       alarmOptions: [],
@@ -95,6 +98,7 @@ export default {
       timer: null,
       isVideo: false,
       vidoeModel: false, //判断是否有切换的按钮
+      isBtnSearch:false
     };
   },
   watch: {
@@ -126,14 +130,17 @@ export default {
   },
 async mounted() {
   await this.getOption();
-    this.changeModel(this.model)
+    this.changeModel(this.model,true)
   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer);
   },
   methods: {
-    changeModel(flag) {
+    changeModel(flag,firstS) {
       this.isVideo = flag
+      if(!firstS){
+        this.isBtnSearch = true
+      }
             this.$nextTick(() => {
               this.$refs.SelectTop.seach();
           });
@@ -151,11 +158,11 @@ async mounted() {
     },
   async  getOption() {
       // 报警类型筛选条件，后来的原型不需要了
-      // getAlgorithmListApi({}).then((result) => {
-      //   if (result.code == 0) {
-      //     this.alarmOptions = JSON.parse(result.data);
-      //   }
-      // });
+      getAlgorithmListApi({}).then((result) => {
+        if (result.code == 0) {
+          this.alarmOptions = JSON.parse(result.data);
+        }
+      });
     const result = await  getCameraApi({})
         if (result.code == 0) {
           this.camerList = JSON.parse(result.data);
@@ -164,12 +171,22 @@ async mounted() {
     },
     // 点击检索
     getData(sourceData) {
+      // 判断是不是行为分析
+      if(!this.isBtnSearch&&this.$route.name === 'behaviouralAnalysis'){
+        this.getBehavioural(sourceData)
+        return
+      }
+      
       // 判断是不是人脸识别
-      if(this.isVideo){
+        if(this.isVideo){
         this.getFaceRecognition(sourceData)
+           this.isBtnSearch = false
       }else{
         this.getFaceCaptured(sourceData)
+           this.isBtnSearch = false
       } 
+      
+     
     },
     handleCurrentChange(val) {
       this.page.curPage = val;
@@ -268,8 +285,6 @@ async mounted() {
           }
            this.page.total = Number(data.total);
           this.imgArr = this.getDrawPoint(data.alarmList);
-               
-    
         }
       })
     },
@@ -287,6 +302,25 @@ async mounted() {
         }
         this.page.total = res.data.total
         this.imgArr = this.handleData(data.row)
+      })
+    },
+    // 行为分析接口
+    getBehavioural(sourceData){
+      this.imgArr = []
+      this.isVideo = false
+       const parms = {...sourceData,...this.page}
+      getAlarmHisApi(parms).then((res) => {
+        if (res.code == 0) {
+          const data = JSON.parse(res.data);
+          if(!data?.alarmList.length>0){
+            this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+          }
+           this.page.total = Number(data.total);
+          this.imgArr = this.getDrawPoint(data.alarmList);
+        }
       })
     }
   },

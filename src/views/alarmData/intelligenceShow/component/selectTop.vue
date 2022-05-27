@@ -10,7 +10,7 @@
           <el-date-picker v-model="form.endTime" type="datetime">
           </el-date-picker> </el-form-item
       >
-        <!-- <el-form-item :label="$t('html.告警类型')">
+        <el-form-item v-if="showChangeModel" :label="$t('html.告警类型')">
           <el-select
             multiple
             collapse-tags
@@ -24,7 +24,7 @@
               :value="item.alarmNumber"
             ></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item :label="$t('html.设备')">
           <el-select
             multiple
@@ -93,7 +93,10 @@
 import { mapGetters } from "vuex";
 export default {
   props: ["alarmOptions", "camerList", "isVideo"],
-  inject:['model'],
+  inject:{
+    model:{default:''},
+    showChangeModel:{default:''}
+  },
   data() {
     return {
       show: {
