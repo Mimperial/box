@@ -1,6 +1,6 @@
 <template>
   <div>
-    <intelligenceShow :model="true"></intelligenceShow>
+    <intelligenceShow :model="3" :cardList="contentList"></intelligenceShow>
   </div>
 </template>
 
@@ -10,8 +10,19 @@ export default {
 components:{
   intelligenceShow
 },
-provide:{
-  model:true
+data(){
+  return {
+      contentList:{
+      imgsrc:'FaceSnap',
+      FaceUrl:'FaceUrl',
+      bottomText:[
+        {label:'姓名',value:'PersonName'},
+        {label:'识别度',value:'FaceThreshold'},
+        {label:'时间',value:'time'},
+        {label:'相机名称',value:'CamerName'},
+      ]
+    },
+  }
 }
 }
 </script>

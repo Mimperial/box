@@ -1,6 +1,7 @@
+// 抓拍
 <template>
   <div>
-    <intelligenceShow :model="false"></intelligenceShow>
+    <intelligenceShow :model="2" :cardList="contentList"></intelligenceShow>
   </div>
 </template>
 
@@ -10,8 +11,16 @@ export default {
 components:{
   intelligenceShow
 },
-provide:{
-  model:false
+data(){
+  return {
+    contentList:{
+      imgsrc:'alarmUrl',
+      bottomText:[
+        {label:'相机名称',value:'cameraId'},
+        {label:'时间',value:'time'}
+      ]
+    },
+  }
 }
 }
 </script>

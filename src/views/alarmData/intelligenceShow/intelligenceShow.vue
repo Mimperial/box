@@ -1,46 +1,27 @@
 <template>
-  <div class="alarmData">
-    <SelectTop
-      ref="SelectTop"
-      @seach="getData"
-      @download="download"
-      :isVideo="isVideo"
-      :alarmOptions="alarmOptions"
-      :camerList="camerList"
-    ></SelectTop>
-    <div v-if="vidoeModel " style="margin-bottom: 20px">
-      <div v-if="showChangeModel">
+  <div class="alarm-page">
+    <!-- 顶部search -->
+    <Select :model="model" :formData.sync="form" :camerList="camerList" :alarmOptions="alarmOptions">
+      <el-button type="primary" @click="search">检索</el-button>
+    <el-button type="primary" @click="dialogVisibleDownload = true"  :disabled="downloadFlag">{{ downloadFlag ? "压缩中" : "下载" }}</el-button>
+    </Select>
+    <!-- 中间切换按钮部分 -->
+    <div v-if="model === 1" style="margin-bottom:20px">
       <el-button
         size="mini"
         icon="el-icon-s-grid"
-        @click="changeModel(false)"
+        @click="behavioutBtn(false)"
       ></el-button>
       <el-button
         size="mini"
         icon="el-icon-menu"
-        @click="changeModel(true)"
+        @click="behavioutBtn(true)"
       ></el-button>
       </div>
-    </div>
-    <div :class="{ imageAll: true, noVideo: !isVideo }">
-      <div class="imageItem" v-for="item in imgArr" :key="item.id">
-        <!-- 人脸识别 -->
-        <ImageShow
-          v-if="isVideo"
-          :imageData="item"
-          :alarmOptions="alarmOptions"
-          :camerList="camerList"
-        ></ImageShow>
-        <!-- 人脸抓拍 -->
-        <ImageShow2
-          v-else
-          :imageData="item"
-          :alarmOptions="alarmOptions"
-          :camerList="camerList"
-        ></ImageShow2>
-      </div>
-    </div>
-    <div class="block">
+    <!-- 中间内容 -->
+  <cardContent v-loading="loading" :model="model" :cardList="cardList" :cardData="cardData" :alarmOptions="alarmOptions" :camerList="camerList"></cardContent>
+  <!-- 分页器 -->
+   <div class="block">
       <el-pagination
         layout="total, prev, pager, next, jumper"
         @current-change="handleCurrentChange"
@@ -49,151 +30,177 @@
         :current-page.sync="page.curPage"
       >
       </el-pagination>
+      <!-- diaflog -->
+       <el-dialog
+      title="下载文件"
+      :visible.sync="dialogVisibleDownload"
+      width="30%"
+    >
+      <div class="content">
+        <span class="title">下载类型：</span>
+        <el-radio-group v-model="form.download">
+          <el-radio label="picture">图片</el-radio>
+          <el-radio label="video" v-if="isVideo">视频</el-radio>
+          <el-radio label="all" v-if="isVideo">图片+视频</el-radio>
+        </el-radio-group>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisibleDownload = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="download"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  getAlarmHisApi,
-  getAlgorithmListApi,
-  getFaceAlarms,
-  getCameraApi,
-  downloadAlarmHisApi,
-} from "@/api/article";
-import SelectTop from "./component/selectTop.vue";
-import FunAreaSelect from "@/components/funAreaSelect.vue";
-import ImageShow from "./component/imageShow.vue";
-import ImageShow2 from "./component/imageShow2.vue";
-import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
+import Select from './component/select.vue'
+import cardContent from './component/cardContent.vue'
+import {getAlarmHisApi,getAlgorithmListApi,
+  getCameraApi,getFaceAlarms,downloadAlarmHisApi} from '@/api/article'
 import { changeImge } from "@/utils/utils";
+import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
 import { mapGetters } from "vuex";
-import { LegendPlainComponent } from 'echarts/components';
-export default {
-  components: { FunAreaSelect, SelectTop, ImageShow, ImageShow2 },
-  props:{
-    showChangeModel:{
-      type:Boolean,
-      default:false
-    }
-  },
-  inject:{
-    model:{default:''},
-    showChangeModel:{default:''}
-  },
-  data() {
-    return {
-      alarmOptions: [],
-      camerList: [],
-      imgArr: [],
-      page: {
-        pageNum: 12,
-        curPage: 1,
-        total: 0,
+
+
+  export default {
+    name: '',
+    model:{
+      prop: 'checked',
+    event: 'change'
+    },
+    props:{
+      model:{
+        type:Number,
+        default:1
       },
-      baseUrl:
-        process.env.NODE_ENV == "dev"
-          ? process.env.VUE_APP_URL.replace(":8183", "")
-          : window.location.origin,
-      timer: null,
-      isVideo: false,
-      vidoeModel: false, //判断是否有切换的按钮
-      isBtnSearch:false
-    };
-  },
-  watch: {
-    isVideo: {
-      immediate: true,
-      handler(newValue, oldValue) {
-        if (newValue == true) {
-          this.page.pageNum = 12;
-        } else {
-          this.page.pageNum = 24;
-        }
+      checked: Boolean,
+      cardList:{
+        type:Object,
+        defautl:()=>[]
       },
     },
+    components:{
+      Select,
+      cardContent
+    },
+     computed: {
+    ...mapGetters(["downloadFlag"]),
   },
-  created() {
-    var roles = this.$store.getters.roles;
+    created(){
+      var roles = this.$store.getters.roles;
     if (roles.includes("isVideo")) {
       this.isVideo = true;
     }
-    if (
-      roles == "admin" ||
-      (roles.includes("isVideo") && roles.includes("NoVideo"))
-    ) {
-      this.vidoeModel = true;
-    }
-  },
-  computed: {
-    ...mapGetters(["downloadFlag"]),
-  },
-async mounted() {
-  await this.getOption();
-    this.changeModel(this.model,true)
-  },
-  beforeDestroy() {
-    this.timer && clearInterval(this.timer);
-  },
-  methods: {
-    changeModel(flag,firstS) {
-      this.isVideo = flag
-      if(!firstS){
-        this.isBtnSearch = true
-      }
-            this.$nextTick(() => {
-              this.$refs.SelectTop.seach();
-          });
-      // const flag = this.model
-      // if (flag !== this.isVideo) {
-      //   this.isVideo = flag;
-      //   if (this.imgArr.length > 0) {
-      //     if (flag == true && this.imgArr.length > 12) {
-      //       this.imgArr = this.imgArr.slice(0, 12);
-      //     }
-      //     this.$nextTick(() => {
-      //     });
-      //   }
-      // }
+       this.getSelectData()
     },
-  async  getOption() {
-      // 报警类型筛选条件，后来的原型不需要了
-      getAlgorithmListApi({}).then((result) => {
-        if (result.code == 0) {
-          this.alarmOptions = JSON.parse(result.data);
-        }
-      });
-    const result = await  getCameraApi({})
-        if (result.code == 0) {
-          this.camerList = JSON.parse(result.data);
-        }
-      
-    },
-    // 点击检索
-    getData(sourceData) {
-      // 判断是不是行为分析
-      if(!this.isBtnSearch&&this.$route.name === 'behaviouralAnalysis'){
-        this.getBehavioural(sourceData)
+    mounted(){
+      if(this.model === 1){
+        this.behavioutBtn()
         return
       }
-      
-      // 判断是不是人脸识别
-        if(this.isVideo){
-        this.getFaceRecognition(sourceData)
-           this.isBtnSearch = false
-      }else{
-        this.getFaceCaptured(sourceData)
-           this.isBtnSearch = false
-      } 
-      
-     
+      this.search()
+
     },
-    handleCurrentChange(val) {
+    data() {
+      return {
+          form:{
+            startTime:new Date(new Date() - 7 * 24 * 3600 * 1000),
+            endTime: new Date(),
+            alarmType:'',
+            cameraId:'',
+            Gender:'',
+            download:'picture'
+          },
+          page: {
+          pageNum: 24,
+          curPage: 1,
+          total: 0,
+        },
+        camerList:[],
+        alarmOptions:[],
+        cardData:[],
+           baseUrl:
+        process.env.NODE_ENV == "dev"
+          ? process.env.VUE_APP_URL.replace(":8183", "")
+          : window.location.origin,
+          dialogVisibleDownload:false,
+          isVideo:false,
+          loading:false
+      }
+    },
+    methods:{
+      handleCurrentChange(val) {
       this.page.curPage = val;
-      this.$refs.SelectTop.seach();
+    this.search()
     },
-    download(data) {
-      let { startTime, endTime, alarmType, cameraId, download } = data;
+    
+      search(){
+        this.loading = true
+        const parms = {...this.form,...this.page}
+          const cameraId =
+          this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
+          this.camerList.map((item) => "'" + item.channelId + "'").join(",");
+        if(this.model === 1){
+          // 调用行为分析接口
+        const  alarmType = this.form.alarmType.map((item) => "'" + item + "'").join(",");
+          getAlarmHisApi({...parms,alarmType,cameraId}).then(res=>{
+            const data = JSON.parse(res.data)
+            if(!data?.alarmList.length>0){
+            this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+          }
+           this.page.total = Number(data.total);
+            this.cardData = this.getDrawPoint(data.alarmList)
+          }).finally(()=>{
+        this.loading = false
+          })
+        }else if(this.model == 2){
+           getAlarmHisApi({...parms,cameraId,alarmType: "'400'"}).then((res) => {
+        if (res.code == 0) {
+          const data = JSON.parse(res.data);
+          if(!data?.alarmList.length>0){
+            this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+          }
+           this.page.total = Number(data.total);
+          this.cardData = this.getDrawPoint(data.alarmList);
+        }
+      }).finally(()=>{
+        this.loading = false
+          })
+        }else{
+       const {pageNum,curPage} = this.page
+      getFaceAlarms({...parms,CameraId:cameraId,pageNum:'12',curPage:String(curPage)}).then(res=>{
+        const {data} = res
+        if(data.row.length===0){
+              this.$message({
+              message: this.$t("js.msgoneb"),
+                type: "success",
+              });  
+        }
+        this.page.total = res.data.total
+         this.cardData = this.handleData(data.row)
+      }).finally(()=>{
+        this.loading = false
+          })
+    
+        }
+      },
+      download(){
+          const cameraId =
+          this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
+          this.camerList.map((item) => "'" + item.channelId + "'").join(",");
+        const  alarmType = this.form.alarmType.map((item) => "'" + item + "'").join(",");
+ let { startTime, endTime, download } = this.form;
       let userId = getDownloadIdToken();
       if (!this.downloadFlag) {
         downloadAlarmHisApi({
@@ -217,10 +224,11 @@ async mounted() {
           } catch (error) {
             console.log(error);
           }
-        });
+          this.dialogVisibleDownload = false
+        })
       }
-    },
-    handleData(data){
+      },
+        handleData(data){
       const copyData = [...data]
       const baseUrl = this.baseUrl
       const arr =  copyData.map((v,index)=>{
@@ -235,7 +243,25 @@ async mounted() {
       console.log("🤡 ~~ copyData", arr)
       return arr
     },
-    getDrawPoint(alarmList) {
+      behavioutBtn(bol=this.checked){
+         this.page.pageNum = bol?12:24
+       this.$emit('change',bol)
+         this.search()
+
+      },
+      // 获取数据
+       getSelectData(){
+            getAlgorithmListApi({}).then(res=>{
+              const data = JSON.parse(res.data)
+              this.alarmOptions = data
+            })
+            getCameraApi({}).then(res=>{
+                 if (res.code == 0) {
+                this.camerList = JSON.parse(res.data);
+            }
+            })
+        },
+         getDrawPoint(alarmList) {
       return alarmList.map((item) => {
         item.alarmUrl = this.baseUrl + item.alarmUrl;
         if (item.alarmVideo) {
@@ -265,93 +291,25 @@ async mounted() {
         item.yuan = JSON.parse(JSON.stringify(item.listData));
         item.listData = changeImge(
           item.listData,
-          this.isVideo ? 170 : 160,
-          this.isVideo ? 95.625 : 90
+         170,
+         95.625
         );
         return item;
       });
     },
-    // 人脸抓拍接口
-    getFaceCaptured(sourceData){
-      const parms = {...sourceData,...this.page,alarmType: "'400'"}
-      getAlarmHisApi(parms).then((res) => {
-        if (res.code == 0) {
-          const data = JSON.parse(res.data);
-          if(!data?.alarmList.length>0){
-            this.$message({
-              message: this.$t("js.msgoneb"),
-                type: "success",
-              });  
-          }
-           this.page.total = Number(data.total);
-          this.imgArr = this.getDrawPoint(data.alarmList);
-        }
-      })
-    },
-    // 人脸识别接口
-    getFaceRecognition(sourceData){
-      const {startTime,endTime,Gender,cameraId:CameraId,Usage=''} = sourceData
-      const {pageNum,curPage} = this.page
-      getFaceAlarms({startTime,endTime,Gender:String(Gender),CameraId,Usage,pageNum:String(pageNum),curPage:String(curPage)}).then(res=>{
-        const {data} = res
-        if(data.row.length===0){
-              this.$message({
-              message: this.$t("js.msgoneb"),
-                type: "success",
-              });  
-        }
-        this.page.total = res.data.total
-        this.imgArr = this.handleData(data.row)
-      })
-    },
-    // 行为分析接口
-    getBehavioural(sourceData){
-      this.imgArr = []
-      this.isVideo = false
-       const parms = {...sourceData,...this.page}
-      getAlarmHisApi(parms).then((res) => {
-        if (res.code == 0) {
-          const data = JSON.parse(res.data);
-          if(!data?.alarmList.length>0){
-            this.$message({
-              message: this.$t("js.msgoneb"),
-                type: "success",
-              });  
-          }
-           this.page.total = Number(data.total);
-          this.imgArr = this.getDrawPoint(data.alarmList);
-        }
-      })
     }
-  },
-};
+  }
 </script>
 
 <style lang="scss" scoped>
-.imageAll {
-  width: 100%;
-  display: grid;
-  justify-content: space-between;
-  grid-template-columns: repeat(4, 372px);
-  grid-template-rows: repeat(3,188px);
-  grid-gap: 10px;
-  min-height: 550px;
-  &.noVideo {
-    grid-template-columns: repeat(auto-fill, 176px);
-    min-height: 420px;
+  .alarm-page{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px;
   }
-  .imageItem {
-    margin-top: 5px;
-  }
-}
-.alarmData {
-  padding: 20px;
-}
-.block {
+  .block {
   text-align: center;
   margin-top: 20px;
-}
-.el-row {
-  margin-bottom: 20px;
 }
 </style>
