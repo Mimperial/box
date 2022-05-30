@@ -12,7 +12,7 @@ components:{
 },
 provide:{
   model:false,
-  showChangeModel:true
+  showChangeModel:true // 是否是行为分析
 }
 }
 </script>

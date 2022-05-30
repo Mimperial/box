@@ -25,7 +25,7 @@
     </div>
     <div class="info">
       <div class="wenzi">相机名称：{{ name }}</div>
-      <!-- <div class="wenzi">报警类型：{{ type }}</div> -->
+      <div class="wenzi">报警类型：{{ type }}</div>
       <div class="wenzi">时间：{{ imageData.time }}</div>
     </div>
     <ImageDialog
@@ -45,6 +45,12 @@ export default {
     ImageDialog,
   },
   props: ["alarmOptions", "imageData", "camerList"],
+  inject:{
+    showChangeModel:{
+      default:false
+    }
+  },
+  
   data() {
     return {
       show: false, //是否显示绘框
@@ -65,6 +71,7 @@ export default {
       return alarm ? alarm.name : "暂无";
     },
   },
+  
   methods: {
     showImage() {
       this.showImageDialog = true;
