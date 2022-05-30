@@ -13,8 +13,10 @@
       text-color="#25B2DB"
       active-text-color="#FFFFFF"
       :collapse="isCollapse"
+      :collapse-transition="false"
       router
       @open="handleOpen"
+      v-if="showMenu"
     >
       <div v-for="(item, index) in listInfo" :key="index">
         <el-submenu :index="item.path" v-if="item.children">
@@ -54,6 +56,7 @@ export default {
       listInfo: [],
       isCollapse: false,
       openeds: ["system", "smart", "intelligenceShow"],
+      showMenu:false
     };
   },
   computed: {
@@ -94,12 +97,16 @@ export default {
           }
         }
       });
+        this.$nextTick(()=>{
+            this.showMenu = true
+        })
     },
   },
   watch: {
     $route: {
       handler(val, oldval) {
         this.listGet(val);
+        this.showMenu = false
       },
       deep: true,
     },
