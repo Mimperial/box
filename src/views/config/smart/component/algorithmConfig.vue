@@ -13,7 +13,13 @@
             :label-width="item.name.length > 4 ? '110px' : '80px'"
             :label="item.name"
           >
-            <div>
+            <div
+              :style="{
+                width:
+                  item.describe && item.describe.length > 2 ? '65%' : '80%',
+              }"
+              style="float: left"
+            >
               <el-input
                 v-if="item.type == 1"
                 size="small"
@@ -35,7 +41,7 @@
                 </el-option>
               </el-select>
             </div>
-            <div v-if="item.describe">
+            <div style="float: right" v-if="item.describe">
               {{ item.describe }}
             </div>
           </el-form-item>
