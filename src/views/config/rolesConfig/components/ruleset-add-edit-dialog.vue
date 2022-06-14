@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.RuleName" :maxlength="10"></el-input>
       </el-form-item>
       <el-form-item :label="$t('html.xzsf')">
-        <el-select v-model="dataForm.AlgList" multiple :placeholder="$t('html.select')" style="width: 100%">
+        <el-select :disabled="dataForm.RuleId" v-model="dataForm.AlgList" multiple :placeholder="$t('html.select')" style="width: 100%">
           <el-option
               v-for="item in algorithmList"
               :key="item.alarmNumber"
