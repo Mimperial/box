@@ -179,7 +179,7 @@ import { mapGetters } from "vuex";
           })
         }else{
        const {pageNum,curPage} = this.page
-      getFaceAlarms({...parms,CameraId:cameraId,pageNum:'12',curPage:String(curPage)}).then(res=>{
+      getFaceAlarms({...parms,cameraId,pageNum:'12',curPage:String(curPage)}).then(res=>{
         const {data} = res
         if(data.row.length===0){
               this.$message({
