@@ -1,7 +1,7 @@
 <template>
   <el-header>
     <div class="imageAside">
-      <img v-show="show=='true'" :src="imgSrc" alt="" />
+      <!-- <img v-show="show=='true'" :src="imgSrc" alt="" /> -->
     </div>
     <!-- <div class="qiehuan">
     <language></language>
