@@ -157,7 +157,7 @@ export default {
     };
   },
   created() {
-    this.getFaceGroups();
+    // this.getFaceGroups();
     this.getCamera();
     this.getAlgorithmList();
     this.getRuleList();
@@ -167,6 +167,9 @@ export default {
       this.peopleSleShow = this.selectAlgorithmIds.some(
         (item) => item == "400"
       );
+      if (this.peopleSleShow) {
+        this.getFaceGroups();
+      }
     },
   },
   computed: {
