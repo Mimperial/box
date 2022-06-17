@@ -35,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
                 let Alarmroutes = ''
                 if(accessRoutes[0].children.length>=3){
                     Alarmroutes = accessRoutes[0].children[1].children[0].children
-                    if(Alarmroutes&&Alarmroutes.length>0){
+                    if(Alarmroutes){
                         handleRoutes=  Alarmroutes[0]
                     }
                 }

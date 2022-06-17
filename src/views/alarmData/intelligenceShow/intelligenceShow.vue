@@ -247,6 +247,7 @@ import { mapGetters } from "vuex";
          this.page.pageNum = bol?12:24
        this.$emit('change',bol)
          this.search()
+         
 
       },
       // 获取数据

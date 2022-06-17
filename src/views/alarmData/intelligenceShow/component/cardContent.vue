@@ -56,6 +56,7 @@
         </div>
       </template>
      <ImageDialog
+     ref="imageDialog"
       :title="name"
       :imageData="showUrl"
       v-model="showImageDialog"
@@ -129,8 +130,9 @@ data(){
         },
          clickImage(url,i){
          this.name = this.camerList.find(item=>item.channelId === i.cameraId).name
-      this.showImageDialog = true;
+             this.showImageDialog = true;
         this.showUrl = {id:i.id,alarmUrl:url,yuan:i.yuan}
+        this.$refs.imageDialog.show = true
     },
      successLoad() {
       this.show = true;
