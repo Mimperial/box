@@ -76,6 +76,7 @@ export default {
       //关闭弹框
       this.$emit("input", false);
       this.dialogValue = false;
+      this.show = false
     },
     successLoad() {
       this.show = true;
