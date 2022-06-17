@@ -277,7 +277,18 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
           roles: 3
         },
         component: () => import('@/views/bigScreen/bigScreen.vue'),
-      }]
+      },
+      {
+        path: 'pocDemonstration',
+        name: 'pocDemonstration',
+        meta: {
+          title: 'POC演示',
+          icon: 'el-icon-s-tools',
+          roles: 3
+        },
+        component: () => import('@/views/bigScreen/bigScreen.vue'),
+      },
+    ]
   }
 ]
 

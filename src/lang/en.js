@@ -393,6 +393,7 @@ export default {
         报警数据: "Alarm History",
         智能展示: "AI Results",
         BI大屏: "BI",
+        POC演示:"POC演示",
         编辑: "Modify",
         名称: "Name",
         值: "Value",

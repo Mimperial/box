@@ -23,7 +23,7 @@
         @click.native="
           toRun(
             headerList[0].path + '/' + item.path,
-            item.path == 'bigScreen',
+            item.path == 'bigScreen'||'pocDemonstration',
             item.path
           )
         "
@@ -75,6 +75,10 @@ export default {
   },
   methods: {
     toRun(val, isPanduan, path) {
+      if(path == 'pocDemonstration'){
+        window.open(process.env.VUE_APP_POC)
+        return
+      }
       if (isPanduan != true) {
         this.$router.push(val);
       } else {
