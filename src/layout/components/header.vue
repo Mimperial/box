@@ -75,10 +75,6 @@ export default {
   },
   methods: {
     toRun(val, isPanduan, path) {
-      if(path == 'pocDemonstration'){
-        window.open(process.env.VUE_APP_POC)
-        return
-      }
       if (isPanduan != true) {
         this.$router.push(val);
       } else {

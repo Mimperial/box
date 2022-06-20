@@ -207,6 +207,16 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
             },
             component: () => import('@/views/config/rolesConfig/rolesConfig'),
           },
+          {
+            path: 'pocDemonstration',
+            name: 'pocDemonstration',
+            meta: {
+              title: 'POC演示',
+              icon: 'el-icon-s-tools',
+              roles: "1-8"
+            },
+            component: () => import('@/views/config/system/systemSetting.vue'),
+          },
         ]
       }, {
         path: 'alarmData',
@@ -273,16 +283,6 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
         name: 'homebigScreen',
         meta: {
           title: 'BI大屏',
-          icon: 'el-icon-s-tools',
-          roles: 3
-        },
-        component: () => import('@/views/bigScreen/bigScreen.vue'),
-      },
-      {
-        path: 'pocDemonstration',
-        name: 'pocDemonstration',
-        meta: {
-          title: 'POC演示',
           icon: 'el-icon-s-tools',
           roles: 3
         },

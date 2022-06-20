@@ -38,7 +38,7 @@
             >{{ language(item1.meta.title) }}</el-menu-item
           >
         </el-submenu>
-        <el-menu-item :index="$route.matched[1].path + '/' + item.path" v-else>
+        <el-menu-item :index="$route.matched[1].path + '/' + item.path" @click="toPath(item.path)" v-else>
           <i :class="item.meta.icon ? item.meta.icon : 'el-icon-message'"></i>
           <span slot="title">{{ language(item.meta.title) }}</span>
         </el-menu-item>
@@ -77,6 +77,12 @@ export default {
     this.leftShow();
   },
   methods: {
+    toPath(path){
+    if(path === 'pocDemonstration'){
+        window.open(process.env.VUE_APP_POC)
+    }
+
+    },
     handleOpen(index) {
       // console.log("handleOpen", index);
     },
