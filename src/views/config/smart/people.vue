@@ -5,7 +5,7 @@
         style="padding: 30px 10px 10px 30px; box-sizing: border-box"
         class="left-top"
       >
-        <BaseIcon title="选择通道"></BaseIcon>
+        <BaseIcon title="人员库"></BaseIcon>
       </div>
       <div class="left-content">
         <div class="search-box">
