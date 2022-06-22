@@ -62,6 +62,22 @@ Vue.prototype.timeChange = function (form, time, type, hours = "24小时制") {
     return timeNow
 }
 
+
+export function formatTime(time){
+//将时间戳格式转换成年月日时分秒
+let date = new Date(time);
+let Y = date.getFullYear() + '-';
+let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+let D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+
+let h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+let m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+let s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+let strDate = Y + M + D + h + m + s;
+return strDate
+}
+
+
 //this.timeChange("2021-05-19 18:20:30", arr[0].value, "12小时制")
 // var arr = [
 //     {

@@ -65,6 +65,7 @@ import {getAlarmHisApi,getAlgorithmListApi,
 import { changeImge } from "@/utils/utils";
 import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
 import { mapGetters } from "vuex";
+import {formatTime} from '@/utils/time'
 
 
   export default {
@@ -109,8 +110,8 @@ import { mapGetters } from "vuex";
     data() {
       return {
           form:{
-            startTime:new Date(new Date() - 7 * 24 * 3600 * 1000),
-            endTime: new Date(),
+            startTime:formatTime(new Date(new Date() - 7 * 24 * 3600 * 1000).getTime()),
+            endTime: formatTime(new Date()),
             alarmType:'',
             cameraId:'',
             Gender:'',
@@ -179,7 +180,7 @@ import { mapGetters } from "vuex";
           })
         }else{
        const {pageNum,curPage} = this.page
-      getFaceAlarms({...parms,cameraId,pageNum:'12',curPage:String(curPage)}).then(res=>{
+      getFaceAlarms({...parms,CameraId:cameraId,pageNum:'12',curPage:String(curPage)}).then(res=>{
         const {data} = res
         if(data.row.length===0){
               this.$message({
