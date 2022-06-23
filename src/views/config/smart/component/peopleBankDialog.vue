@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
       @open="dialogOpen"
     >
       <div>

@@ -358,6 +358,11 @@ export default {
     },
     async clickSelectChannel(row) {
       const { id, RuleId } = row;
+      if (row.GroupIds && row.GroupIds.length > 1) {
+        this.peopleIds = row.GroupIds.split(",");
+      } else {
+        this.peopleIds = [];
+      }
       // 切换相机
       if (this.selectCamerId !== id) {
         this.selectCamerId = id;
@@ -404,14 +409,14 @@ export default {
             var data = JSON.parse(res.data);
             console.log(data, "data-----");
             if (data && data.length > 0) {
-              if (data[0].GroupIds && data[0].GroupIds.length > 1) {
-                this.peopleIds = data[0].GroupIds.split(",");
-              } else {
-                this.peopleIds = [];
-              }
               if (setSelectCamerId) {
                 //设置初始化相机选择
                 this.selectCamerId = data[0].id;
+                if (data[0].GroupIds && data[0].GroupIds.length > 1) {
+                  this.peopleIds = data[0].GroupIds.split(",");
+                } else {
+                  this.peopleIds = [];
+                }
               }
               this.selectChannels = data.map((item) => {
                 //这里进行测报警信息数据转换成json格式
