@@ -113,11 +113,11 @@ export default {
             GenderList:[
                 {
                     label:'男',
-                    value:'0'
+                    value:'1'
                 },
                 {
                     label:'女',
-                    value:'1'
+                    value:'2'
                 },
             ]
         }

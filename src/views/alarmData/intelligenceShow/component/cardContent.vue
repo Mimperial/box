@@ -3,7 +3,7 @@
       <template v-for="(item,i) in cardData">
         <div class="box-card" :key="i"> 
                 <div  class="image"   @click="clickImage(item[cardList.imgsrc],item)">
-                    <div  v-if="model == 3" >底库</div>
+                <div  v-if="model == 3" >底库</div>
                 <el-image
                     style="width: 100%; height: 100%"
                     :src="item[cardList.imgsrc]"
@@ -129,10 +129,12 @@ data(){
             return i[name]
         },
          clickImage(url,i){
-         this.name = this.camerList.find(item=>item.channelId === i.cameraId).name
+         this.name = this.camerList.find(item=>item.channelId === i.cameraId)?.name
              this.showImageDialog = true;
         this.showUrl = {id:i.id,alarmUrl:url,yuan:i.yuan}
-        this.$refs.imageDialog.show = true
+        this.$nextTick(()=>{
+            this.$refs.imageDialog.show = true
+        })
     },
      successLoad() {
       this.show = true;
