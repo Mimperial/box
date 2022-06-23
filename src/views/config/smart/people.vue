@@ -219,10 +219,12 @@ export default {
       this.faceGroupsChange(this.groupActive, val);
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.page.size = val;
+      this.faceGroupsChange(this.groupActive);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page.current = val;
+      this.faceGroupsChange(this.groupActive);
     },
     getBankDialog(val, item = {}) {
       this.bankDialogTitle = val;
@@ -279,6 +281,12 @@ export default {
     },
 
     deleteFaceGroup(GroupId) {
+      if (this.personList.length)
+        return this.$message({
+          type: "info",
+          message: "该群组已涉及人员，不允许删除!",
+        });
+
       this.$confirm("确定要删除该数据吗?", "提示", {
         confirmButtonText: this.$t("js.msgonez"),
         cancelButtonText: this.$t("js.msgoneq"),
@@ -366,6 +374,9 @@ export default {
           display: inline-block;
           margin-left: 20px;
           width: 70%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

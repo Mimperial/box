@@ -358,6 +358,11 @@ export default {
     },
     async clickSelectChannel(row) {
       const { id, RuleId } = row;
+      if (row.GroupIds && row.GroupIds.length > 1) {
+        this.peopleIds = row.GroupIds.split(",");
+      } else {
+        this.peopleIds = [];
+      }
       // 切换相机
       if (this.selectCamerId !== id) {
         this.selectCamerId = id;
