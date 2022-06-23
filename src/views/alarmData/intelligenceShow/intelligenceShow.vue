@@ -200,8 +200,9 @@ import {formatTime} from '@/utils/time'
           const cameraId =
           this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
           this.camerList.map((item) => "'" + item.channelId + "'").join(",");
-        const  alarmType = this.form.alarmType.map((item) => "'" + item + "'").join(",");
- let { startTime, endTime, download } = this.form;
+        console.log("🤡 ~~ this.form", this.form)
+        const  alarmType = this.form.alarmType&&this.form.alarmType.map((item) => "'" + item + "'").join(",");
+        let { startTime, endTime, download } = this.form;
       let userId = getDownloadIdToken();
       if (!this.downloadFlag) {
         downloadAlarmHisApi({
@@ -212,6 +213,7 @@ import {formatTime} from '@/utils/time'
           download,
           userId,
         }).then((res) => {
+          console.log("🤡 ~~ res", res)
           try {
             var data = JSON.parse(res.data);
             if (data.status == 1) {

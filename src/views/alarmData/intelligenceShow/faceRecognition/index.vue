@@ -13,8 +13,8 @@ components:{
 data(){
   return {
       contentList:{
-      imgsrc:'FaceSnap',
-      FaceUrl:'FaceUrl',
+      imgsrc:'FaceUrl',
+      FaceUrl:'FaceSnap',
       bottomText:[
         {label:'姓名',value:'PersonName'},
         {label:'识别度',value:'FaceThreshold'},
