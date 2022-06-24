@@ -7,13 +7,22 @@
   >
     <div class="boxWrite">
       <span class="left">实时报警图片</span>
+      <div class="tabsChange floatLeft">
+        <img class="left-img floatLeft" :src="daping_shu" alt="">
+        <div :class="['floatLeft','text',{showBg:alarmIndex===1}] " @click="changeAlarm(1)">
+          行为分析
+        </div>
+        <img class="center-img floatLeft" :src="daping_shu" alt="">
+        <div :class="['floatLeft','text',{showBg:alarmIndex===2}] " @click="changeAlarm(2)">人脸识别</div>
+        <img class="right-img floatLeft" :src="daping_shu" alt="">
+      </div> 
       <span @click="toAlarm" class="right"
         >更多报警信息<img
           :src="require('@/assets/img/bigScreen/more.png')"
           alt=""
       /></span>
     </div>
-    <div class="alarmPicure">
+    <div class="alarmPicure" v-if="alarmIndex == 1">
       <transition-group
         @after-enter="afterEnter"
         name="alarmImage"
@@ -53,25 +62,55 @@
         </div>
       </transition-group>
     </div>
+    <div class="face" v-else>
+      <div class="face-recognize" >
+      <!-- 人脸识别 -->
+      <div class="face-left">
+        <img :src="face_shibie" style="margin: 0 0.2rem"  alt="" >
+        <template v-for="(item,index) in 2" >
+          <faceRecoginze :key="index"></faceRecoginze>
+        </template>
+      </div>
+      <!-- 人脸抓拍 -->
+      <div class="face-right">
+        <img :src="face_zhuapai" style="margin-right:0.3rem" alt="" srcset="">
+        <div class="face-right-item">
+          <div v-for="(item,index) in 5" :key="index">
+            <face-capture></face-capture>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    
   </div>
 </template>
 
 <script>
 import FunAreaSelect from "@/components/funAreaSelect.vue";
+import faceRecoginze from './botCom/faceRecoginze.vue'
+import faceCapture from './botCom/faceCapture.vue'
 export default {
   components: {
     FunAreaSelect,
+    faceRecoginze,
+    faceCapture
   },
   props: ["alarmCacle"],
   data() {
     return {
       bigScreenBottom: require("@/assets/img/bigScreen/bigScreenBottom.png"),
       alarmHeader: require("@/assets/img/bigScreen/alarmHeader.png"),
+      daping_shu:require('@/assets/img/daping_shu.svg'),
+      face_shibie:require('@/assets/img/shibei.png'),
+      face_zhuapai:require('@/assets/img/zhuapai.png'),
       alarmImageList: [],
       maxImageCount: 5,
       hidden: false,
       timer: null,
       resizeTime: null,
+      alarmIndex:1,
+      faceList:[]
     };
   },
   mounted() {
@@ -82,6 +121,8 @@ export default {
         if (this.alarmImageList.length > this.maxImageCount + 1) {
           this.alarmImageList.shift();
         }
+          console.log("🤡 ~~ this.alarmImageList", this.alarmImageList)
+          this.handlerFaceList( this.alarmImageList)
         this.$emit("change", true);
       }
     }, 3000);
@@ -92,6 +133,15 @@ export default {
     window.removeEventListener("resize", this.resizeWidth);
   },
   methods: {
+    handlerFaceList(list){
+        this.faceList=  this.alarmImageList.filter(item=>{
+          return item.name == ''
+        })
+
+    },
+    changeAlarm(index){
+      this.alarmIndex = index
+    },
     resizeWidth() {
       this.hidden = true;
       if (this.resizeTime) {
@@ -150,6 +200,33 @@ export default {
     padding: 0.19rem;
     box-sizing: border-box;
     overflow: hidden;
+    .floatLeft{
+      float: left;
+    }
+    .tabsChange{
+      display: inline-block;
+      .text{
+            font-size: 0.14rem;
+    font-weight: 500;
+    color: #66CCFF;
+    line-height: 0.3rem;
+    padding: 0 0.2rem;
+    cursor: pointer;
+      }
+      .left-img{
+        margin-left: 0.5rem;
+
+      }
+      .center-img{
+      
+      }
+      .right-img{
+      
+      }
+      .showBg{
+        background-color: #2C4685;
+      }
+    }
     .left {
       float: left;
       font-size: 0.16rem;
@@ -217,6 +294,33 @@ export default {
         width: 100%;
         height: 100%;
       }
+    }
+  }
+  .face-recognize{
+        width: 18rem;
+    height: 1.93rem;
+    overflow: hidden;
+       padding: 0 0.2rem;
+    position: relative;
+    display: flex;
+    .face-left{
+      height: 100%;
+      float: left;
+      display: flex;
+    }
+    .face-right{
+       height: 100%;
+       float: left;
+      display: flex;
+      flex: 1;
+      .face-right-item{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .inlineBolck{
+     
     }
   }
 }
