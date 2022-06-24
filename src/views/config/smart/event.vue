@@ -434,7 +434,7 @@ export default {
           if (setSelectCamerId) {
             //设置初始化相机选择
             this.selectCamerId = data[0].id;
-            this.currentRuleId = data[0].RuleId;
+           
             if (data[0].GroupIds && data[0].GroupIds.length > 1) {
               this.peopleIds = data[0].GroupIds.split(",");
             } else {
@@ -474,6 +474,7 @@ export default {
       }
       this.ruleList = newData.reverse();
       // this.currentRuleId = newData[0].RuleId;
+       this.currentRuleId = this.selectChannels[0].RuleId;
       console.log("newData--", newData);
       await this.handleSelect(this.currentRuleId,true);
     },
