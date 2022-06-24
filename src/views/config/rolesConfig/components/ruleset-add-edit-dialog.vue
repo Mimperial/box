@@ -1,8 +1,10 @@
 <template>
-  <el-dialog custom-class="rulesDialog" :title="dataForm.RuleId ? $t('html.editRule') : $t('html.newRule')" :visible.sync="dialogShow" width="30%"  @close="closeDialog">
+  <el-dialog custom-class="rulesDialog"
+  :close-on-click-modal="false"
+   :title="dataForm.RuleId ? $t('html.editRule') : $t('html.newRule')" :visible.sync="dialogShow" width="30%"  @close="closeDialog">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataFormRef">
       <el-form-item :label="$t('html.ruleName')" prop="RuleName">
-        <el-input v-model="dataForm.RuleName" :maxlength="10"></el-input>
+        <el-input v-model.trim="dataForm.RuleName" :maxlength="10"></el-input>
       </el-form-item>
       <el-form-item :label="$t('html.xzsf')">
         <el-select :disabled="dataForm.RuleId" v-model="dataForm.AlgList" multiple :placeholder="$t('html.select')" style="width: 100%">

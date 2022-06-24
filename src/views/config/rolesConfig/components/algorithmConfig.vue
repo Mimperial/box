@@ -14,7 +14,7 @@
         ></el-table-column>
         <el-table-column property="path" :label="$t('html.tp')">
           <template slot-scope="scope">
-            <img :src="scope.row.path" alt="" />
+            <img :src="scope.row.path" alt="" class="table-img" />
           </template>
         </el-table-column>
         <el-table-column property="path" :label="$t('html.qy')">
@@ -524,6 +524,10 @@ export default {
 <style>
 .all {
   cursor: pointer;
+}
+.table-img{
+  max-width: 57px;
+  max-height: 62px;
 }
 </style>
 <style lang="scss" scoped>

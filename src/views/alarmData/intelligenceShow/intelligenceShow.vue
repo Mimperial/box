@@ -19,7 +19,7 @@
       ></el-button>
       </div>
     <!-- 中间内容 -->
-  <cardContent v-loading="loading" :model="model" :cardList="cardList" :cardData="cardData" :alarmOptions="alarmOptions" :camerList="camerList"></cardContent>
+  <cardContent ref="cardContentRef" v-loading="loading" :model="model" :cardList="cardList" :cardData="cardData" :alarmOptions="alarmOptions" :camerList="camerList"></cardContent>
   <!-- 分页器 -->
    <div class="block">
       <el-pagination
@@ -142,6 +142,9 @@ import {formatTime} from '@/utils/time'
     
       search(){
         this.loading = true
+        
+    this.$refs.cardContentRef.show = false
+        this.$refs.cardContentRef.show = false
         const parms = {...this.form,...this.page}
           const cameraId =
           this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
@@ -161,6 +164,8 @@ import {formatTime} from '@/utils/time'
             this.cardData = this.getDrawPoint(data.alarmList)
           }).finally(()=>{
         this.loading = false
+    this.$refs.cardContentRef.show = true
+
           })
         }else if(this.model == 2){
            getAlarmHisApi({...parms,cameraId,alarmType: "'400'"}).then((res) => {
@@ -177,6 +182,7 @@ import {formatTime} from '@/utils/time'
         }
       }).finally(()=>{
         this.loading = false
+    this.$refs.cardContentRef.show = true
           })
         }else{
        const {pageNum,curPage} = this.page
@@ -192,6 +198,7 @@ import {formatTime} from '@/utils/time'
          this.cardData = this.handleData(data.row)
       }).finally(()=>{
         this.loading = false
+    this.$refs.cardContentRef.show = true
           })
     
         }
