@@ -3,7 +3,7 @@
     <!-- 顶部search -->
     <Select :model="model" :formData.sync="form" :camerList="camerList" :alarmOptions="alarmOptions">
       <el-button type="primary" @click="search">检索</el-button>
-    <el-button type="primary" @click="dialogVisibleDownload = true"  :disabled="downloadFlag">{{ downloadFlag ? "压缩中" : "下载" }}</el-button>
+    <el-button v-if="model!==3" type="primary" @click="dialogVisibleDownload = true"  :disabled="downloadFlag">{{ downloadFlag ? "压缩中" : "下载" }}</el-button>
     </Select>
     <!-- 中间切换按钮部分 -->
     <div v-if="model === 1&&isVideo" style="margin-bottom:20px">
@@ -35,6 +35,7 @@
       title="下载文件"
       :visible.sync="dialogVisibleDownload"
       width="30%"
+      :close-on-click-modal="false"
     >
       <div class="content">
         <span class="title">下载类型：</span>
@@ -142,9 +143,9 @@ import {formatTime} from '@/utils/time'
     
       search(){
         this.loading = true
-        
-    this.$refs.cardContentRef.show = false
-        this.$refs.cardContentRef.show = false
+        this.$nextTick(()=>{
+          this.$refs.cardContentRef.show = false
+        })
         const parms = {...this.form,...this.page}
           const cameraId =
           this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
@@ -164,8 +165,6 @@ import {formatTime} from '@/utils/time'
             this.cardData = this.getDrawPoint(data.alarmList)
           }).finally(()=>{
         this.loading = false
-    this.$refs.cardContentRef.show = true
-
           })
         }else if(this.model == 2){
            getAlarmHisApi({...parms,cameraId,alarmType: "'400'"}).then((res) => {
@@ -182,7 +181,6 @@ import {formatTime} from '@/utils/time'
         }
       }).finally(()=>{
         this.loading = false
-    this.$refs.cardContentRef.show = true
           })
         }else{
        const {pageNum,curPage} = this.page
@@ -198,24 +196,27 @@ import {formatTime} from '@/utils/time'
          this.cardData = this.handleData(data.row)
       }).finally(()=>{
         this.loading = false
-    this.$refs.cardContentRef.show = true
           })
     
         }
       },
       download(){
+        const alarmType = {
+          1:this.form.alarmType&&this.form.alarmType.map((item) => "'" + item + "'").join(","),
+          2:'400',
+          3:'400'
+        }
+
           const cameraId =
           this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
           this.camerList.map((item) => "'" + item.channelId + "'").join(",");
-        console.log("🤡 ~~ this.form", this.form)
-        const  alarmType = this.form.alarmType&&this.form.alarmType.map((item) => "'" + item + "'").join(",");
         let { startTime, endTime, download } = this.form;
       let userId = getDownloadIdToken();
       if (!this.downloadFlag) {
         downloadAlarmHisApi({
           startTime,
           endTime,
-          alarmType,
+          alarmType:alarmType[this.model],
           cameraId,
           download,
           userId,

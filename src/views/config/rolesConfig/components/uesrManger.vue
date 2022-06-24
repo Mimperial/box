@@ -33,7 +33,10 @@
         </el-table>
       </el-col>
     </el-row>
-    <el-dialog :title="$t('html.qxgl')" :visible.sync="dialogFormVisible">
+    <el-dialog :title="$t('html.qxgl')" 
+      :close-on-click-modal="false"
+    
+     :visible.sync="dialogFormVisible">
       <el-tree
         :data="data"
         show-checkbox
@@ -54,7 +57,9 @@
         </span>
       </el-tree>
     </el-dialog>
-    <el-dialog :title="$t('html.yhtj')" :visible.sync="dialogAddVisible">
+    <el-dialog :title="$t('html.yhtj')" 
+      :close-on-click-modal="false"
+    :visible.sync="dialogAddVisible">
       <el-form :model="ruleForm" ref="ruleForm" :rules="rules" :label-width="labelWidth">
         <el-form-item :label="$t('html.sryhm')"  prop="name">
           <el-input v-model="ruleForm.name" autocomplete="off"></el-input>

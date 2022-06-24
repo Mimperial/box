@@ -3,11 +3,10 @@
       <template v-for="(item,i) in cardData">
         <div class="box-card" :key="i"> 
                 <div  class="image"   @click="clickImage(item[cardList.imgsrc],item)">
-                <div  v-if="model == 3" >底库</div>
+                <div  v-if="model == 3" class="card-top-text">底库</div>
                 <el-image
-                    style="width: 100%; height: 100%"
-                    :src="item[cardList.imgsrc]"
-                  
+                style="width: 100%; height: 100%"
+                :src="item[cardList.imgsrc]"
                 @load="successLoad"
                 fit="contain">
                 </el-image>
@@ -24,7 +23,7 @@
                 </div>
                
                    <div class="video" v-if="cardList.videoSrc">
-                            <div class="img_top_text">抓拍</div>
+                            <div class="img_top_text ">抓拍</div>
                             
                              <div @click="showVideo(item[cardList.videoSrc],item)" :class="{ player: true, black: true }">
                                 <i class="el-icon-mybofang"></i>
@@ -33,7 +32,7 @@
                     </div>
 
                     <div v-if="model == 3"  class="image" @click="clickImage(item[cardList.FaceUrl],item)">
-                        <div>抓拍</div>
+                        <div class="card-top-text">抓拍</div>
                          <el-image
                     style="width: 100%; height: 100%"
                     :src="item[cardList.FaceUrl]"
@@ -137,7 +136,9 @@ data(){
         })
     },
      successLoad() {
-      this.show = true;
+         this.$nextTick(()=>{
+             this.show = true;
+         })
     },
     showVideo(url,i) {
          this.name = this.camerList.find(item=>item.channelId === i.cameraId).name
@@ -149,6 +150,11 @@ data(){
 </script>
 
 <style lang='scss'>
+.card-top-text{
+    font-size: 14px;
+    text-align: left;
+    padding-left: 10px;
+}
 .card-content{
     display: grid;
     grid-template-columns: repeat(auto-fill,176px);

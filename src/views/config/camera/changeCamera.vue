@@ -3,6 +3,7 @@
     <el-dialog
       :title="title"
       :before-close="closeDialog"
+      :close-on-click-modal="false"
       :visible.sync="dialogValue"
     >
       <el-form

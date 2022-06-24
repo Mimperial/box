@@ -4,6 +4,7 @@
       :title="title"
       :before-close="closeDialog"
       :visible.sync="dialogValue"
+      :close-on-click-modal="false"
       width="1000px"
     >
       <div class="playVideo">

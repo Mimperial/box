@@ -4,6 +4,7 @@
       :title="title"
       :visible.sync="dialogValue"
       :before-close="closeDialog"
+      :close-on-click-modal="false"
       width="1000px"
     >
       <div class="dialogImage">

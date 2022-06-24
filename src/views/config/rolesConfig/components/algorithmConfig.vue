@@ -76,6 +76,7 @@
       :visible.sync="innerVisible"
       append-to-body
       :before-close="beforClose"
+      :close-on-click-modal="false"
     >
       <el-row>
         <el-form

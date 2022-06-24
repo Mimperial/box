@@ -3,12 +3,15 @@
     <el-dialog
       :title="$t('html.编辑')"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+
       width="70%"
     >
       <el-dialog
         width="40%"
         :title="title"
         :visible.sync="innerVisible"
+      :close-on-click-modal="false"
         append-to-body
       >
         <el-form :rules="rules" ref="ruleForm" :model="form" label-width="80px">
