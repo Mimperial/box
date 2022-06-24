@@ -165,6 +165,7 @@ import {formatTime} from '@/utils/time'
             this.cardData = this.getDrawPoint(data.alarmList)
           }).finally(()=>{
         this.loading = false
+          this.$refs.cardContentRef.show = true
           })
         }else if(this.model == 2){
            getAlarmHisApi({...parms,cameraId,alarmType: "'400'"}).then((res) => {
@@ -181,6 +182,7 @@ import {formatTime} from '@/utils/time'
         }
       }).finally(()=>{
         this.loading = false
+          this.$refs.cardContentRef.show = true
           })
         }else{
        const {pageNum,curPage} = this.page
@@ -196,6 +198,7 @@ import {formatTime} from '@/utils/time'
          this.cardData = this.handleData(data.row)
       }).finally(()=>{
         this.loading = false
+          this.$refs.cardContentRef.show = true
           })
     
         }

@@ -93,12 +93,12 @@ export default {
                 describe: element.describe,
               });
             } else if (type < 20) {
-              let { min, max } = element.describe.split(":");
+              let arr= element.describe.split(":");
               this.showAll.push({
                 type: 2,
                 name: element.name,
-                min:min||0,
-                max:max||100,
+                min:0,
+                max:100,
                 key: element.type,
                 value:
                   value || value == 0 ? Number(value) : Number(element.default),
