@@ -113,16 +113,20 @@ data(){
 
     methods:{
         handleData(name,i){
+            console.log("🤡 ~~ i", name,i)
+            console.log('cardList.bottomText',this.cardList.bottomText);
             if(name == 'alarmType'){
                  var alarm = this.alarmOptions.find(
                     (item) => item.alarmNumber == i[name]
                 );
                 return alarm ? alarm.name : "暂无";
             }
-            if(name == 'cameraId'){
+            if(name == 'cameraId'||name == 'CameraId'){
+                console.log('this.camerList',this.camerList);
                  var camera = this.camerList.find(
                     (item) => item.channelId == i[name]
                 );
+                console.log('camera',camera);
                 return camera ? camera.name : "暂无";
             }
             return i[name]

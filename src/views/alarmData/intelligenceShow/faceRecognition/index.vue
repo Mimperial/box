@@ -19,7 +19,7 @@ data(){
         {label:'姓名',value:'PersonName'},
         {label:'识别度',value:'FaceThreshold'},
         {label:'时间',value:'time'},
-        {label:'相机名称',value:'CamerName'},
+        {label:'相机名称',value:'CameraId'},
       ]
     },
   }
