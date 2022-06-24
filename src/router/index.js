@@ -174,7 +174,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                 meta: {
                   title: '智能事件',
                   icon: 'el-icon-paperclip',
-                  roles: "1-1-1",
+                  roles: "1-6-1",
                 },
                 component: () => import('@/views/config/smart/event.vue'),
               }, {
@@ -183,7 +183,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                 meta: {
                   title: '人员库管理',
                   icon: 'el-icon-paperclip',
-                  roles: "1-1-2",
+                  roles: "1-6-2",
                 },
                 component: () => import('@/views/config/smart/people.vue'),
               },
