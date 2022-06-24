@@ -202,6 +202,16 @@ export default {
       const ruleRes = await getFaceGroups({ GroupName: "" });
       if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
       this.peopleList = ruleRes.data.row;
+      if (this.peopleIds.length) {
+        let list = [];
+        this.peopleIds.forEach((item) => {
+          let status = this.peopleList.find((em) => em.GroupId == item);
+          if (status) {
+            list.push(item);
+          }
+        });
+        this.peopleIds = list;
+      }
     },
     async cloningSure(data) {
       let { loading, close, loadingText, algInfos, length, ids, setCloseFlag } =
@@ -359,7 +369,19 @@ export default {
     async clickSelectChannel(row) {
       const { id, RuleId } = row;
       if (row.GroupIds && row.GroupIds.length > 1) {
-        this.peopleIds = row.GroupIds.split(",");
+        // console.log("peopleList12");
+        let arr = row.GroupIds.split(",");
+        if (this.peopleList.length && arr.length) {
+          let list = [];
+          arr.forEach((item) => {
+            let status = this.peopleList.find((em) => em.GroupId == item);
+            if (status) {
+              list.push(item);
+            }
+          });
+          this.peopleIds = list;
+        }
+        // this.peopleIds = row.GroupIds.split(",");
       } else {
         this.peopleIds = [];
       }
