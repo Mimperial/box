@@ -1,6 +1,6 @@
 <template>
   <div>
-      <intelligenceShow :model="1" v-model="isRight" :cardList="isRight?contentRightList:contentList"></intelligenceShow>
+      <intelligenceShow :isVideo="isVideo" :model="1" v-model="isRight" :cardList="isRight?contentRightList:contentList"></intelligenceShow>
   </div>
 </template>
 
@@ -29,8 +29,16 @@ data(){
         {label:'报警类型',value:'alarmType'},
       ]
     },
-    isRight:true
+    isRight:false,
+    isVideo:false
   }
+},
+created(){
+    var roles = this.$store.getters.roles;
+    if (roles.includes("isVideo")) {
+      this.isVideo = true;
+      this.isRight=  true
+    }
 }
 }
 </script>

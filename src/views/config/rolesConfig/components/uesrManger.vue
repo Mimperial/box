@@ -172,6 +172,7 @@ export default {
   created() {
     var objData = JSON.parse(JSON.stringify(asyncRouters[0].children));
     this.data = this.changeNewData(objData);
+    console.log("🤡 ~~ this.changeNewData(objData)", this.changeNewData(objData))
   },
   mounted() {
     this.getData();

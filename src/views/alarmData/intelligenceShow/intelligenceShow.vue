@@ -6,7 +6,7 @@
     <el-button type="primary" @click="dialogVisibleDownload = true"  :disabled="downloadFlag">{{ downloadFlag ? "压缩中" : "下载" }}</el-button>
     </Select>
     <!-- 中间切换按钮部分 -->
-    <div v-if="model === 1" style="margin-bottom:20px">
+    <div v-if="model === 1&&isVideo" style="margin-bottom:20px">
       <el-button
         size="mini"
         icon="el-icon-s-grid"
@@ -84,6 +84,10 @@ import {formatTime} from '@/utils/time'
         type:Object,
         defautl:()=>[]
       },
+      isVideo:{
+         type:Boolean,
+        defautl:false
+      }
     },
     components:{
       Select,
@@ -93,10 +97,7 @@ import {formatTime} from '@/utils/time'
     ...mapGetters(["downloadFlag"]),
   },
     created(){
-      var roles = this.$store.getters.roles;
-    if (roles.includes("isVideo")) {
-      this.isVideo = true;
-    }
+    
        this.getSelectData()
     },
     mounted(){
@@ -130,7 +131,6 @@ import {formatTime} from '@/utils/time'
           ? process.env.VUE_APP_URL.replace(":8183", "")
           : window.location.origin,
           dialogVisibleDownload:false,
-          isVideo:false,
           loading:false
       }
     },

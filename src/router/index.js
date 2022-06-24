@@ -224,7 +224,8 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
         meta: {
           title: '报警数据',
           icon: "el-icon-bell",
-          roles: 2
+          roles: 2,
+         
         },
         component:alarmDataLayout,
         redirect: '/home/alarmData/intelligenceShow',
@@ -236,10 +237,7 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
               title: '智能展示',
               icon: "el-icon-view",
               roles: "2-1",
-              buttonRoles: [
-                { roles: "isVideo", name: "有视频" },
-                { roles: "NoVideo", name: "无视频" }
-              ],
+            
             },
             component: () => import('@/views/alarmData/intelligenceShow'),
             // redirect: '/home/alarmData/intelligenceShow/behaviouralAnalysis',
@@ -252,6 +250,10 @@ export const asyncRouters = [//异步路由，也就是根据权限变化的路�
                   title:'行为分析',
                   icon:'el-icon-view',
                   roles:"2-1-4",
+                  buttonRoles: [
+                    { roles: "isVideo", name: "有视频" },
+                    { roles: "NoVideo", name: "无视频" }
+                  ],
                 },
               },
               {
