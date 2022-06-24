@@ -164,9 +164,14 @@ export default {
   },
   watch: {
     selectAlgorithmIds() {
+      
       this.peopleSleShow = this.selectAlgorithmIds.some(
         (item) => item == "400"
-      );
+      )
+      if(this.algorithmList.length && !this.algorithmList.some((item) => item.alarmNumber == "400")) {
+         this.peopleSleShow =false
+      }
+
       if (this.peopleSleShow) {
         this.getFaceGroups();
       }
@@ -214,7 +219,7 @@ export default {
       }
     },
     async cloningSure(data) {
-      let { loading, close, loadingText, algInfos, length, ids, setCloseFlag } =
+      let { loading, close, loadingText, algInfos, length, ids, setCloseFlag,GroupIds,RuleId } =
         data;
       if (!ids || ids.length == 0) {
         this.$message({
@@ -228,6 +233,11 @@ export default {
       try {
         for (let i = 0; i < length; i++) {
           loadingText("正在克隆：" + i + "/" + length);
+           await editCameraApi({
+        id: ids[i],
+        RuleId: RuleId,
+        GroupIds: GroupIds || " ",
+      });
           await setAlgorithmApi({
             id: ids[i],
             AlgInfos: JSON.stringify(algInfos),
@@ -480,9 +490,10 @@ export default {
     },
     // 选择规则
     async handleSelect(currentId, type) {
-      if (!type) {
-        this.selectAlgorithmIds = [];
-      }
+      // if (!type) {
+      //   this.selectAlgorithmIds = [];
+      // }
+     
       try {
         const result = await getAlgorithmListApi({});
         this.algorithmList = JSON.parse(result.data);
@@ -498,6 +509,12 @@ export default {
       this.algorithmList = this.algorithmList.filter((item) =>
         currentItem?.AlgList.some((ele) => ele === item.alarmNumber)
       );
+        this.peopleSleShow = this.selectAlgorithmIds.some(
+        (item) => item == "400"
+      )
+      if(this.algorithmList.length && !this.algorithmList.some((item) => item.alarmNumber == "400")) {
+         this.peopleSleShow =false
+      }
     },
   },
 };

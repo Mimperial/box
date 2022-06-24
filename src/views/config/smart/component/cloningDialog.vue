@@ -70,13 +70,16 @@ export default {
   methods: {
     sureClick() {
       var algInfos = this.cloningData.algInfos;
+      console.log('cloningData',this.cloningData);
       this.$emit("sure", {
         loading: this.showLoading.bind(this),
         close: this.closeDialog.bind(this),
         loadingText: this.setloadingText.bind(this),
         algInfos,
+        RuleId:this.cloningData.RuleId,
         length: this.selectIds.length,
         ids: this.selectIds,
+        GroupIds:this.cloningData.GroupIds || ' ',
         setCloseFlag: this.setCloseFlag.bind(this),
       });
     },
