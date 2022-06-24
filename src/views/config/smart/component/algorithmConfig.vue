@@ -97,8 +97,8 @@ export default {
               this.showAll.push({
                 type: 2,
                 name: element.name,
-                min,
-                max,
+                min:min||0,
+                max:max||100,
                 key: element.type,
                 value:
                   value || value == 0 ? Number(value) : Number(element.default),
