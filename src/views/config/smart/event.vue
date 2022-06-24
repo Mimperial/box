@@ -156,11 +156,11 @@ export default {
       ruleList: [], // 规则列表
     };
   },
-  created() {
+  async created() {
     // this.getFaceGroups();
-    this.getCamera();
-    this.getAlgorithmList();
-    this.getRuleList();
+    await this.getCamera();
+    await this.getAlgorithmList();
+    await this.getRuleList();
   },
   watch: {
     selectAlgorithmIds() {
@@ -396,7 +396,7 @@ export default {
       if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
       let data = JSON.parse(ruleRes.data);
       this.currentRuleId = data[0].RuleId;
-      await this.handleSelect(this.currentRuleId);
+      await this.handleSelect(this.currentRuleId,true);
     },
     getAlgorithm() {
       getAlgorithmApi({ id: this.selectCamerId }).then((res) => {
@@ -412,49 +412,48 @@ export default {
         }
       });
     },
-    getAlgorithmList() {
+    async getAlgorithmList() {
       //获取所有
-      getAlgorithmListApi({}).then((res) => {
-        try {
-          var data = JSON.parse(res.data);
-          this.algorithmList = data;
-          this.clickAlgorithmId = data[0].id;
-        } catch (error) {
-          console.log(error, "解析错误请检查getAlgorithmListApi接口");
-        }
-      });
+      let res = await getAlgorithmListApi({});
+      console.log("getCamera--2");
+      try {
+        var data = JSON.parse(res.data);
+        this.algorithmList = data;
+        this.clickAlgorithmId = data[0].id;
+      } catch (error) {
+        console.log(error, "解析错误请检查getAlgorithmListApi接口");
+      }
     },
-    getCamera(setSelectCamerId = true) {
-      getCameraApi({})
-        .then((res) => {
-          if (res.code == 0) {
-            var data = JSON.parse(res.data);
-            console.log(data, "data-----");
-            if (data && data.length > 0) {
-              if (setSelectCamerId) {
-                //设置初始化相机选择
-                this.selectCamerId = data[0].id;
-                if (data[0].GroupIds && data[0].GroupIds.length > 1) {
-                  this.peopleIds = data[0].GroupIds.split(",");
-                } else {
-                  this.peopleIds = [];
-                }
-              }
-              this.selectChannels = data.map((item) => {
-                //这里进行测报警信息数据转换成json格式
-                try {
-                  item.algInfos = JSON.parse(item.algInfos);
-                } catch (error) {
-                  console.log("解析失败，可能没有报警边框设置！");
-                }
-                return item;
-              });
-              this.getAlgorithm(); //获取当前相机的算法
-              // this.handleSelect(this.currentRuleId)
+    async getCamera(setSelectCamerId = true) {
+      let res = await getCameraApi({});
+      if (res.code == 0) {
+        console.log("getCamera--1");
+        var data = JSON.parse(res.data);
+        console.log(data, "data-----");
+        if (data && data.length > 0) {
+          if (setSelectCamerId) {
+            //设置初始化相机选择
+            this.selectCamerId = data[0].id;
+            this.currentRuleId = data[0].RuleId;
+            if (data[0].GroupIds && data[0].GroupIds.length > 1) {
+              this.peopleIds = data[0].GroupIds.split(",");
+            } else {
+              this.peopleIds = [];
             }
           }
-        })
-        .catch((err) => {});
+          this.selectChannels = data.map((item) => {
+            //这里进行测报警信息数据转换成json格式
+            try {
+              item.algInfos = JSON.parse(item.algInfos);
+            } catch (error) {
+              console.log("解析失败，可能没有报警边框设置！");
+            }
+            return item;
+          });
+          this.getAlgorithm(); //获取当前相机的算法
+          // this.handleSelect(this.currentRuleId)
+        }
+      }
     },
     cloningHighlight(data) {
       //判断克隆字是否高亮显示
@@ -467,17 +466,22 @@ export default {
     // 获取规则列表
     async getRuleList() {
       const result = await getRule({});
+      console.log("getCamera--3");
       const { code, msg, data } = result;
       let newData = JSON.parse(data);
       if (code !== 0) {
         return this.$message.error(msg);
       }
       this.ruleList = newData.reverse();
-      this.currentRuleId = newData[0].RuleId;
-      await this.handleSelect(this.currentRuleId);
+      // this.currentRuleId = newData[0].RuleId;
+      console.log("newData--", newData);
+      await this.handleSelect(this.currentRuleId,true);
     },
     // 选择规则
-    async handleSelect(currentId) {
+    async handleSelect(currentId, type) {
+      if (!type) {
+        this.selectAlgorithmIds = [];
+      }
       try {
         const result = await getAlgorithmListApi({});
         this.algorithmList = JSON.parse(result.data);
