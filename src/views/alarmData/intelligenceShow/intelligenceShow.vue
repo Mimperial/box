@@ -133,10 +133,8 @@ export default {
   data() {
     return {
       form: {
-        startTime: formatTime(
-          new Date(new Date() - 7 * 24 * 3600 * 1000).getTime()
-        ),
-        endTime: formatTime(new Date()),
+        startTime: formatTime(new Date().getTime()),
+        endTime: formatTime(new Date().getTime() + 1 * 24 * 3600 * 1000),
         alarmType: '',
         cameraId: '',
         Gender: '',
