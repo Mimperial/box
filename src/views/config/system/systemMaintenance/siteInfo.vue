@@ -33,7 +33,7 @@
       </el-form-item>
       <el-form-item :label-width="labelWidth" size="mini">
         <el-button type="primary" @click="submitForm('ruleForm')">{{
-          $t("html.bc")
+          $t('html.bc')
         }}</el-button>
       </el-form-item>
     </el-form>
@@ -41,33 +41,42 @@
 </template>
 
 <script>
-import { setStationConfigApi, getStationConfigApi } from "@/api/article";
+import { setStationConfigApi, getStationConfigApi } from '@/api/article'
+import { verifylonglat } from '@/utils/utils.js'
 export default {
   computed: {
     labelWidth() {
-      var labelWidth = "120px";
-      if (this.$i18n.locale == "en") {
-        labelWidth = "150px";
+      var labelWidth = '120px'
+      if (this.$i18n.locale == 'en') {
+        labelWidth = '150px'
       }
-      return labelWidth;
+      return labelWidth
     },
   },
   data() {
     return {
       ruleForm: {
-        Name: "",
-        Longitude: "",
-        Latitude: "",
+        Name: '',
+        Longitude: '',
+        Latitude: '',
       },
       rules: {
-        Name: [{ required: true, message: "请输入站点名称", trigger: "blur" }],
-        Longitude: [{ required: true, message: "请输入经度", trigger: "blur" }],
-        Latitude: [{ required: true, message: "请输入维度", trigger: "blur" }],
+        Name: [{ required: true, message: '请输入站点编号', trigger: 'blur' }],
+        Longitude: [
+          { required: true, message: '请输入站点名称', trigger: 'blur' },
+        ],
+        Latitude: [
+          {
+            required: true,
+            validator: verifylonglat,
+            trigger: 'blur',
+          },
+        ],
       },
-    };
+    }
   },
   mounted() {
-    this.getData();
+    this.getData()
   },
   methods: {
     getData() {
@@ -75,14 +84,14 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             try {
-              var data = JSON.parse(res.data);
-              this.ruleForm = data;
+              var data = JSON.parse(res.data)
+              this.ruleForm = data
             } catch (error) {
-              console.log(error, "解析失败可能是后端传过来的值是空");
+              console.log(error, '解析失败可能是后端传过来的值是空')
             }
           }
         })
-        .catch((err) => {});
+        .catch((err) => {})
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -91,20 +100,20 @@ export default {
             .then((res) => {
               if (res.code == 0) {
                 this.$message({
-                  message: this.$t("js.msgonxe"),
-                  type: "success",
-                });
-                this.getData();
+                  message: this.$t('js.msgonxe'),
+                  type: 'success',
+                })
+                this.getData()
               }
             })
-            .catch((err) => {});
+            .catch((err) => {})
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

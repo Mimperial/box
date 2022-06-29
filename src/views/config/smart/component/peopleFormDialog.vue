@@ -81,11 +81,11 @@
 </template>
 
 <script>
-import { addFacePerson, editFacePerson } from "@/api/article.js";
+import { addFacePerson, editFacePerson } from '@/api/article.js'
 export default {
   props: {
     title: {
-      default: "添加",
+      default: '添加',
       type: String,
     },
     bankDialogShow: {
@@ -102,49 +102,49 @@ export default {
   },
   data() {
     return {
-      iconBase64: "",
+      iconBase64: '',
       dialogVisible: false,
       personIdDisabled: false,
-      bankName: "",
-      imageUrl: "",
+      bankName: '',
+      imageUrl: '',
       ruleForm: {
-        PersonName: "",
-        Gender: "",
-        PersonId: "",
-        Image: "",
-        Enable: "1",
+        PersonName: '',
+        Gender: '',
+        PersonId: '',
+        Image: '',
+        Enable: '1',
       },
       rules: {
         PersonName: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 1, max: 8, message: "长度在 1 到 8 个字符", trigger: "blur" },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' },
         ],
-        Gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+        Gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
         PersonId: [
-          { required: true, message: "请输入工号", trigger: "blur" },
+          { required: true, message: '请输入工号', trigger: 'blur' },
           {
             min: 1,
             max: 30,
-            message: "长度在 1 到 30 个字符",
-            trigger: "blur",
+            message: '长度在 1 到 30 个字符',
+            trigger: 'blur',
           },
         ],
-        Enable: [{ required: true, message: "请选择状态", trigger: "change" }],
-        Image: [{ required: true, message: "请上传图片", trigger: "blur" }],
+        Enable: [{ required: true, message: '请选择状态', trigger: 'change' }],
+        Image: [{ required: true, message: '请上传图片', trigger: 'blur' }],
       },
-    };
+    }
   },
   watch: {
     bankDialogShow() {
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
   },
   methods: {
     dialogOpen() {
-      if (this.title == "编辑") {
+      if (this.title == '编辑') {
         // this.ruleForm = this.editData;
         // this.ruleForm.Image = this.httpUrl + this.editData.Url;
-        this.personIdDisabled = true;
+        this.personIdDisabled = true
         this.ruleForm = {
           PersonName: this.editData.PersonName,
           Gender: this.editData.Gender,
@@ -152,77 +152,78 @@ export default {
           Image: this.editData.Image,
           Enable: this.editData.Enable,
           GroupId: this.editData.GroupId,
-        };
-        this.imageUrl = this.httpUrl + this.editData.Url;
+        }
+        this.imageUrl = this.httpUrl + this.editData.Url
       } else {
-        this.personIdDisabled = false;
+        this.personIdDisabled = false
         this.ruleForm = {
-          PersonName: "",
-          Gender: "",
-          PersonId: "",
-          Image: "",
-          Enable: "1",
-        };
-        this.imageUrl = "";
+          PersonName: '',
+          Gender: '',
+          PersonId: '',
+          Image: '',
+          Enable: '1',
+        }
+        this.imageUrl = ''
       }
-      this.$refs["ruleForm"].resetFields();
+      this.$refs['ruleForm'].resetFields()
     },
     handleAvatarChange(res, file) {
-      console.log("res, file", res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log('res, file', res, file)
+      this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 2
 
       if (isLt2M) {
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
+        let reader = new FileReader()
+        reader.readAsDataURL(file)
         reader.onload = () => {
-          this.imageUrl = reader.result;
-          this.ruleForm.Image = reader.result.split(",")[1];
+          this.imageUrl = reader.result
+          this.ruleForm.Image = reader.result.split(',')[1]
           // console.log('reader.result',reader.result.split(','));
-        };
+        }
         reader.onerror = function (error) {
-          console.log("Error: ", error);
-        };
+          console.log('Error: ', error)
+        }
       } else {
-        this.$message.error("上传图片大小不能超过 2MB!");
+        this.$message.error('上传图片大小不能超过 2MB!')
       }
-      return false;
+      return false
     },
     handleClose() {
-      this.dialogVisible = false;
-      this.resetForm();
+      this.dialogVisible = false
+      this.resetForm()
     },
     submitForm() {
-      console.log("ruleForm", this.ruleForm);
+      console.log('ruleForm', this.ruleForm)
       if (!this.ruleForm.Image && !this.imageUrl)
-        return this.$message.error("请上传图片");
-      this.$refs["ruleForm"].validate(async (valid) => {
+        return this.$message.error('请上传图片')
+      this.$refs['ruleForm'].validate(async (valid) => {
         if (valid) {
-          let ruleRes = null;
-          if (this.title == "编辑") {
-            ruleRes = await editFacePerson(this.ruleForm);
+          let ruleRes = null
+          if (this.title == '编辑') {
+            ruleRes = await editFacePerson(this.ruleForm)
           } else {
-            this.ruleForm.GroupId = this.GroupId;
-            ruleRes = await addFacePerson(this.ruleForm);
+            this.ruleForm.GroupId = this.GroupId
+            ruleRes = await addFacePerson(this.ruleForm)
+            console.log('🤡 ~~ ruleRes', ruleRes)
           }
-          if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-          console.log("addFacePerson", ruleRes);
-          this.$emit("faceGroupsChange", this.GroupId);
-          this.handleClose();
+          if (ruleRes.code !== 0) return
+          console.log('addFacePerson', ruleRes)
+          this.$emit('faceGroupsChange', this.GroupId)
+          this.handleClose()
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     resetForm() {
-      console.log("resetForm-------------");
-      this.$refs["ruleForm"].resetFields();
+      console.log('resetForm-------------')
+      this.$refs['ruleForm'].resetFields()
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

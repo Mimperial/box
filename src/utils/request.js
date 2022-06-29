@@ -73,7 +73,7 @@ service.interceptors.response.use(
                 })
             } else {
                 Message({
-                    message: (res.msg ? res.msg : "未知错误！"),
+                    message: (res.msg||res.message ? res.msg||res.message : "未知错误！"),
                     type: 'error',
                     duration: 1500
                 })
