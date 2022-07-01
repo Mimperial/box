@@ -264,6 +264,7 @@ export default {
             this.$refs.tree.setCheckedNodes(this.data);
           } else {
             this.selectFlag(JSON.parse(obj.rolerList));
+            console.log("🤡 ~~ this.selectArr", this.selectArr)
             this.$refs.tree.setCheckedKeys(this.selectArr);
           }
         }
@@ -271,6 +272,7 @@ export default {
     },
     selectFlag(data, list) {
       var routers = list ? list : this.data;
+      console.log("🤡 ~~ routers", routers)
       routers.forEach((element) => {
         if (data.includes(element.meta.roles)) {
           this.selectArr.push(element.path);

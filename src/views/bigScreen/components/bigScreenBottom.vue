@@ -7,13 +7,30 @@
   >
     <div class="boxWrite">
       <span class="left">实时报警图片</span>
+      <div class="tabsChange floatLeft">
+        <img class="left-img floatLeft" :src="daping_shu" alt="" />
+        <div
+          :class="['floatLeft', 'text', { showBg: alarmIndex === 1 }]"
+          @click="changeAlarm(1)"
+        >
+          行为分析
+        </div>
+        <img class="center-img floatLeft" :src="daping_shu" alt="" />
+        <div
+          :class="['floatLeft', 'text', { showBg: alarmIndex === 2 }]"
+          @click="changeAlarm(2)"
+        >
+          人脸识别
+        </div>
+        <img class="right-img floatLeft" :src="daping_shu" alt="" />
+      </div>
       <span @click="toAlarm" class="right"
         >更多报警信息<img
           :src="require('@/assets/img/bigScreen/more.png')"
           alt=""
       /></span>
     </div>
-    <div class="alarmPicure">
+    <div class="alarmPicure" v-if="alarmIndex == 1">
       <transition-group
         @after-enter="afterEnter"
         name="alarmImage"
@@ -53,91 +70,134 @@
         </div>
       </transition-group>
     </div>
+    <div class="face" v-else>
+      <div class="face-recognize">
+        <!-- 人脸识别 -->
+        <div class="face-left">
+          <img :src="face_shibie" style="margin: 0 0.2rem" alt="" />
+          <template v-for="(item, index) in faceRecognition">
+            <faceRecoginze :key="index" :item="item"></faceRecoginze>
+          </template>
+        </div>
+        <!-- 人脸抓拍 -->
+        <div class="face-right">
+          <img
+            :src="face_zhuapai"
+            style="margin-right: 0.3rem"
+            alt=""
+            srcset=""
+          />
+          <div class="face-right-item">
+            <template v-for="(item, index) in faceCapturing">
+              <face-capture :item="item" :key="index"></face-capture>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import FunAreaSelect from "@/components/funAreaSelect.vue";
+import FunAreaSelect from '@/components/funAreaSelect.vue'
+import faceRecoginze from './botCom/faceRecoginze.vue'
+import faceCapture from './botCom/faceCapture.vue'
 export default {
   components: {
     FunAreaSelect,
+    faceRecoginze,
+    faceCapture,
   },
-  props: ["alarmCacle"],
+  props: ['alarmCacle', 'faceRecognition', 'faceCapturing'],
   data() {
     return {
-      bigScreenBottom: require("@/assets/img/bigScreen/bigScreenBottom.png"),
-      alarmHeader: require("@/assets/img/bigScreen/alarmHeader.png"),
+      bigScreenBottom: require('@/assets/img/bigScreen/bigScreenBottom.png'),
+      alarmHeader: require('@/assets/img/bigScreen/alarmHeader.png'),
+      daping_shu: require('@/assets/img/daping_shu.svg'),
+      face_shibie: require('@/assets/img/shibei.png'),
+      face_zhuapai: require('@/assets/img/zhuapai.png'),
       alarmImageList: [],
       maxImageCount: 5,
       hidden: false,
       timer: null,
       resizeTime: null,
-    };
+      alarmIndex: 1,
+      faceList: [],
+    }
   },
   mounted() {
-    document.addEventListener("visibilitychange", this.visibilitychange);
+    document.addEventListener('visibilitychange', this.visibilitychange)
     setInterval(() => {
       if (this.alarmCacle.length > 0) {
-        this.alarmImageList.push(this.alarmCacle[0]);
+        this.alarmImageList.push(this.alarmCacle[0])
         if (this.alarmImageList.length > this.maxImageCount + 1) {
-          this.alarmImageList.shift();
+          this.alarmImageList.shift()
         }
-        this.$emit("change", true);
+        console.log('🤡 ~~ this.alarmImageList', this.alarmImageList)
+        this.handlerFaceList(this.alarmImageList)
+        this.$emit('change', true)
       }
-    }, 3000);
-    window.addEventListener("resize", this.resizeWidth);
+    }, 3000)
+    window.addEventListener('resize', this.resizeWidth)
   },
   beforeDestroy() {
-    document.removeEventListener("visibilitychange", this.visibilitychange);
-    window.removeEventListener("resize", this.resizeWidth);
+    document.removeEventListener('visibilitychange', this.visibilitychange)
+    window.removeEventListener('resize', this.resizeWidth)
   },
   methods: {
+    handlerFaceList(list) {
+      this.faceList = this.alarmImageList.filter((item) => {
+        return item.name == ''
+      })
+    },
+    changeAlarm(index) {
+      this.alarmIndex = index
+    },
     resizeWidth() {
-      this.hidden = true;
+      this.hidden = true
       if (this.resizeTime) {
-        clearTimeout(this.resizeTime);
-        this.resizeTime = null;
+        clearTimeout(this.resizeTime)
+        this.resizeTime = null
       }
       this.resizeTime = setTimeout(() => {
-        this.hidden = false;
-        this.resizeTime = null;
-      }, 1000);
+        this.hidden = false
+        this.resizeTime = null
+      }, 1000)
     },
     visibilitychange(event) {
-      if (document.visibilityState == "hidden") {
-        this.hidden = true;
+      if (document.visibilityState == 'hidden') {
+        this.hidden = true
       } else {
         if (!this.timer) {
           this.timer = setTimeout(() => {
-            this.hidden = false;
-            this.timer = null;
-          }, 1000);
+            this.hidden = false
+            this.timer = null
+          }, 1000)
         }
       }
     },
     toAlarm() {
-      this.$router.push("/home/alarmData/intelligenceShow");
+      this.$router.push('/home/alarmData/intelligenceShow')
     },
     afterEnter(el) {
-      var index = Number(el.dataset.index);
+      var index = Number(el.dataset.index)
       if (this.alarmImageList.length > this.maxImageCount) {
-        el.style.left = 3.64 * (index - 1) + "rem";
+        el.style.left = 3.64 * (index - 1) + 'rem'
       } else {
-        el.style.left = 3.64 * index + "rem";
+        el.style.left = 3.64 * index + 'rem'
       }
     },
     enter(el) {
-      var index = Number(el.dataset.index);
+      var index = Number(el.dataset.index)
       if (this.alarmImageList.length > this.maxImageCount) {
-        index = index - 1;
+        index = index - 1
       }
-      var fontSize = document.querySelector("html").style.fontSize;
-      fontSize = Number(fontSize.replace("px", ""));
-      el.style.left =
-        parseInt((el.offsetWidth + fontSize * 0.2) * index) + "px";
+      var fontSize = document.querySelector('html').style.fontSize
+      fontSize = Number(fontSize.replace('px', ''))
+      el.style.left = parseInt((el.offsetWidth + fontSize * 0.2) * index) + 'px'
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -150,6 +210,30 @@ export default {
     padding: 0.19rem;
     box-sizing: border-box;
     overflow: hidden;
+    .floatLeft {
+      float: left;
+    }
+    .tabsChange {
+      display: inline-block;
+      .text {
+        font-size: 0.14rem;
+        font-weight: 500;
+        color: #66ccff;
+        line-height: 0.3rem;
+        padding: 0 0.2rem;
+        cursor: pointer;
+      }
+      .left-img {
+        margin-left: 0.5rem;
+      }
+      .center-img {
+      }
+      .right-img {
+      }
+      .showBg {
+        background-color: #2c4685;
+      }
+    }
     .left {
       float: left;
       font-size: 0.16rem;
@@ -217,6 +301,33 @@ export default {
         width: 100%;
         height: 100%;
       }
+    }
+  }
+  .face-recognize {
+    width: 18rem;
+    height: 1.93rem;
+    overflow: hidden;
+    padding: 0 0.2rem;
+    position: relative;
+    display: flex;
+    .face-left {
+      width: 8.5rem;
+      height: 100%;
+      float: left;
+      display: flex;
+    }
+    .face-right {
+      width: 9.41rem;
+      height: 100%;
+      float: left;
+      display: flex;
+      flex: 1;
+      .face-right-item {
+        width: 100%;
+        display: flex;
+      }
+    }
+    .inlineBolck {
     }
   }
 }
