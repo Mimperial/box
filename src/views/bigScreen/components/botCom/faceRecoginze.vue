@@ -13,7 +13,7 @@
       <img class="reco-img" :src="item.FaceUrl" alt="" />
       <div class="reco-bottom">
         <div>识别度:{{ item.FaceThreshold }}</div>
-        <div>相机名称:{{ item.CameraId }}</div>
+        <div>通道:{{ item.CameraId }}</div>
       </div>
     </div>
     <div class="vs-img">
@@ -80,7 +80,7 @@ export default {
   }
   .reco-img {
     width: 80%;
-    height: 80%;
+    height: 77%;
   }
   .vs-img {
     position: absolute;

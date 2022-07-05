@@ -16,7 +16,7 @@
             <el-table-column align="center" label="" width="50">
               <template slot-scope="scope">
                 <el-radio v-model="selectCamerId" :label="scope.row.id">{{
-                  ""
+                  ''
                 }}</el-radio>
               </template>
             </el-table-column>
@@ -76,7 +76,7 @@
                 <el-checkbox
                   @change="startOrClose(item)"
                   :label="item.alarmNumber"
-                  >{{ "" }}</el-checkbox
+                  >{{ '' }}</el-checkbox
                 >
               </div>
               <div class="algorithmIcon">
@@ -128,10 +128,10 @@ import {
   setAlgorithmApi,
   editCameraApi,
   getFaceGroups,
-} from "@/api/article";
-import BaseIcon from "@/components/baseIcon.vue";
-import EventRight from "./component/eventRight.vue";
-import CloningDialog from "./component/cloningDialog.vue";
+} from '@/api/article'
+import BaseIcon from '@/components/baseIcon.vue'
+import EventRight from './component/eventRight.vue'
+import CloningDialog from './component/cloningDialog.vue'
 
 export default {
   components: {
@@ -144,37 +144,40 @@ export default {
       peopleIds: [],
       peopleList: [],
       peopleSleShow: false,
-      currentRuleId: "", // 规则id
+      currentRuleId: '', // 规则id
       selectChannels: [], //所有的"选择通道"
-      selectCamerId: "",
+      selectCamerId: '',
       algorithmList: [],
-      clickAlgorithmId: "",
+      clickAlgorithmId: '',
       selectAlgorithmIds: [], //选中的算法ids
       algorithmDataCacle: {}, //缓存报警数据对于切换算法设置报错上次的数据 AlgCode:object
       cloningDialogVisible: false, //控制克隆弹框内容
       cloningData: {}, //克隆数据的原始data
       ruleList: [], // 规则列表
-    };
+    }
   },
   async created() {
     // this.getFaceGroups();
-    await this.getCamera();
-    await this.getAlgorithmList();
-    await this.getRuleList();
+    await this.getCamera()
+    await this.getAlgorithmList()
+    await this.getRuleList()
   },
   watch: {
-    selectAlgorithmIds() {
-      
-      this.peopleSleShow = this.selectAlgorithmIds.some(
-        (item) => item == "400"
-      )
-      if(this.algorithmList.length && !this.algorithmList.some((item) => item.alarmNumber == "400")) {
-         this.peopleSleShow =false
-      }
-
-      if (this.peopleSleShow) {
-        this.getFaceGroups();
-      }
+    selectAlgorithmIds: {
+      handler: function () {
+        this.peopleSleShow = this.selectAlgorithmIds.some(
+          (item) => item == '400'
+        )
+        if (this.peopleSleShow) {
+          this.getFaceGroups()
+        }
+        if (
+          this.algorithmList.length &&
+          !this.algorithmList.some((item) => item.alarmNumber == '400')
+        ) {
+          this.peopleSleShow = false
+        }
+      },
     },
   },
   computed: {
@@ -182,109 +185,119 @@ export default {
       //非选中的相机
       return this.selectChannels.filter(
         (item) => item.id !== this.selectCamerId
-      );
+      )
     },
     selectCamera() {
       var cameraData = this.selectChannels.find(
         (item) => item.id === this.selectCamerId
-      );
+      )
       if (cameraData && cameraData.algInfos && cameraData.algInfos.length > 0) {
         cameraData.algInfos.forEach((element) => {
-          this.algorithmDataCacle[element.AlgCode] = element;
-        });
+          this.algorithmDataCacle[element.AlgCode] = element
+        })
       }
-      return cameraData;
+      return cameraData
     },
     selectAlgorithm() {
       var algorithmData = this.algorithmList.find(
         (item) => item.id === this.clickAlgorithmId
-      );
-      return algorithmData;
+      )
+      return algorithmData
     },
   },
   methods: {
     async getFaceGroups() {
-      const ruleRes = await getFaceGroups({ GroupName: "" });
-      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-      this.peopleList = ruleRes.data.row;
+      const ruleRes = await getFaceGroups({ GroupName: '' })
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+      console.log('🤡 ~~ ruleRes', ruleRes)
+      this.peopleList = ruleRes.data.row
       if (this.peopleIds.length) {
-        let list = [];
+        let list = []
         this.peopleIds.forEach((item) => {
-          let status = this.peopleList.find((em) => em.GroupId == item);
+          let status = this.peopleList.find((em) => em.GroupId == item)
           if (status) {
-            list.push(item);
+            list.push(item)
           }
-        });
-        this.peopleIds = list;
+        })
+        this.peopleIds = list
       }
     },
     async cloningSure(data) {
-      let { loading, close, loadingText, algInfos, length, ids, setCloseFlag,GroupIds,RuleId } =
-        data;
+      let {
+        loading,
+        close,
+        loadingText,
+        algInfos,
+        length,
+        ids,
+        setCloseFlag,
+        GroupIds,
+        RuleId,
+      } = data
       if (!ids || ids.length == 0) {
         this.$message({
-          message: "请勾选需要克隆的相机！",
-          type: "warning",
-        });
-        return;
+          message: '请勾选需要克隆的相机！',
+          type: 'warning',
+        })
+        return
       }
-      loading();
-      setCloseFlag(true); //克隆中禁止关闭
+      loading()
+      setCloseFlag(true) //克隆中禁止关闭
       try {
         for (let i = 0; i < length; i++) {
-          loadingText("正在克隆：" + i + "/" + length);
-           await editCameraApi({
-        id: ids[i],
-        RuleId: RuleId,
-        GroupIds: GroupIds || " ",
-      });
+          loadingText('正在克隆：' + i + '/' + length)
+          await editCameraApi({
+            id: ids[i],
+            RuleId: RuleId,
+            GroupIds: GroupIds || ' ',
+          })
           await setAlgorithmApi({
             id: ids[i],
             AlgInfos: JSON.stringify(algInfos),
-          });
+          })
         }
-        loadingText("请稍等...");
+        loadingText('请稍等...')
         setTimeout(() => {
-          this.getCamera(false);
-          setCloseFlag(false);
-          close();
+          this.getCamera(false)
+          setCloseFlag(false)
+          close()
           this.$message({
-            message: "克隆完成！",
-            type: "success",
-          });
-        }, 500);
+            message: '克隆完成！',
+            type: 'success',
+          })
+        }, 500)
       } catch (error) {
-        setCloseFlag(false);
-        close();
-        this.$message.error("克隆失败,请检查接口！");
+        setCloseFlag(false)
+        close()
+        this.$message.error('克隆失败,请检查接口！')
       }
     },
     cloning(data) {
-      this.cloningData = data;
-      this.cloningDialogVisible = true;
+      this.cloningData = data
+      this.cloningDialogVisible = true
     },
     clickAlgorithm(item) {
       //点击切换算法设置
       if (this.clickAlgorithmId != item.id) {
-        this.clickAlgorithmId = item.id;
-        var data = this.$refs.EventRight.getInfo();
+        this.clickAlgorithmId = item.id
+        var data = this.$refs.EventRight.getInfo()
         /**
          * 取出的是上一个的数据
          */
-        this.setAlgorithmDataCacle(data);
+        this.setAlgorithmDataCacle(data)
       }
     },
     /**
      * 开启或者关闭算法
      */
     startOrClose(item) {
-      let { alarmNumber } = item;
+      let { alarmNumber } = item
       if (this.algorithmDataCacle[alarmNumber]) {
-        this.setAlgorithmDataCacleAlarmNumber(alarmNumber);
+        this.setAlgorithmDataCacleAlarmNumber(alarmNumber)
       }
     },
     setAlgorithmDataCacle(data) {
-      let { areas, times, alarmNumber, Parameters } = data;
+      let { areas, times, alarmNumber, Parameters } = data
 
       if (!this.algorithmDataCacle[alarmNumber]) {
         this.algorithmDataCacle[alarmNumber] = {
@@ -292,56 +305,56 @@ export default {
           Are: areas,
           Time: times,
           Parameters: Parameters,
-        };
-        this.setAlgorithmDataCacleAlarmNumber(alarmNumber);
+        }
+        this.setAlgorithmDataCacleAlarmNumber(alarmNumber)
       } else {
-        this.algorithmDataCacle[alarmNumber]["Are"] = areas;
-        this.algorithmDataCacle[alarmNumber]["Time"] = times;
-        this.setAlgorithmDataCacleAlarmNumber(alarmNumber);
-        this.algorithmDataCacle[alarmNumber]["Parameters"] = Parameters;
+        this.algorithmDataCacle[alarmNumber]['Are'] = areas
+        this.algorithmDataCacle[alarmNumber]['Time'] = times
+        this.setAlgorithmDataCacleAlarmNumber(alarmNumber)
+        this.algorithmDataCacle[alarmNumber]['Parameters'] = Parameters
       }
     },
     setAlgorithmDataCacleAlarmNumber(alarmNumber) {
-      this.algorithmDataCacle[alarmNumber]["Switch"] =
-        this.selectAlgorithmIds.includes(alarmNumber) ? 1 : 0;
+      this.algorithmDataCacle[alarmNumber]['Switch'] =
+        this.selectAlgorithmIds.includes(alarmNumber) ? 1 : 0
     },
     clearCacleData() {
       //清除上次缓存的信息 切换算法设置报错上次的数据
-      this.algorithmDataCacle = {};
+      this.algorithmDataCacle = {}
     },
     async save({ data, setLoading }) {
       if (this.peopleSleShow && this.peopleIds.length < 1) {
-        return this.$message.info("请选择人员库");
+        return this.$message.info('请选择人员库')
       } else if (!this.peopleSleShow) {
-        this.peopleIds = [];
+        this.peopleIds = []
       }
       // return false;
-      this.setAlgorithmDataCacle(data);
+      this.setAlgorithmDataCacle(data)
       // 给通道设置规则 GroupIds
       await editCameraApi({
         id: this.selectCamerId,
         RuleId: this.currentRuleId,
-        GroupIds: this.peopleIds.join(",") || " ",
-      });
-      var AlgInfos = [];
+        GroupIds: this.peopleIds.join(',') || ' ',
+      })
+      var AlgInfos = []
       if (this.algorithmList && this.algorithmList.length > 0) {
         // 在算法数组中过滤掉当前规则里不存在的算法
         this.selectAlgorithmIds = this.selectAlgorithmIds.filter((item) =>
           this.algorithmList.some((ele) => ele.alarmNumber === item)
-        );
+        )
       }
 
       this.selectAlgorithmIds.forEach((item) => {
         const element = JSON.parse(
           JSON.stringify(this.algorithmDataCacle[item])
-        );
+        )
         if (element.Parameters && element.Parameters.length > 0) {
           element.Parameters.forEach((item) => {
-            item.Value = String(item.Value);
-          });
+            item.Value = String(item.Value)
+          })
         }
-        AlgInfos.push(element);
-      });
+        AlgInfos.push(element)
+      })
 
       // for (const key in this.algorithmDataCacle) {
       //   console.log(key)
@@ -356,172 +369,172 @@ export default {
       //   }
       //   AlgInfos.push(element);
       // }
-      setLoading(true);
+      setLoading(true)
       setAlgorithmApi({
         id: this.selectCamera.id,
         AlgInfos: JSON.stringify(AlgInfos),
       })
         .then((res) => {
           if (res.code == 0) {
-            this.clearCacleData();
-            this.getCamera(false);
+            this.clearCacleData()
+            this.getCamera(false)
             this.$message({
-              type: "success",
-              message: this.$t("js.msgonxe"),
-            });
+              type: 'success',
+              message: this.$t('js.msgonxe'),
+            })
           }
-          setLoading(false);
+          setLoading(false)
         })
         .catch((err) => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     },
     async clickSelectChannel(row) {
-      const { id, RuleId } = row;
+      const { id, RuleId } = row
       if (row.GroupIds && row.GroupIds.length > 1) {
         // console.log("peopleList12");
-        let arr = row.GroupIds.split(",");
+        let arr = row.GroupIds.split(',')
         if (this.peopleList.length && arr.length) {
-          let list = [];
+          let list = []
           arr.forEach((item) => {
-            let status = this.peopleList.find((em) => em.GroupId == item);
+            let status = this.peopleList.find((em) => em.GroupId == item)
             if (status) {
-              list.push(item);
+              list.push(item)
             }
-          });
-          this.peopleIds = list;
+          })
+          this.peopleIds = list
         }
         // this.peopleIds = row.GroupIds.split(",");
       } else {
-        this.peopleIds = [];
+        this.peopleIds = []
       }
       // 切换相机
       if (this.selectCamerId !== id) {
-        this.selectCamerId = id;
-        this.getAlgorithm();
-        this.clearCacleData();
+        this.selectCamerId = id
+        this.getAlgorithm()
+        this.clearCacleData()
       }
       // 获取通道下的规则
-      const ruleRes = await getRule({ RuleId: RuleId });
-      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-      let data = JSON.parse(ruleRes.data);
-      this.currentRuleId = data[0].RuleId;
-      await this.handleSelect(this.currentRuleId,true);
+      const ruleRes = await getRule({ RuleId: RuleId })
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+      let data = JSON.parse(ruleRes.data)
+      this.currentRuleId = data[0].RuleId
+      await this.handleSelect(this.currentRuleId, true)
     },
     getAlgorithm() {
       getAlgorithmApi({ id: this.selectCamerId }).then((res) => {
         //根据id获取配置的算法
         try {
-          var data = JSON.parse(res.data);
+          var data = JSON.parse(res.data)
           this.selectAlgorithmIds = data
             .filter((item) => item.AlgCode && item.Switch == 1)
-            .map((item) => item.AlgCode);
+            .map((item) => item.AlgCode)
         } catch (error) {
-          this.selectAlgorithmIds = [];
-          console.log("暂时没有进行配置的算法");
+          this.selectAlgorithmIds = []
+          console.log('暂时没有进行配置的算法')
         }
-      });
+      })
     },
     async getAlgorithmList() {
       //获取所有
-      let res = await getAlgorithmListApi({});
-      console.log("getCamera--2");
+      let res = await getAlgorithmListApi({})
+      console.log('getCamera--2')
       try {
-        var data = JSON.parse(res.data);
-        this.algorithmList = data;
-        this.clickAlgorithmId = data[0].id;
+        var data = JSON.parse(res.data)
+        this.algorithmList = data
+        this.clickAlgorithmId = data[0].id
       } catch (error) {
-        console.log(error, "解析错误请检查getAlgorithmListApi接口");
+        console.log(error, '解析错误请检查getAlgorithmListApi接口')
       }
     },
     async getCamera(setSelectCamerId = true) {
-      let res = await getCameraApi({});
+      let res = await getCameraApi({})
       if (res.code == 0) {
-        console.log("getCamera--1");
-        var data = JSON.parse(res.data);
-        console.log(data, "data-----");
+        console.log('getCamera--1')
+        var data = JSON.parse(res.data)
+        console.log(data, 'data-----')
         if (data && data.length > 0) {
           if (setSelectCamerId) {
             //设置初始化相机选择
-            this.selectCamerId = data[0].id;
-           
+            this.selectCamerId = data[0].id
+
             if (data[0].GroupIds && data[0].GroupIds.length > 1) {
-              this.peopleIds = data[0].GroupIds.split(",");
+              this.peopleIds = data[0].GroupIds.split(',')
             } else {
-              this.peopleIds = [];
+              this.peopleIds = []
             }
           }
           this.selectChannels = data.map((item) => {
             //这里进行测报警信息数据转换成json格式
             try {
-              item.algInfos = JSON.parse(item.algInfos);
+              item.algInfos = JSON.parse(item.algInfos)
             } catch (error) {
-              console.log("解析失败，可能没有报警边框设置！");
+              console.log('解析失败，可能没有报警边框设置！')
             }
-            return item;
-          });
-          this.getAlgorithm(); //获取当前相机的算法
+            return item
+          })
+          this.getAlgorithm() //获取当前相机的算法
           // this.handleSelect(this.currentRuleId)
         }
       }
     },
     cloningHighlight(data) {
       //判断克隆字是否高亮显示
-      var flag = false;
+      var flag = false
       if (data && data.length > 0) {
-        flag = data.some((item) => item.Time && item.Are);
+        flag = data.some((item) => item.Time && item.Are)
       }
-      return !flag;
+      return !flag
     },
     // 获取规则列表
     async getRuleList() {
-      const result = await getRule({});
-      console.log("getCamera--3");
-      const { code, msg, data } = result;
-      let newData = JSON.parse(data);
+      const result = await getRule({})
+      console.log('getCamera--3')
+      const { code, msg, data } = result
+      let newData = JSON.parse(data)
       if (code !== 0) {
-        return this.$message.error(msg);
+        return this.$message.error(msg)
       }
-      this.ruleList = newData.reverse();
+      this.ruleList = newData.reverse()
       // this.currentRuleId = newData[0].RuleId;
-       this.currentRuleId = this.selectChannels[0].RuleId;
-      console.log("newData--", newData);
-      await this.handleSelect(this.currentRuleId,true);
+      this.currentRuleId = this.selectChannels[0].RuleId
+      console.log('newData--', newData)
+      await this.handleSelect(this.currentRuleId, true)
     },
     // 选择规则
     async handleSelect(currentId, type) {
       // if (!type) {
       //   this.selectAlgorithmIds = [];
       // }
-     
+
       try {
-        const result = await getAlgorithmListApi({});
-        this.algorithmList = JSON.parse(result.data);
+        const result = await getAlgorithmListApi({})
+        this.algorithmList = JSON.parse(result.data)
       } catch (err) {
-        console.log(err.error, "解析错误请检查getAlgorithmListApi接口");
+        console.log(err.error, '解析错误请检查getAlgorithmListApi接口')
       }
-      let currentItem = this.ruleList.find((item) => item.RuleId === currentId);
+      let currentItem = this.ruleList.find((item) => item.RuleId === currentId)
       if (!currentItem && this.ruleList && this.ruleList.length > 0) {
-        currentItem = this.ruleList[0];
-        currentItem = this.ruleList[0];
+        currentItem = this.ruleList[0]
+        currentItem = this.ruleList[0]
       }
       // 在算法数组中过滤掉当前规则里不存在的算法
       this.algorithmList = this.algorithmList.filter((item) =>
         currentItem?.AlgList.some((ele) => ele === item.alarmNumber)
-      );
-        this.peopleSleShow = this.selectAlgorithmIds.some(
-        (item) => item == "400"
       )
-      if(this.algorithmList.length && !this.algorithmList.some((item) => item.alarmNumber == "400")) {
-         this.peopleSleShow =false
+      this.peopleSleShow = this.selectAlgorithmIds.some((item) => item == '400')
+      if (
+        this.algorithmList.length &&
+        !this.algorithmList.some((item) => item.alarmNumber == '400')
+      ) {
+        this.peopleSleShow = false
       }
     },
   },
-};
+}
 </script>
 
-<style>
-</style>
+<style></style>
 <style lang="scss" scoped>
 /deep/ .is-scrolling-none::-webkit-scrollbar {
   width: 5px;
