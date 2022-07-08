@@ -166,9 +166,9 @@ export default {
       this.cardData = []
       this.loading = true
       const parms = { ...this.form, ...this.page }
-      const cameraId =
-        this.form.cameraId.map((item) => "'" + item + "'").join(',') ||
-        this.camerList.map((item) => "'" + item.channelId + "'").join(',')
+      const cameraId = this.form.cameraId
+        .map((item) => "'" + item + "'")
+        .join(',')
       if (this.model === 1) {
         // 调用行为分析接口
         const alarmType = this.form.alarmType
