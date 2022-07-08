@@ -8,14 +8,18 @@
       :close-on-click-modal="false"
     >
       <div>
+        <el-form :model="form" inline>
+          <el-form-item label="导入图片">
+            <el-input v-model="form.model"></el-input>
+          </el-form-item>
+        </el-form>
         <el-upload
           class="upload-demo"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          multiple
-          :limit="3"
-          :http-request="uploadFn"
+          action=""
+          accept=".rar,.zip"
+          :on-change="changeFile"
         >
-          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button type="">选择</el-button>
         </el-upload>
       </div>
       <div style="text-align: center" slot="footer" class="dialog-footer">
@@ -27,7 +31,7 @@
         <el-button
           style="background-color: #010b56"
           type="primary"
-          @click="dialogVisible = false"
+          @click="upload"
           >确 定</el-button
         >
       </div>
@@ -36,107 +40,88 @@
 </template>
 
 <script>
+import { getToken } from '@/utils/token.js'
+import { faceFileupload } from '@/api/article.js'
+import axios from '@/utils/request'
+
 export default {
   props: {
-    bankDialogShow: {
-      default: false,
-      type: Boolean,
+    GroupId: {
+      type: String,
     },
   },
   data() {
     return {
-      uploadFn: null,
       dialogVisible: false,
-      bankName: "",
-      imageUrl: "",
-      ruleForm: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
+      form: { model: '' },
+      httpUrl:
+        process.env.NODE_ENV == 'dev'
+          ? process.env.VUE_APP_URL + ':8183'
+          : window.location.origin,
+      header: {
+        Token: getToken(),
       },
-      rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        region: [
-          { required: true, message: "请选择活动区域", trigger: "change" },
-        ],
-        date1: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择日期",
-            trigger: "change",
-          },
-        ],
-        date2: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择时间",
-            trigger: "change",
-          },
-        ],
-        type: [
-          {
-            type: "array",
-            required: true,
-            message: "请至少选择一个活动性质",
-            trigger: "change",
-          },
-        ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" },
-        ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }],
-      },
-    };
-  },
-  watch: {
-    bankDialogShow() {
-      this.dialogVisible = true;
-    },
+      file: '',
+    }
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    upload() {
+      if (!this.file) {
+        this.$message({
+          message: '请上传文件',
+          type: 'warning',
+        })
+        return
+      }
+      axios
+        .file('/api/web/file_upload', { file: this.file }, this.httpUrl)
+        .then(async (res) => {
+          await this.addImage(res.data)
+          this.handleClose()
+          // 导入图片添加进去
+        })
+        .catch((e) => {
+          this.handleClose()
+        })
     },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
+    changeFile(file) {
+      this.file = file.raw
+      this.form.model = file.name
+    },
+    addImage(data) {
+      return new Promise((resolve, rej) => {
+        axios({
+          method: 'post',
+          url: '/api/web/batchAddFacePerson',
+          data: {
+            BatchFile: data,
+            GroupId: this.GroupId,
+          },
+        }).then((res) => {
+          resolve(res)
+        })
+      })
     },
     handleClose() {
-      this.dialogVisible = false;
+      this.dialogVisible = false
+      this.form.model = ''
+      this.file = ''
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          alert('submit!')
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -168,5 +153,10 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.upload-demo {
+  position: absolute;
+  left: 52%;
+  top: 34%;
 }
 </style>
