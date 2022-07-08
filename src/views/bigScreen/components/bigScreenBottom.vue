@@ -133,7 +133,6 @@ export default {
         if (this.alarmImageList.length > this.maxImageCount + 1) {
           this.alarmImageList.shift()
         }
-        console.log('🤡 ~~ this.alarmImageList', this.alarmImageList)
         this.handlerFaceList(this.alarmImageList)
         this.$emit('change', true)
       }

@@ -70,12 +70,12 @@
                 <el-button @click="deleteFacePerson" class="right-top-btn"
                   >删除</el-button
                 >
-                <!-- <el-button
+                <el-button
                   class="right-top-btn"
-                  @click="importShow = !importShow"
+                  @click="$refs.peopleDialog.dialogVisible = true"
                   >导入</el-button
                 >
-                <el-button class="right-top-btn">导出</el-button> -->
+                <el-button class="right-top-btn">导出</el-button>
               </div>
             </el-col>
             <el-col :span="8">
@@ -108,7 +108,7 @@
               <el-row :gutter="10">
                 <el-col :span="12">{{ item.PersonName }}</el-col>
                 <el-col style="text-align: right" :span="12">{{
-                  item.Gender == 1 ? "男" : "女"
+                  item.Gender == 1 ? '男' : '女'
                 }}</el-col>
               </el-row>
             </div>
@@ -146,21 +146,22 @@
     >
     </peopleFormDialog>
     <!-- 导入 -->
-    <peopleImportDialog :bankDialogShow="importShow"> </peopleImportDialog>
+    <peopleImportDialog ref="peopleDialog" :GroupId="groupActive">
+    </peopleImportDialog>
   </div>
 </template>
 
 <script>
-import BaseIcon from "@/components/baseIcon.vue";
-import peopleBankDialog from "./component/peopleBankDialog.vue";
-import peopleFormDialog from "./component/peopleFormDialog.vue";
-import peopleImportDialog from "./component/peopleImportDialog.vue";
+import BaseIcon from '@/components/baseIcon.vue'
+import peopleBankDialog from './component/peopleBankDialog.vue'
+import peopleFormDialog from './component/peopleFormDialog.vue'
+import peopleImportDialog from './component/peopleImportDialog.vue'
 import {
   getFaceGroups,
   deleteFaceGroup,
   getFacePersons,
   deleteFacePerson,
-} from "@/api/article.js";
+} from '@/api/article.js'
 
 export default {
   components: {
@@ -173,147 +174,146 @@ export default {
     return {
       groupActive: null,
       personActive: null,
-      PersonName: "",
-      input1: "",
+      PersonName: '',
+      input1: '',
       page: {
         total: 0,
         size: 18,
         current: 1,
       },
-      bankDialogTitle: "新建",
+      bankDialogTitle: '新建',
       bankDialogShow: false,
       editData: {},
-      formTitle: "添加",
+      formTitle: '添加',
       formShow: false,
       formData: {},
-      importShow: false,
       faceGroups: [],
       personList: [],
-      httpUrl: "",
-    };
+      httpUrl: '',
+    }
   },
   created() {
     this.httpUrl =
-      process.env.NODE_ENV == "dev"
+      process.env.NODE_ENV == 'dev'
         ? process.env.VUE_APP_URL
-        : window.location.origin;
-    this.init();
+        : window.location.origin
+    this.init()
     // this.faceGroupsChange();
   },
   methods: {
     async faceGroupsChange(val, PersonName) {
       const ruleRes = await getFacePersons({
-        GroupId: `'${val}'` || "",
+        GroupId: `'${val}'` || '',
         curPage: String(this.page.current),
         pageNum: String(this.page.size),
-        PersonName: PersonName || "",
-      });
-      console.log("faceGroupsChange", ruleRes);
-      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-      this.groupActive = val;
-      this.personList = ruleRes.data.row;
-      this.page.total = ruleRes.data.total;
+        PersonName: PersonName || '',
+      })
+      console.log('faceGroupsChange', ruleRes)
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+      this.groupActive = val
+      this.personList = ruleRes.data.row
+      this.page.total = ruleRes.data.total
     },
     PersonNameChange(val) {
-      this.page.current = 1;
-      this.faceGroupsChange(this.groupActive, val);
+      this.page.current = 1
+      this.faceGroupsChange(this.groupActive, val)
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.faceGroupsChange(this.groupActive);
+      this.page.size = val
+      this.faceGroupsChange(this.groupActive)
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.faceGroupsChange(this.groupActive);
+      this.page.current = val
+      this.faceGroupsChange(this.groupActive)
     },
     getBankDialog(val, item = {}) {
-      this.bankDialogTitle = val;
-      this.bankDialogShow = !this.bankDialogShow;
-      if (val == "修改") {
-        this.editData = item;
+      this.bankDialogTitle = val
+      this.bankDialogShow = !this.bankDialogShow
+      if (val == '修改') {
+        this.editData = item
       }
     },
     getForm(val, item = {}) {
-      this.formTitle = val;
-      this.formShow = !this.formShow;
-      if (val == "编辑") {
-        this.personActive = item.PersonId;
-        this.formData = item;
+      this.formTitle = val
+      this.formShow = !this.formShow
+      if (val == '编辑') {
+        this.personActive = item.PersonId
+        this.formData = item
       }
     },
     init() {
-      this.getFaceGroups();
+      this.getFaceGroups()
     },
     deleteFacePerson() {
-      this.$confirm("确定要删除该数据吗?", "提示", {
-        confirmButtonText: this.$t("js.msgonez"),
-        cancelButtonText: this.$t("js.msgoneq"),
-        type: "warning",
+      this.$confirm('确定要删除该数据吗?', '提示', {
+        confirmButtonText: this.$t('js.msgonez'),
+        cancelButtonText: this.$t('js.msgoneq'),
+        type: 'warning',
       })
         .then(() => {
           deleteFacePerson({
             PersonId: this.personActive,
           }).then((ruleRes) => {
-            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-            this.faceGroupsChange(this.groupActive);
+            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+            this.faceGroupsChange(this.groupActive)
             this.$message({
-              type: "success",
-              message: this.$t("js.mqsgone"),
-            });
-          });
+              type: 'success',
+              message: this.$t('js.mqsgone'),
+            })
+          })
         })
         .catch((err) => {
           this.$message({
-            type: "info",
-            message: this.$t("js.msgonoe"),
-          });
-        });
+            type: 'info',
+            message: this.$t('js.msgonoe'),
+          })
+        })
     },
     async getFaceGroups(val) {
-      console.log("val", val);
+      console.log('val', val)
       // GroupName
-      const ruleRes = await getFaceGroups({ GroupName: val || "" });
-      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-      this.faceGroups = ruleRes.data.row;
+      const ruleRes = await getFaceGroups({ GroupName: val || '' })
+      if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+      this.faceGroups = ruleRes.data.row
       if (this.groupActive == null) {
-        this.faceGroupsChange(this.faceGroups[0]["GroupId"]);
+        this.faceGroupsChange(this.faceGroups[0]['GroupId'])
       }
     },
 
     deleteFaceGroup(GroupId) {
       if (this.personList.length)
         return this.$message({
-          type: "info",
-          message: "该群组已涉及人员，不允许删除!",
-        });
+          type: 'info',
+          message: '该群组已涉及人员，不允许删除!',
+        })
 
-      this.$confirm("确定要删除该数据吗?", "提示", {
-        confirmButtonText: this.$t("js.msgonez"),
-        cancelButtonText: this.$t("js.msgoneq"),
-        type: "warning",
+      this.$confirm('确定要删除该数据吗?', '提示', {
+        confirmButtonText: this.$t('js.msgonez'),
+        cancelButtonText: this.$t('js.msgoneq'),
+        type: 'warning',
       })
         .then(() => {
           deleteFaceGroup({
             GroupId,
           }).then((ruleRes) => {
-            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg);
-            this.groupActive = null;
-            this.getFaceGroups();
+            if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
+            this.groupActive = null
+            this.getFaceGroups()
             this.$message({
-              type: "success",
-              message: this.$t("js.mqsgone"),
-            });
-          });
+              type: 'success',
+              message: this.$t('js.mqsgone'),
+            })
+          })
         })
         .catch((err) => {
           this.$message({
-            type: "info",
-            message: this.$t("js.msgonoe"),
-          });
-        });
+            type: 'info',
+            message: this.$t('js.msgonoe'),
+          })
+        })
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
