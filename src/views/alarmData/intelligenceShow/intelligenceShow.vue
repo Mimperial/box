@@ -163,6 +163,7 @@ export default {
     },
 
     search() {
+      this.cardData = []
       this.loading = true
       const parms = { ...this.form, ...this.page }
       const cameraId =

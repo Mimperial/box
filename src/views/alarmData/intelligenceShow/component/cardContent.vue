@@ -107,6 +107,7 @@ export default {
   computed: {
     handlerCardData: {
       get: function () {
+        console.log(this.cardData)
         return this.cardData.map((item) => {
           return { ...item, isShow: false } //是否显示绘框
         })
