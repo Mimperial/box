@@ -544,7 +544,9 @@ export function getFaceGroups(data) {
 export function faceFileupload(data) {
   return axios.post('/api/web/file_upload', data)
 }
-
+export function downloadFacePerson(data) {
+  return axios.post('/api/web/downloadFacePerson', data)
+}
 // ------------------------------------------------------------人员管理------------------------------------------------------------
 
 export function addFacePerson(data) {

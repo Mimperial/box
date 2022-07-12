@@ -25,6 +25,7 @@
           文件格式为rar压缩包，单张最大175px,最小80px的正方形图片，每张大小2M以内
         </div>
       </div>
+      <div style="height: 67px"></div>
       <div style="text-align: center" slot="footer" class="dialog-footer">
         <el-button
           style="border: 1px solid #010b56"
@@ -132,8 +133,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .el-dialog__footer {
-  margin-top: 24px;
+.hint-message {
+  margin: 20px 0;
 }
 .dialog-footer {
   text-align: center;
@@ -167,12 +168,12 @@ export default {
 .upload-demo {
   position: absolute;
   left: 52%;
-  top: 34%;
+  top: 27%;
 }
 .hint-message {
   position: absolute;
   left: 15%;
-  top: 53%;
+  top: 38%;
   width: 36%;
 }
 </style>

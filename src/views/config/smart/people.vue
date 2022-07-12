@@ -75,7 +75,9 @@
                   @click="$refs.peopleDialog.dialogVisible = true"
                   >导入</el-button
                 >
-                <el-button class="right-top-btn">导出</el-button>
+                <el-button class="right-top-btn" @click="exportExcel"
+                  >导出</el-button
+                >
               </div>
             </el-col>
             <el-col :span="8">
@@ -161,6 +163,7 @@ import {
   deleteFaceGroup,
   getFacePersons,
   deleteFacePerson,
+  downloadFacePerson,
 } from '@/api/article.js'
 
 export default {
@@ -201,6 +204,15 @@ export default {
     // this.faceGroupsChange();
   },
   methods: {
+    exportExcel() {
+      downloadFacePerson({ GroupId: `'${this.groupActive}'` }).then((res) => {
+        const atag = document.createElement('a')
+        atag.setAttribute('download', true)
+        atag.href = this.httpUrl + res.data
+        console.log('🤡 ~~ atag', atag)
+        atag.click()
+      })
+    },
     async faceGroupsChange(val, PersonName) {
       const ruleRes = await getFacePersons({
         GroupId: `'${val}'` || '',
