@@ -21,6 +21,9 @@
         >
           <el-button type="">选择</el-button>
         </el-upload>
+        <div class="hint-message">
+          文件格式为rar压缩包，单张最大175px,最小80px的正方形图片，每张大小2M以内
+        </div>
       </div>
       <div style="text-align: center" slot="footer" class="dialog-footer">
         <el-button
@@ -78,6 +81,10 @@ export default {
         .then(async (res) => {
           await this.addImage(res.data)
           this.handleClose()
+          this.$message({
+            message: '上传成功',
+            type: 'success',
+          })
           // 导入图片添加进去
         })
         .catch((e) => {
@@ -125,6 +132,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .el-dialog__footer {
+  margin-top: 24px;
+}
 .dialog-footer {
   text-align: center;
 }
@@ -158,5 +168,11 @@ export default {
   position: absolute;
   left: 52%;
   top: 34%;
+}
+.hint-message {
+  position: absolute;
+  left: 15%;
+  top: 53%;
+  width: 36%;
 }
 </style>

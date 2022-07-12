@@ -30,7 +30,7 @@
           alt=""
       /></span>
     </div>
-    <div class="alarmPicure" v-if="alarmIndex == 1">
+    <div class="alarmPicure" v-show="alarmIndex == 1">
       <transition-group
         @after-enter="afterEnter"
         name="alarmImage"
@@ -70,7 +70,7 @@
         </div>
       </transition-group>
     </div>
-    <div class="face" v-else>
+    <div class="face" v-show="alarmIndex == 2">
       <div class="face-recognize">
         <!-- 人脸识别 -->
         <div class="face-left">

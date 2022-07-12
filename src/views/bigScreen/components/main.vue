@@ -205,6 +205,7 @@ export default {
             if (this.alarmImageShow) {
               //当加载完报警名字在开始触发报警图片
               var obj = JSON.parse(data.Data)
+              console.log('🤡 ~~ obj', obj)
               obj.ImageUrl =
                 (process.env.NODE_ENV == 'dev'
                   ? process.env.VUE_APP_URL.replace(':8183', '')
@@ -222,12 +223,20 @@ export default {
                   url: obj.ImageUrl,
                   id: new Date().getTime() + '',
                   listData: obj.listData,
+                  time: obj.Time.slice(0, -4),
                   yanListData: obj.yanListData,
                 }
                 if (AlarmName) {
                   obj.name = AlarmName
                 }
+
                 this.alarmCacle.push(obj)
+                if (obj.listData[0].alarmType === '400') {
+                  if (this.faceCapturing.length >= 5) {
+                    this.faceCapturing.shift()
+                  }
+                  this.faceCapturing.push(obj)
+                }
               }
             }
           } else if (data.Cmd == 'FaceAlarm') {
@@ -241,19 +250,20 @@ export default {
               FaceThreshold,
               PersonName,
             } = obj
-            this.faceCapturing.push({
+            const { name } =
+              this.camerList.find((item) => item.channelId === CameraId) || {}
+            if (this.faceRecognition.length >= 2) {
+              this.faceRecognition.shift()
+            }
+            this.faceRecognition.push({
               FaceUrl: imageUrl + FaceUrl,
               FaceSnap: imageUrl + FaceSnap,
               CameraId,
               time: time.slice(0, -4),
               FaceThreshold: (FaceThreshold * 100).toFixed(0) + '%',
+              name,
               PersonName,
             })
-            if (this.faceCapturing.length > 5) {
-              this.faceCapturing.shift()
-            }
-
-            this.faceRecognition = this.faceCapturing.slice(0, 2)
           }
         },
         {

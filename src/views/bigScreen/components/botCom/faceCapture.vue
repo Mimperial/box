@@ -1,10 +1,10 @@
 <template>
   <div class="box-Capture">
     <div class="capture-left">
-      <img :src="item.FaceSnap" alt="" />
+      <img :src="item.url" alt="" />
     </div>
     <div class="capture-right">
-      <p>通道:{{ item.CameraId }}</p>
+      <p>通道:{{ item.name }}</p>
       <p>{{ item.time }}</p>
     </div>
   </div>

@@ -157,7 +157,7 @@ export default {
     }
   },
   async created() {
-    // this.getFaceGroups();
+    this.getFaceGroups()
     await this.getCamera()
     await this.getAlgorithmList()
     await this.getRuleList()
@@ -211,16 +211,15 @@ export default {
       if (ruleRes.code !== 0) return this.$message.error(ruleRes.msg)
       console.log('🤡 ~~ ruleRes', ruleRes)
       this.peopleList = ruleRes.data.row
-      if (this.peopleIds.length) {
-        let list = []
-        this.peopleIds.forEach((item) => {
-          let status = this.peopleList.find((em) => em.GroupId == item)
-          if (status) {
-            list.push(item)
-          }
-        })
-        this.peopleIds = list
-      }
+
+      let list = []
+      this.peopleIds.forEach((item) => {
+        let status = this.peopleList.find((em) => em.GroupId == item)
+        if (status) {
+          list.push(item)
+        }
+      })
+      this.peopleIds = list
     },
     async cloningSure(data) {
       let {
@@ -391,9 +390,14 @@ export default {
     },
     async clickSelectChannel(row) {
       const { id, RuleId } = row
+      console.log('🤡 ~~ row', row)
+
+      console.log('🤡 ~~ row.GroupIds.length', row.GroupIds.length)
       if (row.GroupIds && row.GroupIds.length > 1) {
         // console.log("peopleList12");
         let arr = row.GroupIds.split(',')
+        console.log('🤡 ~~ arr', arr)
+        console.log('🤡 ~~ this.peopleList', this.peopleList)
         if (this.peopleList.length && arr.length) {
           let list = []
           arr.forEach((item) => {
@@ -403,6 +407,7 @@ export default {
             }
           })
           this.peopleIds = list
+          console.log('🤡 ~~ this.peopleIds', this.peopleIds)
         }
         // this.peopleIds = row.GroupIds.split(",");
       } else {

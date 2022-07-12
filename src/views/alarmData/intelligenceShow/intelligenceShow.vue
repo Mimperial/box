@@ -124,7 +124,7 @@ export default {
     this.getSelectData()
   },
   mounted() {
-    if (this.model === 1) {
+    if (this.model === 1 || this.model === 3) {
       this.behavioutBtn()
       return
     }
@@ -289,7 +289,7 @@ export default {
       return arr
     },
     behavioutBtn(bol = this.checked) {
-      this.page.pageNum = bol ? 12 : 24
+      this.page.pageNum = bol || this.model == 3 ? 12 : 24
       this.$emit('change', bol)
       this.search()
     },

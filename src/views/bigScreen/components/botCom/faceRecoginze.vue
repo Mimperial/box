@@ -13,7 +13,7 @@
       <img class="reco-img" :src="item.FaceUrl" alt="" />
       <div class="reco-bottom">
         <div>识别度:{{ item.FaceThreshold }}</div>
-        <div>通道:{{ item.CameraId }}</div>
+        <div>通道:{{ item.name }}</div>
       </div>
     </div>
     <div class="vs-img">
