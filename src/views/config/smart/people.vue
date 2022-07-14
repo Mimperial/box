@@ -207,7 +207,7 @@ export default {
     exportExcel() {
       downloadFacePerson({ GroupId: `'${this.groupActive}'` }).then((res) => {
         const atag = document.createElement('a')
-        atag.setAttribute('download', true)
+        // atag.setAttribute('download', true)
         atag.href = this.httpUrl + res.data
         console.log('🤡 ~~ atag', atag)
         atag.click()
