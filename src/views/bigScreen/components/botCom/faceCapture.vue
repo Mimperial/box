@@ -4,7 +4,7 @@
       <img :src="item.url" alt="" />
     </div>
     <div class="capture-right">
-      <p>通道:{{ item.name }}</p>
+      <p>通道:{{ item.channelName }}</p>
       <p>{{ item.time }}</p>
     </div>
   </div>

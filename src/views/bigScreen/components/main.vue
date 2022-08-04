@@ -218,8 +218,11 @@ export default {
                   this.imgheight
                 )
                 var AlarmName = this.getAlarmName(obj.listData[0].alarmType, 1)
+                  const { name } =
+              this.camerList.find((item) => item.channelId === obj.channelId) || {}
                 var obj = {
                   name: '暂无',
+                  channelName:name,
                   url: obj.ImageUrl,
                   id: new Date().getTime() + '',
                   listData: obj.listData,
@@ -240,7 +243,10 @@ export default {
               }
             }
           } else if (data.Cmd == 'FaceAlarm') {
-            const imageUrl = 'http://192.168.40.65'
+            const ImageUrl =
+              process.env.NODE_ENV == 'dev'
+                ? process.env.VUE_APP_URL.replace(':8183', '')
+                : window.location.origin
             const obj = JSON.parse(data.Data)
             const {
               CameraId,
@@ -256,8 +262,8 @@ export default {
               this.faceRecognition.shift()
             }
             this.faceRecognition.push({
-              FaceUrl: imageUrl + FaceUrl,
-              FaceSnap: imageUrl + FaceSnap,
+              FaceUrl: ImageUrl + FaceUrl,
+              FaceSnap: ImageUrl + FaceSnap,
               CameraId,
               time: time.slice(0, -4),
               FaceThreshold: (FaceThreshold * 100).toFixed(0) + '%',
