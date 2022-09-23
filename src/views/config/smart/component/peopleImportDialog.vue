@@ -16,13 +16,15 @@
         <el-upload
           class="upload-demo"
           action=""
-          accept=".rar,.zip"
+          accept=".zip"
           :on-change="changeFile"
+          :before-upload="checkFileType"
+          :show-file-list="false"
         >
           <el-button type="">选择</el-button>
         </el-upload>
         <div class="hint-message">
-          文件格式为rar压缩包，单张最大175px,最小80px的正方形图片，每张大小2M以内
+          文件格式为zip压缩包，单张最大175px,最小80px的正方形图片，每张大小2M以内
         </div>
       </div>
       <div style="height: 67px"></div>
@@ -92,10 +94,17 @@ export default {
           this.handleClose()
         })
     },
-    changeFile(file) {
-      this.file = file.raw
+    checkFileType(file) {
+      const fileName = file.name
+      const fileType = fileName.substring(fileName.lastIndexOf('.'))
+      if (fileType != '.zip') {
+        this.$message.warning('上传文件格式必须为zip压缩包，请重新上传')
+        return
+      }
+      this.file = file
       this.form.model = file.name
     },
+    changeFile(file) {},
     addImage(data) {
       return new Promise((resolve, rej) => {
         axios({
