@@ -7,12 +7,15 @@
       :close-on-click-modal="false"
       width="1000px"
     >
-      <div class="dialogImage">
+      <div
+        class="dialogImage"
+        :class="[topAlarmType == '411' ? 'dialogImage411' : '']"
+      >
         <el-image
           :src="imageData.alarmUrl"
           @load="successLoad"
           style="width: 960px; height: 540px"
-          fit="contain"
+          :fit="topAlarmType == '411' ? 'fill' : 'contain'"
         >
           <div slot="error" class="image-slot">
             <i class="el-icon-picture-outline"></i>
@@ -47,8 +50,12 @@ export default {
       require: true,
     },
     imageData: {
-      type: [Object,String],
+      type: [Object, String],
       default: () => ({}),
+    },
+    topAlarmType: {
+      type: String,
+      default: "400",
     },
   },
   components: {
@@ -67,8 +74,20 @@ export default {
   },
   computed: {
     listData() {
-      if(this.imageData.yuan){
-        return changeImge(this.imageData.yuan, 960, 540);
+      if (this.imageData.yuan) {
+        if (this.topAlarmType == "411") {
+          let imgObj = new Image();
+          imgObj.src = this.imageData.alarmUrl;
+          return changeImge(
+            this.imageData.yuan,
+            240,
+            480,
+            imgObj.width,
+            imgObj.height
+          );
+        } else {
+          return changeImge(this.imageData.yuan, 960, 540);
+        }
       }
     },
   },
@@ -77,7 +96,7 @@ export default {
       //关闭弹框
       this.$emit("input", false);
       this.dialogValue = false;
-      this.show = false
+      this.show = false;
     },
     successLoad() {
       this.show = true;
@@ -90,6 +109,27 @@ export default {
 .dialogImage {
   position: relative;
 }
+
+.dialogImage411 {
+  position: relative;
+  height: 500px;
+  & > div:nth-child(1) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px !important;
+    height: 480px !important;
+  }
+  & > div:nth-child(2) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px !important;
+    height: 480px !important;
+    z-index: 99;
+  }
+}
+
 /deep/ .el-dialog {
   box-shadow: none;
 }

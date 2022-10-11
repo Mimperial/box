@@ -17,7 +17,7 @@
             style="width: 104%; height: 100%"
             :src="item[cardList.imgsrc]"
             @load="successLoad(i)"
-            fit="fill"
+            :fit="topAlarmType == '411' ? 'fill' : 'scale-down'"
           >
           </el-image>
           <FunAreaSelect
@@ -72,6 +72,7 @@
       ref="imageDialog"
       :title="name"
       :imageData="showUrl"
+      :topAlarmType="topAlarmType"
       v-model="showImageDialog"
     ></ImageDialog>
     <VideoDialog
