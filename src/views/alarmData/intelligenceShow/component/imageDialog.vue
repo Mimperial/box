@@ -79,7 +79,7 @@ export default {
           let imgObj = new Image();
           imgObj.src = this.imageData.alarmUrl;
           let data = "";
-          imgObj.onload = function () {
+          // imgObj.onload = function () {
             data = changeImge(
               this.imageData.yuan,
               240,
@@ -87,7 +87,7 @@ export default {
               imgObj.width,
               imgObj.height
             );
-          };
+          // };
           return data;
         } else {
           return changeImge(this.imageData.yuan, 960, 540);
