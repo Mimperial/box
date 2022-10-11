@@ -156,3 +156,18 @@ export function verifylonglat(rule, value, callback) {
     callback()
 }
 
+export function loadImg(url) {
+    return new Promise((res, rej) => {
+        let imgObj = new Image();
+        let obj = {};
+        imgObj.onload = function () {
+            obj = {
+                width: imgObj.width,
+                height: imgObj.height,
+            };
+            res(obj);
+        };
+        imgObj.src = url;
+    });
+}
+

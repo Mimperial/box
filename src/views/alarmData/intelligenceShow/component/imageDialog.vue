@@ -38,7 +38,7 @@
 
 <script>
 import FunAreaSelect from "@/components/funAreaSelect.vue";
-import { changeImge } from "@/utils/utils";
+import { changeImge,loadImg } from "@/utils/utils";
 export default {
   props: {
     title: {

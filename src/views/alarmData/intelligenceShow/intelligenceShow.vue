@@ -92,6 +92,7 @@ import { changeImge } from "@/utils/utils";
 import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
 import { mapGetters } from "vuex";
 import { formatTime } from "@/utils/time";
+import { loadImg } from "@/utils/utils";
 
 export default {
   name: "",
@@ -312,7 +313,6 @@ export default {
     },
     getDrawPoint(alarmList) {
       let that = this;
-      let imgObj = new Image();
       return alarmList.map((item) => {
         item.alarmUrl = this.baseUrl + item.alarmUrl;
         if (item.alarmVideo) {
@@ -341,10 +341,8 @@ export default {
         }
         item.yuan = JSON.parse(JSON.stringify(item.listData));
         // item.listData = changeImge(item.listData, 170, 95.625);
-        console.log(" item.alarmUrl ---", item.alarmUrl);
         if (that.topAlarmType == "411") {
-          imgObj.src = item.alarmUrl;
-          // imgObj.onload = function () {
+          loadImg(item.alarmUrl).then((imgObj) => {
             item.listData = changeImge(
               item.listData,
               100,
@@ -352,7 +350,7 @@ export default {
               imgObj.width,
               imgObj.height
             );
-          // };
+          });
         } else {
           item.listData = changeImge(item.listData, 170, 95.625);
         }
