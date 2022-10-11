@@ -344,13 +344,15 @@ export default {
         console.log(" item.alarmUrl ---", item.alarmUrl);
         if (that.topAlarmType == "411") {
           imgObj.src = item.alarmUrl;
-          item.listData = changeImge(
-            item.listData,
-            100,
-            200,
-            imgObj.width,
-            imgObj.height
-          );
+          imgObj.onload = function () {
+            item.listData = changeImge(
+              item.listData,
+              100,
+              200,
+              imgObj.width,
+              imgObj.height
+            );
+          };
         } else {
           item.listData = changeImge(item.listData, 170, 95.625);
         }

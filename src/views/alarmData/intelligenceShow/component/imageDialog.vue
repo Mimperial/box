@@ -78,13 +78,17 @@ export default {
         if (this.topAlarmType == "411") {
           let imgObj = new Image();
           imgObj.src = this.imageData.alarmUrl;
-          return changeImge(
-            this.imageData.yuan,
-            240,
-            480,
-            imgObj.width,
-            imgObj.height
-          );
+          let data = "";
+          imgObj.onload = function () {
+            data = changeImge(
+              this.imageData.yuan,
+              240,
+              480,
+              imgObj.width,
+              imgObj.height
+            );
+          };
+          return data;
         } else {
           return changeImge(this.imageData.yuan, 960, 540);
         }

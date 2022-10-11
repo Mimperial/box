@@ -65,9 +65,10 @@
             :disabled="true"
             areaColor="rgba(40, 177, 217, 0)"
             selectAreaColor="rgba(40, 177, 217, 0)"
+            :class="[item.name == '人体抓拍' ? 'FunAreaSelect411' : '']"
           ></FunAreaSelect>
           <template v-if="item.name == '人体抓拍'">
-            <el-image class="alarmPic" :src="item.url" fit="scale-down">
+            <el-image class="alarmPic411" :src="item.url" fit="fill">
             </el-image>
           </template>
           <template v-else>
@@ -306,6 +307,21 @@ export default {
         display: block;
         width: 100%;
         height: 100%;
+      }
+
+      .alarmPic411 {
+        display: block;
+        width: 95px;
+        height: 191px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .FunAreaSelect411 {
+        width: 95px;
+        height: 191px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99;
       }
     }
   }
