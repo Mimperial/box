@@ -1,7 +1,8 @@
 <template>
   <el-header>
     <div class="imageAside">
-      <img v-show="show == 'true'" :src="imgSrc" alt="" />
+      <!-- <img v-show="show == 'true'" :src="imgSrc" alt="" /> -->
+      <h1 style="color:#fff">移动安防安保智能分析应用平台</h1>
     </div>
     <!-- <div class="qiehuan">
     <language></language>

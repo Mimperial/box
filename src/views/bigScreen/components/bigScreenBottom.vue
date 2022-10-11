@@ -66,7 +66,13 @@
             areaColor="rgba(40, 177, 217, 0)"
             selectAreaColor="rgba(40, 177, 217, 0)"
           ></FunAreaSelect>
-          <img class="alarmPic" :src="item.url" alt="" />
+          <template v-if="item.name == '人体抓拍'">
+            <el-image class="alarmPic" :src="item.url" fit="scale-down">
+            </el-image>
+          </template>
+          <template v-else>
+            <img class="alarmPic" :src="item.url" alt="" />
+          </template>
         </div>
       </transition-group>
     </div>
@@ -99,23 +105,23 @@
 </template>
 
 <script>
-import FunAreaSelect from '@/components/funAreaSelect.vue'
-import faceRecoginze from './botCom/faceRecoginze.vue'
-import faceCapture from './botCom/faceCapture.vue'
+import FunAreaSelect from "@/components/funAreaSelect.vue";
+import faceRecoginze from "./botCom/faceRecoginze.vue";
+import faceCapture from "./botCom/faceCapture.vue";
 export default {
   components: {
     FunAreaSelect,
     faceRecoginze,
     faceCapture,
   },
-  props: ['alarmCacle', 'faceRecognition', 'faceCapturing'],
+  props: ["alarmCacle", "faceRecognition", "faceCapturing"],
   data() {
     return {
-      bigScreenBottom: require('@/assets/img/bigScreen/bigScreenBottom.png'),
-      alarmHeader: require('@/assets/img/bigScreen/alarmHeader.png'),
-      daping_shu: require('@/assets/img/daping_shu.svg'),
-      face_shibie: require('@/assets/img/shibei.png'),
-      face_zhuapai: require('@/assets/img/zhuapai.png'),
+      bigScreenBottom: require("@/assets/img/bigScreen/bigScreenBottom.png"),
+      alarmHeader: require("@/assets/img/bigScreen/alarmHeader.png"),
+      daping_shu: require("@/assets/img/daping_shu.svg"),
+      face_shibie: require("@/assets/img/shibei.png"),
+      face_zhuapai: require("@/assets/img/zhuapai.png"),
       alarmImageList: [],
       maxImageCount: 5,
       hidden: false,
@@ -123,80 +129,81 @@ export default {
       resizeTime: null,
       alarmIndex: 1,
       faceList: [],
-    }
+    };
   },
   mounted() {
-    document.addEventListener('visibilitychange', this.visibilitychange)
+    document.addEventListener("visibilitychange", this.visibilitychange);
     setInterval(() => {
       if (this.alarmCacle.length > 0) {
-        this.alarmImageList.push(this.alarmCacle[0])
+        this.alarmImageList.push(this.alarmCacle[0]);
         if (this.alarmImageList.length > this.maxImageCount + 1) {
-          this.alarmImageList.shift()
+          this.alarmImageList.shift();
         }
-        this.handlerFaceList(this.alarmImageList)
-        this.$emit('change', true)
+        this.handlerFaceList(this.alarmImageList);
+        this.$emit("change", true);
       }
-    }, 3000)
-    window.addEventListener('resize', this.resizeWidth)
+    }, 3000);
+    window.addEventListener("resize", this.resizeWidth);
   },
   beforeDestroy() {
-    document.removeEventListener('visibilitychange', this.visibilitychange)
-    window.removeEventListener('resize', this.resizeWidth)
+    document.removeEventListener("visibilitychange", this.visibilitychange);
+    window.removeEventListener("resize", this.resizeWidth);
   },
   methods: {
     handlerFaceList(list) {
       this.faceList = this.alarmImageList.filter((item) => {
-        return item.name == ''
-      })
+        return item.name == "";
+      });
     },
     changeAlarm(index) {
-      this.alarmIndex = index
+      this.alarmIndex = index;
     },
     resizeWidth() {
-      this.hidden = true
+      this.hidden = true;
       if (this.resizeTime) {
-        clearTimeout(this.resizeTime)
-        this.resizeTime = null
+        clearTimeout(this.resizeTime);
+        this.resizeTime = null;
       }
       this.resizeTime = setTimeout(() => {
-        this.hidden = false
-        this.resizeTime = null
-      }, 1000)
+        this.hidden = false;
+        this.resizeTime = null;
+      }, 1000);
     },
     visibilitychange(event) {
-      if (document.visibilityState == 'hidden') {
-        this.hidden = true
+      if (document.visibilityState == "hidden") {
+        this.hidden = true;
       } else {
         if (!this.timer) {
           this.timer = setTimeout(() => {
-            this.hidden = false
-            this.timer = null
-          }, 1000)
+            this.hidden = false;
+            this.timer = null;
+          }, 1000);
         }
       }
     },
     toAlarm() {
-      this.$router.push('/home/alarmData/intelligenceShow')
+      this.$router.push("/home/alarmData/intelligenceShow");
     },
     afterEnter(el) {
-      var index = Number(el.dataset.index)
+      var index = Number(el.dataset.index);
       if (this.alarmImageList.length > this.maxImageCount) {
-        el.style.left = 3.64 * (index - 1) + 'rem'
+        el.style.left = 3.64 * (index - 1) + "rem";
       } else {
-        el.style.left = 3.64 * index + 'rem'
+        el.style.left = 3.64 * index + "rem";
       }
     },
     enter(el) {
-      var index = Number(el.dataset.index)
+      var index = Number(el.dataset.index);
       if (this.alarmImageList.length > this.maxImageCount) {
-        index = index - 1
+        index = index - 1;
       }
-      var fontSize = document.querySelector('html').style.fontSize
-      fontSize = Number(fontSize.replace('px', ''))
-      el.style.left = parseInt((el.offsetWidth + fontSize * 0.2) * index) + 'px'
+      var fontSize = document.querySelector("html").style.fontSize;
+      fontSize = Number(fontSize.replace("px", ""));
+      el.style.left =
+        parseInt((el.offsetWidth + fontSize * 0.2) * index) + "px";
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

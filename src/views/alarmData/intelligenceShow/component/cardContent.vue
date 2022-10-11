@@ -7,13 +7,17 @@
   >
     <template v-for="(item, i) in handlerCardData">
       <div class="box-card" :key="i">
-        <div class="image" @click="clickImage(item[cardList.imgsrc], item)">
+        <div
+          class="image"
+          :class="[topAlarmType == '411'?'image411':'']"
+          @click="clickImage(item[cardList.imgsrc], item)"
+        >
           <div v-if="model == 3" class="card-top-text">底库</div>
           <el-image
             style="width: 104%; height: 100%"
             :src="item[cardList.imgsrc]"
             @load="successLoad(i)"
-            fit="scale-down"
+            fit="fill"
           >
           </el-image>
           <FunAreaSelect
@@ -79,9 +83,9 @@
 </template>
 
 <script>
-import FunAreaSelect from '@/components/funAreaSelect.vue'
-import ImageDialog from './imageDialog.vue'
-import VideoDialog from './videoDialog.vue'
+import FunAreaSelect from "@/components/funAreaSelect.vue";
+import ImageDialog from "./imageDialog.vue";
+import VideoDialog from "./videoDialog.vue";
 
 export default {
   props: {
@@ -103,17 +107,21 @@ export default {
       type: Number,
       default: 1,
     },
+    topAlarmType: {
+      type: String,
+      default: "400",
+    },
   },
   computed: {
     handlerCardData: {
       get: function () {
-        console.log(this.cardData)
+        console.log(this.cardData);
         return this.cardData.map((item) => {
-          return { ...item, isShow: false } //是否显示绘框
-        })
+          return { ...item, isShow: false }; //是否显示绘框
+        });
       },
       set: function (value) {
-        console.log('🤡 ~~ value', value)
+        console.log("🤡 ~~ value", value);
       },
     },
   },
@@ -129,47 +137,47 @@ export default {
       showVidoeDialog: false,
 
       showUrl: {},
-      name: '',
-    }
+      name: "",
+    };
   },
 
   methods: {
     handleData(name, i) {
-      if (name == 'alarmType') {
+      if (name == "alarmType") {
         var alarm = this.alarmOptions.find(
           (item) => item.alarmNumber == i[name]
-        )
-        return alarm ? alarm.name : '暂无'
+        );
+        return alarm ? alarm.name : "暂无";
       }
-      if (name == 'cameraId' || name == 'CameraId') {
-        var camera = this.camerList.find((item) => item.channelId == i[name])
-        return camera ? camera.name : '暂无'
+      if (name == "cameraId" || name == "CameraId") {
+        var camera = this.camerList.find((item) => item.channelId == i[name]);
+        return camera ? camera.name : "暂无";
       }
-      return i[name]
+      return i[name];
     },
     clickImage(url, i) {
       this.name = this.camerList.find(
         (item) => item.channelId === i.cameraId
-      )?.name
-      this.showImageDialog = true
-      this.showUrl = { id: i.id, alarmUrl: url, yuan: i.yuan }
+      )?.name;
+      this.showImageDialog = true;
+      this.showUrl = { id: i.id, alarmUrl: url, yuan: i.yuan };
       this.$nextTick(() => {
-        this.$refs.imageDialog.show = true
-      })
+        this.$refs.imageDialog.show = true;
+      });
     },
     successLoad(i) {
-      this.$set(this.handlerCardData[i], 'isShow', true)
-      this.$forceUpdate()
+      this.$set(this.handlerCardData[i], "isShow", true);
+      this.$forceUpdate();
     },
     showVideo(url, i) {
       this.name = this.camerList.find(
         (item) => item.channelId === i.cameraId
-      ).name
-      this.showVidoeDialog = true
-      this.showUrl = { id: i.id, alarmUrl: url, yuan: i.yuan }
+      ).name;
+      this.showVidoeDialog = true;
+      this.showUrl = { id: i.id, alarmUrl: url, yuan: i.yuan };
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -216,6 +224,17 @@ export default {
   width: 160px;
   height: 90px;
 }
+
+.image411 {
+  cursor: pointer;
+  position: relative;
+  float: left;
+  width: 100px;
+  height: 200px;
+  text-align: center;
+  padding-left: 20%;
+}
+
 .video {
   cursor: pointer;
   position: relative;

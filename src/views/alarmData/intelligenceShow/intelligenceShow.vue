@@ -13,7 +13,7 @@
         type="primary"
         @click="dialogVisibleDownload = true"
         :disabled="downloadFlag"
-        >{{ downloadFlag ? '压缩中' : '下载' }}</el-button
+        >{{ downloadFlag ? "压缩中" : "下载" }}</el-button
       >
     </Select>
     <!-- 中间切换按钮部分 -->
@@ -38,6 +38,7 @@
       :cardData="cardData"
       :alarmOptions="alarmOptions"
       :camerList="camerList"
+      :topAlarmType="topAlarmType"
     ></cardContent>
     <!-- 分页器 -->
     <div class="block">
@@ -78,25 +79,25 @@
 </template>
 
 <script>
-import Select from './component/select.vue'
-import cardContent from './component/cardContent.vue'
+import Select from "./component/select.vue";
+import cardContent from "./component/cardContent.vue";
 import {
   getAlarmHisApi,
   getAlgorithmListApi,
   getCameraApi,
   getFaceAlarms,
   downloadAlarmHisApi,
-} from '@/api/article'
-import { changeImge } from '@/utils/utils'
-import { setDownloadIdToken, getDownloadIdToken } from '@/utils/token'
-import { mapGetters } from 'vuex'
-import { formatTime } from '@/utils/time'
+} from "@/api/article";
+import { changeImge } from "@/utils/utils";
+import { setDownloadIdToken, getDownloadIdToken } from "@/utils/token";
+import { mapGetters } from "vuex";
+import { formatTime } from "@/utils/time";
 
 export default {
-  name: '',
+  name: "",
   model: {
-    prop: 'checked',
-    event: 'change',
+    prop: "checked",
+    event: "change",
   },
   props: {
     model: {
@@ -112,33 +113,37 @@ export default {
       type: Boolean,
       defautl: false,
     },
+    topAlarmType: {
+      type: String,
+      default: "400",
+    },
   },
   components: {
     Select,
     cardContent,
   },
   computed: {
-    ...mapGetters(['downloadFlag']),
+    ...mapGetters(["downloadFlag"]),
   },
   created() {
-    this.getSelectData()
+    this.getSelectData();
   },
   mounted() {
     if (this.model === 1 || this.model === 3) {
-      this.behavioutBtn()
-      return
+      this.behavioutBtn();
+      return;
     }
-    this.search()
+    this.search();
   },
   data() {
     return {
       form: {
         startTime: formatTime(new Date().getTime()),
         endTime: formatTime(new Date().getTime() + 1 * 24 * 3600 * 1000),
-        alarmType: '',
-        cameraId: '',
-        Gender: '',
-        download: 'picture',
+        alarmType: "",
+        cameraId: "",
+        Gender: "",
+        download: "picture",
       },
       page: {
         pageNum: 24,
@@ -149,102 +154,102 @@ export default {
       alarmOptions: [],
       cardData: [],
       baseUrl:
-        process.env.NODE_ENV == 'dev'
-          ? process.env.VUE_APP_URL.replace(':8183', '')
+        process.env.NODE_ENV == "dev"
+          ? process.env.VUE_APP_URL.replace(":8183", "")
           : window.location.origin,
       dialogVisibleDownload: false,
       loading: false,
-    }
+    };
   },
   methods: {
     handleCurrentChange(val) {
-      this.page.curPage = val
-      this.search()
+      this.page.curPage = val;
+      this.search();
     },
 
     search() {
-      this.cardData = []
-      this.loading = true
-      const parms = { ...this.form, ...this.page }
+      this.cardData = [];
+      this.loading = true;
+      const parms = { ...this.form, ...this.page };
       const cameraId = this.form.cameraId
         .map((item) => "'" + item + "'")
-        .join(',')
+        .join(",");
       if (this.model === 1) {
         // 调用行为分析接口
         const alarmType = this.form.alarmType
           .map((item) => "'" + item + "'")
-          .join(',')
+          .join(",");
         getAlarmHisApi({ ...parms, alarmType, cameraId })
           .then((res) => {
-            const data = JSON.parse(res.data)
+            const data = JSON.parse(res.data);
             if (!data?.alarmList.length > 0) {
               this.$message({
-                message: this.$t('js.msgoneb'),
-                type: 'success',
-              })
+                message: this.$t("js.msgoneb"),
+                type: "success",
+              });
             }
-            this.page.total = Number(data.total)
-            this.cardData = this.getDrawPoint(data.alarmList)
+            this.page.total = Number(data.total);
+            this.cardData = this.getDrawPoint(data.alarmList);
           })
           .finally(() => {
-            this.loading = false
-          })
+            this.loading = false;
+          });
       } else if (this.model == 2) {
-        getAlarmHisApi({ ...parms, cameraId, alarmType: "'400'" })
+        getAlarmHisApi({ ...parms, cameraId, alarmType: this.topAlarmType })
           .then((res) => {
             if (res.code == 0) {
-              const data = JSON.parse(res.data)
+              const data = JSON.parse(res.data);
               if (!data?.alarmList.length > 0) {
                 this.$message({
-                  message: this.$t('js.msgoneb'),
-                  type: 'success',
-                })
+                  message: this.$t("js.msgoneb"),
+                  type: "success",
+                });
               }
-              this.page.total = Number(data.total)
-              this.cardData = this.getDrawPoint(data.alarmList)
+              this.page.total = Number(data.total);
+              this.cardData = this.getDrawPoint(data.alarmList);
             }
           })
           .finally(() => {
-            this.loading = false
-          })
+            this.loading = false;
+          });
       } else {
-        const { pageNum, curPage } = this.page
+        const { pageNum, curPage } = this.page;
         getFaceAlarms({
           ...parms,
           CameraId: cameraId,
-          pageNum: '12',
+          pageNum: "12",
           curPage: String(curPage),
         })
           .then((res) => {
-            const { data } = res
+            const { data } = res;
             if (data.row.length === 0) {
               this.$message({
-                message: this.$t('js.msgoneb'),
-                type: 'success',
-              })
+                message: this.$t("js.msgoneb"),
+                type: "success",
+              });
             }
-            this.page.total = res.data.total
-            this.cardData = this.handleData(data.row)
+            this.page.total = res.data.total;
+            this.cardData = this.handleData(data.row);
           })
           .finally(() => {
-            this.loading = false
-          })
+            this.loading = false;
+          });
       }
     },
     download() {
       const alarmType = {
         1:
           this.form.alarmType &&
-          this.form.alarmType.map((item) => "'" + item + "'").join(','),
-        2: '400',
-        3: '400',
-      }
+          this.form.alarmType.map((item) => "'" + item + "'").join(","),
+        2: this.topAlarmType,
+        3: "400",
+      };
 
       const cameraId =
-        this.form.cameraId.map((item) => "'" + item + "'").join(',') ||
-        this.camerList.map((item) => "'" + item.channelId + "'").join(',')
-      let { startTime, endTime, download } = this.form
-      let userId = getDownloadIdToken()
+        this.form.cameraId.map((item) => "'" + item + "'").join(",") ||
+        this.camerList.map((item) => "'" + item.channelId + "'").join(",");
+      let { startTime, endTime, download } = this.form;
+      let userId = getDownloadIdToken();
       if (!this.downloadFlag) {
         downloadAlarmHisApi({
           startTime,
@@ -254,91 +259,106 @@ export default {
           download,
           userId,
         }).then((res) => {
-          console.log('🤡 ~~ res', res)
+          console.log("🤡 ~~ res", res);
           try {
-            var data = JSON.parse(res.data)
+            var data = JSON.parse(res.data);
             if (data.status == 1) {
-              setDownloadIdToken(data.userId)
-              this.$store.dispatch('seachFile')
+              setDownloadIdToken(data.userId);
+              this.$store.dispatch("seachFile");
             } else {
               // this.$message.error(
               //   "内容过大/暂无报警信息，请重新选择条件下载！"
               // );
             }
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
-          this.dialogVisibleDownload = false
-        })
+          this.dialogVisibleDownload = false;
+        });
       }
     },
     handleData(data) {
-      const copyData = [...data]
-      const baseUrl = this.baseUrl
+      const copyData = [...data];
+      const baseUrl = this.baseUrl;
       const arr = copyData.map((v, index) => {
-        const FaceThreshold = (v.FaceThreshold * 100).toFixed(0) + '%'
-        const FaceSnap = baseUrl + v.FaceSnap
-        const FaceUrl = baseUrl + v.FaceUrl
-        const time = v.time.slice(0, -4)
-        const { name: CamerName = '' } =
-          this.camerList.find((item) => item.channelId === v.CameraId) || {}
+        const FaceThreshold = (v.FaceThreshold * 100).toFixed(0) + "%";
+        const FaceSnap = baseUrl + v.FaceSnap;
+        const FaceUrl = baseUrl + v.FaceUrl;
+        const time = v.time.slice(0, -4);
+        const { name: CamerName = "" } =
+          this.camerList.find((item) => item.channelId === v.CameraId) || {};
         //  v['CamerName'] = name
-        return { ...v, FaceThreshold, FaceSnap, FaceUrl, time, CamerName }
-      })
-      console.log('🤡 ~~ copyData', arr)
-      return arr
+        return { ...v, FaceThreshold, FaceSnap, FaceUrl, time, CamerName };
+      });
+      console.log("🤡 ~~ copyData", arr);
+      return arr;
     },
     behavioutBtn(bol = this.checked) {
-      this.page.pageNum = bol || this.model == 3 ? 12 : 24
-      this.$emit('change', bol)
-      this.search()
+      this.page.pageNum = bol || this.model == 3 ? 12 : 24;
+      this.$emit("change", bol);
+      this.search();
     },
     // 获取数据
     getSelectData() {
       getAlgorithmListApi({}).then((res) => {
-        const data = JSON.parse(res.data)
-        this.alarmOptions = data
-      })
+        const data = JSON.parse(res.data);
+        this.alarmOptions = data;
+      });
       getCameraApi({}).then((res) => {
         if (res.code == 0) {
-          this.camerList = JSON.parse(res.data)
+          this.camerList = JSON.parse(res.data);
         }
-      })
+      });
     },
     getDrawPoint(alarmList) {
+      let that = this;
+      let imgObj = new Image();
       return alarmList.map((item) => {
-        item.alarmUrl = this.baseUrl + item.alarmUrl
+        item.alarmUrl = this.baseUrl + item.alarmUrl;
         if (item.alarmVideo) {
-          item.alarmVideo = this.baseUrl + item.alarmVideo
+          item.alarmVideo = this.baseUrl + item.alarmVideo;
         }
-        item.time = item.time.split(' ')[0] + ' ' + item.time.split(' ')[1]
-        item.listData = []
-        var boxArr = item.alarmBox.split(';')
+        item.time = item.time.split(" ")[0] + " " + item.time.split(" ")[1];
+        item.listData = [];
+        var boxArr = item.alarmBox.split(";");
         for (let i = 0; i < boxArr.length; i++) {
-          const element = boxArr[i]
-          var arr = element.split('-')
-          var x = Number(arr[0])
-          var y = Number(arr[1])
-          var w = Number(arr[2])
-          var h = Number(arr[3])
+          const element = boxArr[i];
+          var arr = element.split("-");
+          var x = Number(arr[0]);
+          var y = Number(arr[1]);
+          var w = Number(arr[2]);
+          var h = Number(arr[3]);
           item.listData.push({
             id: item.id,
-            modeType: 'react',
+            modeType: "react",
             serviceData: JSON.stringify([
               [x, y],
               [x, y + h],
               [x + w, y + h],
               [x + w, y],
             ]),
-          })
+          });
         }
-        item.yuan = JSON.parse(JSON.stringify(item.listData))
-        item.listData = changeImge(item.listData, 170, 95.625)
-        return item
-      })
+        item.yuan = JSON.parse(JSON.stringify(item.listData));
+        // item.listData = changeImge(item.listData, 170, 95.625);
+        console.log(" item.alarmUrl ---", item.alarmUrl);
+        if (that.topAlarmType == "411") {
+          imgObj.src = item.alarmUrl;
+          item.listData = changeImge(
+            item.listData,
+            100,
+            200,
+            imgObj.width,
+            imgObj.height
+          );
+        } else {
+          item.listData = changeImge(item.listData, 170, 95.625);
+        }
+        return item;
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

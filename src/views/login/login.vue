@@ -8,7 +8,8 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">智能边缘计算终端管理平台</h3>
+        <!-- <h3 class="title">智能边缘计算终端管理平台</h3> -->
+        <h3 class="title">移动安防安保智能分析应用平台</h3>
         <!-- <h3 class="title">{{ $t("html.rtsp16") }}</h3> -->
       </div>
       <shakeInput
