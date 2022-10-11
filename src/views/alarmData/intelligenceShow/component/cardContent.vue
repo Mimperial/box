@@ -9,7 +9,7 @@
       <div class="box-card" :key="i">
         <div
           class="image"
-          :class="[topAlarmType == '411'?'image411':'']"
+          :class="[topAlarmType == '411' ? 'image411' : '']"
           @click="clickImage(item[cardList.imgsrc], item)"
         >
           <div v-if="model == 3" class="card-top-text">底库</div>
@@ -232,7 +232,12 @@ export default {
   width: 100px;
   height: 200px;
   text-align: center;
-  padding-left: 20%;
+  & > div:nth-child(1) {
+    margin-left: 30px;
+  }
+  & > div:nth-child(2) {
+    left: 30px;
+  }
 }
 
 .video {
