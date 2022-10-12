@@ -21,7 +21,9 @@
           >
           </el-image>
           <FunAreaSelect
-            v-if="item.isShow"
+            v-if="
+              item.isShow && item.alarmType != '411' && item.alarmType != '400'
+            "
             :id="item.id"
             :circleRadius="1"
             :circleBorderWidth="1"
@@ -73,6 +75,7 @@
       :title="name"
       :imageData="showUrl"
       :topAlarmType="topAlarmType"
+      :imgShowAlarmType="imgShowAlarmType"
       v-model="showImageDialog"
     ></ImageDialog>
     <VideoDialog
@@ -136,7 +139,7 @@ export default {
       show: false,
       showImageDialog: false,
       showVidoeDialog: false,
-
+      imgShowAlarmType: 400,
       showUrl: {},
       name: "",
     };
@@ -157,9 +160,11 @@ export default {
       return i[name];
     },
     clickImage(url, i) {
+      console.log("iiiiiiiiiiii", i);
       this.name = this.camerList.find(
         (item) => item.channelId === i.cameraId
       )?.name;
+      this.imgShowAlarmType = i.alarmType;
       this.showImageDialog = true;
       this.showUrl = { id: i.id, alarmUrl: url, yuan: i.yuan };
       this.$nextTick(() => {

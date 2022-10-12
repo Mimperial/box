@@ -56,7 +56,7 @@
             <img :src="alarmHeader" alt="" />
           </div>
           <FunAreaSelect
-            v-if="item.listData"
+            v-if="item.listData&& item.name != '人体抓拍' && item.name != '人脸抓拍'"
             :id="item.id + index + 'big'"
             :circleRadius="1"
             :circleBorderWidth="1"

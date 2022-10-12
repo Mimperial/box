@@ -367,6 +367,7 @@ export default {
   height: 100%;
   box-sizing: border-box;
   padding: 20px;
+  background-color: #fff;
 }
 .block {
   text-align: center;

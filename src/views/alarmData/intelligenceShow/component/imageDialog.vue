@@ -22,7 +22,7 @@
           </div>
         </el-image>
         <FunAreaSelect
-          v-if="show"
+          v-if="show && imgShowAlarmType != '411' && imgShowAlarmType != '400'"
           :id="imageData.id + 'dialog'"
           :circleRadius="1"
           :circleBorderWidth="1"
@@ -38,7 +38,7 @@
 
 <script>
 import FunAreaSelect from "@/components/funAreaSelect.vue";
-import { changeImge,loadImg } from "@/utils/utils";
+import { changeImge, loadImg } from "@/utils/utils";
 export default {
   props: {
     title: {
@@ -54,6 +54,10 @@ export default {
       default: () => ({}),
     },
     topAlarmType: {
+      type: String,
+      default: "400",
+    },
+    imgShowAlarmType: {
       type: String,
       default: "400",
     },
@@ -80,13 +84,13 @@ export default {
           imgObj.src = this.imageData.alarmUrl;
           let data = "";
           // imgObj.onload = function () {
-            data = changeImge(
-              this.imageData.yuan,
-              240,
-              480,
-              imgObj.width,
-              imgObj.height
-            );
+          data = changeImge(
+            this.imageData.yuan,
+            240,
+            480,
+            imgObj.width,
+            imgObj.height
+          );
           // };
           return data;
         } else {
