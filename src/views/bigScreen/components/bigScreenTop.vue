@@ -5,9 +5,10 @@
     <img class="bg" :src="headerGif" alt="" />
     <div class="title">
       <div class="content">
-        <img v-show="show == 'true'" :src="logoBigScreen" alt="" />
+        <!-- <img v-show="show == 'true'" :src="logoBigScreen" alt="" /> -->
       </div>
-      <div class="content">智能边缘计算终端管理平台</div>
+      <!-- <div class="content">智能边缘计算终端管理平台</div> -->
+      <div class="content">移动安防安保智能分析应用平台</div>
     </div>
     <div class="setIcon">
       <img @click="toConfig" :src="setBigScreen" alt="" />

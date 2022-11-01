@@ -60,7 +60,20 @@ export default {
       circleRadius: this.circleRadius,
     });
   },
-
+  watch: {
+    listData() {
+      this.mark && this.mark.destroy();
+      this.mark = new markPlugin(this.id, {
+        modeType: "react",
+        disabled: false,
+        areaColor: this.areaColor,
+        serviceData: this.listData,
+        selectAreaColor: this.selectAreaColor,
+        circleBorderWidth: this.circleBorderWidth,
+        circleRadius: this.circleRadius,
+      });
+    },
+  },
   methods: {
     resizeWidth() {
       if (this.mark && this.yanListData && this.yanListData.length > 0) {

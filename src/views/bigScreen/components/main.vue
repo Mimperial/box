@@ -29,18 +29,18 @@
 </template>
 
 <script>
-import BigScreenTop from './bigScreenTop.vue'
-import BigScreenCenter from './bigScreenCenter.vue'
-import BigScreenBottom from './bigScreenBottom.vue'
+import BigScreenTop from "./bigScreenTop.vue";
+import BigScreenCenter from "./bigScreenCenter.vue";
+import BigScreenBottom from "./bigScreenBottom.vue";
 import {
   getCameraApi,
   getAlgorithmListApi,
   wsPreview,
   getAlarmInfoCountApi,
   getDatetimeApi,
-} from '@/api/article'
-import { flvJoin } from '@/utils/videoJoin'
-import { changeImge } from '@/utils/utils'
+} from "@/api/article";
+import { flvJoin } from "@/utils/videoJoin";
+import { changeImge } from "@/utils/utils";
 export default {
   components: {
     BigScreenTop,
@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      cameraId: '',
+      cameraId: "",
       cameraListData: [],
       camerList: [],
       alarmMap: {},
@@ -61,62 +61,62 @@ export default {
       videoHeight: 0,
       imgWidth: 0,
       imgheight: 0,
-      videoTime: '',
+      videoTime: "",
       Vtimer: null,
       alarmImageShow: false, //是否开始展示发送的报警图片，因为有的时候报警名字还没加载完就出报警图片，会出现暂无的情况
-    }
+    };
   },
   beforeDestroy() {
-    this.ws && this.ws.close()
-    this.Vtimer && clearInterval(this.Vtimer)
-    window.removeEventListener('resize', this.resizeWidth)
+    this.ws && this.ws.close();
+    this.Vtimer && clearInterval(this.Vtimer);
+    window.removeEventListener("resize", this.resizeWidth);
   },
   mounted() {
-    this.getAlgorithmList()
-    this.getCamera()
-    this.initWs()
-    this.getTime()
-    this.resizeWidth()
-    window.addEventListener('resize', this.resizeWidth)
+    this.getAlgorithmList();
+    this.getCamera();
+    this.initWs();
+    this.getTime();
+    this.resizeWidth();
+    window.addEventListener("resize", this.resizeWidth);
   },
   computed: {
     cameraInfo() {
       var camera = this.camerList.find(
         (item) => item.channelId == this.cameraId
-      )
-      var url = ''
+      );
+      var url = "";
       if (camera && camera.url) {
-        url = camera.url
+        url = camera.url;
       }
-      return { url, ...camera }
+      return { url, ...camera };
     },
   },
   methods: {
     resizeWidth() {
       setTimeout(() => {
-        var playerVideo = document.getElementById('playerVideo')
+        var playerVideo = document.getElementById("playerVideo");
         if (playerVideo) {
-          this.videoWidth = playerVideo.offsetWidth
-          this.videoHeight = playerVideo.offsetHeight
-          var fontSize = document.querySelector('html').style.fontSize
-          fontSize = Number(fontSize.replace('px', ''))
-          this.imgWidth = 3.44 * fontSize
-          this.imgheight = 1.93 * fontSize
+          this.videoWidth = playerVideo.offsetWidth;
+          this.videoHeight = playerVideo.offsetHeight;
+          var fontSize = document.querySelector("html").style.fontSize;
+          fontSize = Number(fontSize.replace("px", ""));
+          this.imgWidth = 3.44 * fontSize;
+          this.imgheight = 1.93 * fontSize;
         }
-      }, 50)
+      }, 50);
     },
     getTime() {
       //获取系统时间
       getDatetimeApi({}).then((res) => {
         if (JSON.parse(res.data)[0]) {
-          this.videoTime = JSON.parse(res.data)[0].dateTime
+          this.videoTime = JSON.parse(res.data)[0].dateTime;
           this.Vtimer = setInterval(() => {
             this.videoTime = new Date(
               new Date(this.videoTime).getTime() + 1000
-            ).format('yyyy-MM-dd hh:mm:ss')
-          }, 1000)
+            ).format("yyyy-MM-dd hh:mm:ss");
+          }, 1000);
         }
-      })
+      });
     },
     getAlarmInfoCount() {
       /**获取今日报警数据统计 */
@@ -125,129 +125,146 @@ export default {
           if (res.code == 0) {
             if (res.data) {
               try {
-                var data = JSON.parse(res.data)
+                var data = JSON.parse(res.data);
                 data.forEach((element) => {
                   if (this.alarmMap[element.AlarmType]) {
                     this.$set(
                       this.alarmMap[element.AlarmType],
-                      'count',
+                      "count",
                       Number(element.Count)
-                    )
+                    );
                   }
-                })
+                });
               } catch (error) {
-                console.log(error)
+                console.log(error);
               }
             }
           }
         })
-        .catch((err) => {})
+        .catch((err) => {});
     },
     chaneVidoe(data) {
-      var index = 0
-      var camerList = this.camerList
-      this.cameraListData = []
+      var index = 0;
+      var camerList = this.camerList;
+      this.cameraListData = [];
       for (let i = 0; i < camerList.length; i++) {
-        const element = camerList[i]
+        const element = camerList[i];
         if (element.channelId == this.cameraId) {
-          index = i
-          break
+          index = i;
+          break;
         }
       }
       //切换视频
-      if (data == 'left') {
-        index--
+      if (data == "left") {
+        index--;
         if (index < 0) {
           for (let i = 0; i < camerList.length; i++) {
-            const element = camerList[i]
+            const element = camerList[i];
             if (!element.channelId) {
-              index = i - 1
-              break
+              index = i - 1;
+              break;
             }
           }
-          this.cameraId = camerList[index].channelId
+          this.cameraId = camerList[index].channelId;
         } else {
-          this.cameraId = camerList[index].channelId
+          this.cameraId = camerList[index].channelId;
         }
       } else {
-        index++
+        index++;
         if (index >= camerList.length || !camerList[index].channelId) {
-          this.cameraId = camerList[0].channelId
+          this.cameraId = camerList[0].channelId;
         } else {
-          this.cameraId = camerList[index].channelId
+          this.cameraId = camerList[index].channelId;
         }
       }
     },
     changeAlarmImage() {
-      this.alarmCacle.shift()
+      this.alarmCacle.shift();
     },
     initWs() {
       this.ws = wsPreview(
         (data) => {
-          if (data.Cmd == 'Detection') {
-            var xinxi = JSON.parse(data.Data)
+          if (data.Cmd == "Detection") {
+            var xinxi = JSON.parse(data.Data);
             for (let i = 0; i < xinxi.listData.length; i++) {
               if (xinxi.listData[i].alarmType != 0) {
-                xinxi.listData[i].lineColor = '#ff0000'
-                xinxi.listData[i].titleColor = '#ff0000'
+                xinxi.listData[i].lineColor = "#ff0000";
+                xinxi.listData[i].titleColor = "#ff0000";
               }
-              xinxi.listData[i].modeType = 'react'
-              xinxi.listData[i].title = xinxi.listData[i].id
+              xinxi.listData[i].modeType = "react";
+              xinxi.listData[i].title = xinxi.listData[i].id;
             }
             if (this.cameraId == xinxi.channelId) {
               this.cameraListData = changeImge(
                 JSON.parse(JSON.stringify(xinxi.listData)),
                 this.videoWidth,
                 this.videoHeight
-              )
+              );
             }
-          } else if (data.Cmd == 'AlarmTrigger') {
+          } else if (data.Cmd == "AlarmTrigger") {
             if (this.alarmImageShow) {
               //当加载完报警名字在开始触发报警图片
-              var obj = JSON.parse(data.Data)
-              console.log('🤡 ~~ obj', obj)
+              var obj = JSON.parse(data.Data);
+              console.log("🤡 ~~ obj", obj);
               obj.ImageUrl =
-                (process.env.NODE_ENV == 'dev'
-                  ? process.env.VUE_APP_URL.replace(':8183', '')
-                  : window.location.origin) + obj.ImageUrl
+                (process.env.NODE_ENV == "dev"
+                  ? process.env.VUE_APP_URL.replace(":8183", "")
+                  : window.location.origin) + obj.ImageUrl;
               if (obj.listData.length > 0) {
-                obj.yanListData = JSON.parse(JSON.stringify(obj.listData))
-                obj.listData = changeImge(
-                  JSON.parse(JSON.stringify(obj.listData)),
-                  this.imgWidth,
-                  this.imgheight
-                )
-                var AlarmName = this.getAlarmName(obj.listData[0].alarmType, 1)
-                  const { name } =
-              this.camerList.find((item) => item.channelId === obj.channelId) || {}
+                obj.yanListData = JSON.parse(JSON.stringify(obj.listData));
+                console.log("obj-", obj);
+                if (obj.listData[0].alarmType == "411") {
+                  let imgObj = new Image();
+                  imgObj.src = obj.ImageUrl;
+                  imgObj.onload = function () {
+                    obj.listData = changeImge(
+                      JSON.parse(JSON.stringify(obj.listData)),
+                      95,
+                      191,
+                      imgObj.width,
+                      imgObj.height
+                    );
+                  };
+                } else {
+                  obj.listData = changeImge(
+                    JSON.parse(JSON.stringify(obj.listData)),
+                    this.imgWidth,
+                    this.imgheight
+                  );
+                }
+                var AlarmName = this.getAlarmName(obj.listData[0].alarmType, 1);
+                const { name } =
+                  this.camerList.find(
+                    (item) => item.channelId === obj.channelId
+                  ) || {};
                 var obj = {
-                  name: '暂无',
-                  channelName:name,
+                  name: "暂无",
+                  channelName: name,
                   url: obj.ImageUrl,
-                  id: new Date().getTime() + '',
+                  id: new Date().getTime() + "",
                   listData: obj.listData,
                   time: obj.Time.slice(0, -4),
                   yanListData: obj.yanListData,
-                }
+                };
                 if (AlarmName) {
-                  obj.name = AlarmName
+                  obj.name = AlarmName;
                 }
 
-                this.alarmCacle.push(obj)
-                if (obj.listData[0].alarmType === '400') {
+                this.alarmCacle.push(obj);
+                if (obj.listData[0].alarmType === "400") {
                   if (this.faceCapturing.length >= 5) {
-                    this.faceCapturing.shift()
+                    this.faceCapturing.shift();
                   }
-                  this.faceCapturing.push(obj)
+                  this.faceCapturing.push(obj);
                 }
               }
             }
-          } else if (data.Cmd == 'FaceAlarm') {
+          } else if (data.Cmd == "FaceAlarm") {
             const ImageUrl =
-              process.env.NODE_ENV == 'dev'
-                ? process.env.VUE_APP_URL.replace(':8183', '')
-                : window.location.origin
-            const obj = JSON.parse(data.Data)
+              process.env.NODE_ENV == "dev"
+                ? process.env.VUE_APP_URL.replace(":8183", "")
+                : window.location.origin;
+            const obj = JSON.parse(data.Data);
             const {
               CameraId,
               FaceUrl,
@@ -255,59 +272,59 @@ export default {
               time,
               FaceThreshold,
               PersonName,
-            } = obj
+            } = obj;
             const { name } =
-              this.camerList.find((item) => item.channelId === CameraId) || {}
+              this.camerList.find((item) => item.channelId === CameraId) || {};
             if (this.faceRecognition.length >= 2) {
-              this.faceRecognition.shift()
+              this.faceRecognition.shift();
             }
             this.faceRecognition.push({
               FaceUrl: ImageUrl + FaceUrl,
               FaceSnap: ImageUrl + FaceSnap,
               CameraId,
               time: time.slice(0, -4),
-              FaceThreshold: (FaceThreshold * 100).toFixed(0) + '%',
+              FaceThreshold: (FaceThreshold * 100).toFixed(0) + "%",
               name,
               PersonName,
-            })
+            });
           }
         },
         {
-          info: ['Detection', 'AlarmTrigger', 'FaceAlarm'],
+          info: ["Detection", "AlarmTrigger", "FaceAlarm"],
         }
-      )
+      );
     },
     getAlarmName(alarmNumber, count) {
-      var str = ''
+      var str = "";
       if (this.alarmMap[alarmNumber]) {
         if (count) {
           this.$set(
             this.alarmMap[alarmNumber],
-            'count',
+            "count",
             this.alarmMap[alarmNumber].count + count
-          )
+          );
         }
-        str = this.alarmMap[alarmNumber].name
+        str = this.alarmMap[alarmNumber].name;
       }
-      return str
+      return str;
     },
     getAlgorithmList() {
       getAlgorithmListApi({}).then((res) => {
         if (res.code == 0) {
-          var data = JSON.parse(res.data)
+          var data = JSON.parse(res.data);
           if (data && data.length > 0) {
             data.forEach((element) => {
               this.$set(this.alarmMap, element.alarmNumber, {
                 path: element.path,
                 name: element.name,
                 count: 0,
-              })
-            })
-            this.alarmImageShow = true
-            this.getAlarmInfoCount()
+              });
+            });
+            this.alarmImageShow = true;
+            this.getAlarmInfoCount();
           }
         }
-      })
+      });
     },
     getCamera() {
       getCameraApi({})
@@ -315,18 +332,18 @@ export default {
           if (res.code == 0) {
             if (res.data) {
               this.camerList = JSON.parse(res.data).map((item) => {
-                item.url = flvJoin(item)
-                return item
-              })
+                item.url = flvJoin(item);
+                return item;
+              });
               if (this.camerList.length < 6) {
                 for (let i = this.camerList.length - 1; i < 5; i++) {
                   this.camerList.push({
-                    name: '待接入',
-                  })
+                    name: "待接入",
+                  });
                 }
               }
               if (this.camerList[0].channelId) {
-                this.cameraId = this.camerList[0].channelId
+                this.cameraId = this.camerList[0].channelId;
               }
             }
             // this.initWs();
@@ -335,28 +352,28 @@ export default {
         .catch((err) => {
           this.camerList = [
             {
-              name: '待接入',
+              name: "待接入",
             },
             {
-              name: '待接入',
+              name: "待接入",
             },
             {
-              name: '待接入',
+              name: "待接入",
             },
             {
-              name: '待接入',
+              name: "待接入",
             },
             {
-              name: '待接入',
+              name: "待接入",
             },
             {
-              name: '待接入',
+              name: "待接入",
             },
-          ]
-        })
+          ];
+        });
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

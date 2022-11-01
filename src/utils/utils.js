@@ -124,6 +124,7 @@ export function getFenbial(width, height, data, type) {
  * @returns 返回根据当前显示的从1920 * 1080映射过来
  */
 export function changeImge(data, width, height, imgWidth = 1920, imgHeight = 1080) {
+    console.log('width, height', width, height, imgWidth, imgHeight);
     data = JSON.parse(JSON.stringify(data))
     for (let i = 0; i < data.length; i++) {
         var dataService = JSON.parse(data[i].serviceData);
@@ -138,20 +139,35 @@ export function changeImge(data, width, height, imgWidth = 1920, imgHeight = 108
 
 
 //校验经纬度的格式是否符合规范
-export function verifylonglat(rule,value,callback){
-    if(value.split(',').length<=1)  callback(new Error('请输入正确的值!'));
-    const [longitude,latitude] = value.split(',')
-    console.log("🤡 ~~ longitude,latitude", longitude,latitude)
+export function verifylonglat(rule, value, callback) {
+    if (value.split(',').length <= 1) callback(new Error('请输入正确的值!'));
+    const [longitude, latitude] = value.split(',')
+    console.log("🤡 ~~ longitude,latitude", longitude, latitude)
     //经度，整数部分为0-180小数部分为0到6位
     var longreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/;
-    if(!longreg.test(longitude)){
-     callback(new Error('经度整数部分为0-180,小数部分为0到6位!'));
+    if (!longreg.test(longitude)) {
+        callback(new Error('经度整数部分为0-180,小数部分为0到6位!'));
     }
     //纬度,整数部分为0-90小数部分为0到6位
     var latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/;
-    if(!latreg.test(latitude)){
-     callback(new Error('纬度整数部分为0-90,小数部分为0到6位!'));
+    if (!latreg.test(latitude)) {
+        callback(new Error('纬度整数部分为0-90,小数部分为0到6位!'));
     }
     callback()
-   }
- 
+}
+
+export function loadImg(url) {
+    return new Promise((res, rej) => {
+        let imgObj = new Image();
+        let obj = {};
+        imgObj.onload = function () {
+            obj = {
+                width: imgObj.width,
+                height: imgObj.height,
+            };
+            res(obj);
+        };
+        imgObj.src = url;
+    });
+}
+
